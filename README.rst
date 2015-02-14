@@ -34,9 +34,11 @@ Run
 
 or
 
-(venv) $ ./scripts/janome.sh 
-Hello Anonymous !
-Janome is a Japanese morphological analysis engine written by pure Python.
+.. code:: bash
+
+  (venv) $ ./scripts/janome.sh
+  Hello Anonymous !
+  Janome is a Japanese morphological analysis engine written by pure Python.
 
 Test
 ======
