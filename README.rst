@@ -2,6 +2,8 @@
 janome
 ========
 
+.. note:: This is a skelton. NOT working.
+
 Install
 ========
 
