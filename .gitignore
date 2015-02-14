@@ -1,0 +1,10 @@
+*.pyc
+*.pyo
+*.egg
+*.DS_store
+Janome.egg-info
+docs/_build
+dist
+build/
+.idea/
+venv
