@@ -7,7 +7,7 @@ def greeting_msg(name):
 
 def main(args):
     print(greeting_msg(args[0]))
-    print("Janome is a Japanese morphological analysis engine written by pure Python.")
+    print("Janome is a Japanese morphological analysis engine written in pure Python.")
 
 
 if __name__ == '__main__':

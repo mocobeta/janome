@@ -10,7 +10,7 @@ Install
 Strongly recommend install in a python virtual env.
 
 .. code:: bash
-		 
+
   (venv)$ python -V
   Python 3.4.2
 
@@ -30,7 +30,7 @@ Run
   >>> args = ['moco']
   >>> janome.main(args)
   Hello moco !
-  Janome is a Japanese morphological analysis engine written by pure Python.
+  Janome is a Japanese morphological analysis engine written in pure Python.
 
 or
 
@@ -38,7 +38,7 @@ or
 
   (venv) $ ./scripts/janome.sh
   Hello Anonymous !
-  Janome is a Japanese morphological analysis engine written by pure Python.
+  Janome is a Japanese morphological analysis engine written in pure Python.
 
 Test
 ======
