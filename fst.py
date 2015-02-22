@@ -17,7 +17,6 @@ class State:
 
     def set_final(self, final):
         self.final = final
-        self.trans_map = {}
 
     def transition(self, char):
         if char in self.trans_map:
