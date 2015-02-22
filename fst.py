@@ -1,5 +1,6 @@
 import copy
 import re
+from enum import Enum
 
 
 class State:
@@ -195,6 +196,119 @@ def create_minimum_transducer(inputs):
 
     return fstDict
 
+
+class OP(Enum):
+    MINC = 1  # Match or INCrement
+    MBRK = 2  # Match or BReaK
+    AINC = 3  # Accept and INCrement
+    ACCP = 5  # ACCePt
+
+
+class INST:
+    def __init__(self, num, op, ch=None, jump=None, output=None):
+        self.num = num
+        self.op = op
+        self.ch = ch
+        self.jump = jump
+        self.output = output
+
+    def __str__(self):
+        return '%d\t%s\t%s\t%s\t%s' % (
+            self.num,
+            self.op.name,
+            self.ch if self.ch else '',
+            str(self.jump) if self.jump else '',
+            self.output if self.output else ''
+        )
+
+
+def fst2instructions(fst):
+    arcs = []
+    state_range = {}
+    for s in reversed(fst.dictionary):
+        state_range[s.id] = {'first': len(arcs), 'last': len(arcs)}
+        if s.is_final():
+            arc = {'state': s, 'ch': None, 'next': None, 'output': s.final_output}
+            arcs.append(arc)
+            state_range[s.id]['last'] += 1
+        for (c, v) in s.trans_map.items():
+            arc = {'state': s, 'ch': c, 'next': v['state'], 'output': v['output'] if v['output'] else ''}
+            arcs.append(arc)
+        state_range[s.id]['last'] += len(s.trans_map) - 1
+
+    instructions = []
+    for (i, arc) in enumerate(arcs):
+        num = i
+        ch = arc['ch']
+        jump = state_range[arc['next'].id]['first'] - i if arc['next'] else None
+        output = arc['output'] if arc['output'] else None
+        op = None
+        if arc['state'].is_final():
+            if not arc['state'].trans_map:
+                op = OP.ACCP
+            elif num != state_range[arc['state'].id]['last']:
+                op = OP.AINC
+            else:
+                op = OP.MBRK
+        else:
+            if num != state_range[arc['state'].id]['last']:
+                op = OP.MINC
+            else:
+                op = OP.MBRK
+
+        instructions.append(INST(num, op, ch, jump, output))
+
+    return instructions
+
+
+class VM:
+    def __init__(self, instructions):
+        self.insts = instructions
+
+    def run(self, word):
+        outputs = set()
+        accept = False
+        buf = ''
+        i = 0
+        cnt = 0
+        while cnt < len(self.insts):
+            #print(str(cnt), buf)
+            inst = self.insts[cnt]
+            if inst.op == OP.MINC:
+                if i >= len(word):
+                    break
+                if word[i] == inst.ch:
+                    if inst.output:
+                        buf += inst.output
+                    i += 1
+                    cnt += inst.jump
+                else:
+                    cnt += 1
+            elif inst.op == OP.MBRK:
+                if i >= len(word):
+                    break
+                if word[i] == inst.ch:
+                    if inst.output:
+                        buf += inst.output
+                    i += 1
+                    cnt += inst.jump
+                else:
+                    break
+            elif inst.op == OP.AINC:
+                for out in inst.output:
+                    outputs.add(buf + out)
+                    accept = True
+                cnt += 1
+            elif inst.op == OP.ACCP:
+                for out in inst.output:
+                    outputs.add(buf + out)
+                    accept = True
+                break
+            else:
+                break
+        return accept, outputs
+
+
 if __name__ == '__main__':
     inputs1 = [
         ('apr', '30'),
@@ -206,8 +320,13 @@ if __name__ == '__main__':
         ('jul', '31'),
         ('jun', '30')
     ]
+    print('-- state transitions --')
     dict = create_minimum_transducer(inputs1)
     dict.print_dictionary()
+    print('-- instructions --')
+    insts = fst2instructions(dict)
+    for inst in insts:
+        print(inst)
 
     print("\n\n")
 
@@ -218,6 +337,10 @@ if __name__ == '__main__':
         ('なし', '10'),
         ('もも', '20'),
     ]
+    print('-- state transitions --')
     dict = create_minimum_transducer(inputs2)
     dict.print_dictionary()
-
+    print('-- instructions --')
+    insts = fst2instructions(dict)
+    for inst in insts:
+        print(inst)
