@@ -1,6 +1,6 @@
 import copy
-import re
 from enum import Enum
+from struct import pack
 
 
 class State:
@@ -27,29 +27,26 @@ class State:
 
     def set_transition(self, char, state):
         self.trans_map[char] = {'state': state,
-                                'output': '' if char not in self.trans_map else self.trans_map[char]['output']}
+                                'output': bytes() if char not in self.trans_map else self.trans_map[char]['output']}
 
     def state_output(self):
         return self.final_output
 
     def set_state_output(self, output):
-        self.final_output = output
-
-    def add_state_output(self, output):
-        self.final_output.add(output)
+        self.final_output = set([bytes(e) for e in output])
 
     def clear_state_output(self):
         self.final_output = set()
 
     def output(self, char):
         if char in self.trans_map:
-            return self.trans_map[char]['output']
+            return bytes(self.trans_map[char]['output'])
         else:
-            return ''
+            return bytes()
 
-    def set_output(self, char, str):
+    def set_output(self, char, out):
         if char in self.trans_map:
-            self.trans_map[char]['output'] = str
+            self.trans_map[char]['output'] = bytes(out)
 
     def deepcopy(self, id):
         state = State(id)
@@ -111,7 +108,7 @@ def create_minimum_transducer(inputs):
     buffer.append(State())  # insert 'initial' state
 
     # previous word
-    prev_word = ''
+    prev_word = bytes()
 
     def find_minimized(state):
         # if an equal state exists in the dictionary, use that
@@ -148,18 +145,18 @@ def create_minimum_transducer(inputs):
             buffer[i - 1].set_transition(current_word[i - 1], buffer[i])
         if current_word != prev_word:
             buffer[len(current_word)].set_final(True)
-            buffer[len(current_word)].set_state_output(set(['']))
+            buffer[len(current_word)].set_state_output(set([bytes()]))
 
         # set state outputs
         for j in range(1, pref_len + 1):
             # divide (j-1)th state's output to (common) prefix and suffix
-            common_prefix = ''
+            common_prefix = bytearray()
             output = buffer[j - 1].output(current_word[j - 1])
             k = 0
             while k < len(output) and k < len(current_output) and output[k] == current_output[k]:
-                common_prefix += output[k]
+                common_prefix += pack('b', output[k])
                 k += 1
-            word_suffix = re.sub("^" + common_prefix, "", output)
+            word_suffix = output[len(common_prefix):]
 
             # re-set (j-1)'th state's output to prefix
             buffer[j - 1].set_output(current_word[j - 1], common_prefix)
@@ -178,10 +175,10 @@ def create_minimum_transducer(inputs):
                 buffer[j].set_state_output(tmp_set)
 
             # update current output (subtract prefix)
-            current_output = re.sub("^" + common_prefix, "", current_output)
+            current_output = current_output[len(common_prefix):]
 
         if current_word == prev_word:
-            buffer[len(current_word)].set_state_output(buffer[len(current_word)].state_output() | set(current_output))
+            buffer[len(current_word)].state_output().add(current_output)
         else:
             buffer[pref_len].set_output(current_word[pref_len], current_output)
 
@@ -232,7 +229,7 @@ def fst2instructions(fst):
             arcs.append(arc)
             state_range[s.id]['last'] += 1
         for (c, v) in s.trans_map.items():
-            arc = {'state': s, 'ch': c, 'next': v['state'], 'output': v['output'] if v['output'] else ''}
+            arc = {'state': s, 'ch': c, 'next': v['state'], 'output': v['output'] if v['output'] else bytes()}
             arcs.append(arc)
         state_range[s.id]['last'] += len(s.trans_map) - 1
 
@@ -268,11 +265,10 @@ class VM:
     def run(self, word):
         outputs = set()
         accept = False
-        buf = ''
+        buf = bytearray()
         i = 0
         cnt = 0
         while cnt < len(self.insts):
-            #print(str(cnt), buf)
             inst = self.insts[cnt]
             if inst.op == OP.MINC:
                 if i >= len(word):
@@ -296,12 +292,12 @@ class VM:
                     break
             elif inst.op == OP.AINC:
                 for out in inst.output:
-                    outputs.add(buf + out)
+                    outputs.add(bytes(buf + out))
                     accept = True
                 cnt += 1
             elif inst.op == OP.ACCP:
                 for out in inst.output:
-                    outputs.add(buf + out)
+                    outputs.add(bytes(buf + out))
                     accept = True
                 break
             else:
@@ -311,14 +307,14 @@ class VM:
 
 if __name__ == '__main__':
     inputs1 = [
-        ('apr', '30'),
-        ('aug', '31'),
-        ('dec', '31'),
-        ('feb', '28'),
-        ('feb', '29'),
-        ('jan', '31'),
-        ('jul', '31'),
-        ('jun', '30')
+        ('apr'.encode('utf-8'), '30'.encode('utf-8')),
+        ('aug'.encode('utf-8'), '31'.encode('utf-8')),
+        ('dec'.encode('utf-8'), '31'.encode('utf-8')),
+        ('feb'.encode('utf-8'), '28'.encode('utf-8')),
+        ('feb'.encode('utf-8'), '29'.encode('utf-8')),
+        ('jan'.encode('utf-8'), '31'.encode('utf-8')),
+        ('jul'.encode('utf-8'), '31'.encode('utf-8')),
+        ('jun'.encode('utf-8'), '30'.encode('utf-8'))
     ]
     print('-- state transitions --')
     dict = create_minimum_transducer(inputs1)
@@ -331,11 +327,11 @@ if __name__ == '__main__':
     print("\n\n")
 
     inputs2 = [
-        ('さくら', '10'),
-        ('さくらんぼ', '11'),
-        ('すもも', '20'),
-        ('なし', '10'),
-        ('もも', '20'),
+        ('さくら'.encode('utf-8'), '10'.encode('utf-8')),
+        ('さくらんぼ'.encode('utf-8'), '11'.encode('utf-8')),
+        ('すもも'.encode('utf-8'), '20'.encode('utf-8')),
+        ('なし'.encode('utf-8'), '10'.encode('utf-8')),
+        ('もも'.encode('utf-8'), '20'.encode('utf-8')),
     ]
     print('-- state transitions --')
     dict = create_minimum_transducer(inputs2)
