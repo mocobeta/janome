@@ -1,13 +1,25 @@
 import copy
-from enum import Enum
-from struct import pack
+from struct import pack, unpack
+import logging
+
+# bit flags to represent class of arcs
+# refer to Apache Lucene FST's implementation
+FLAG_FINAL_ARC = 1 << 0             # 1
+FLAG_LAST_ARC = 1 << 1              # 2
+FLAG_TARGET_NEXT = 1 << 2           # 4  TODO: not used. can be removed?
+FLAG_STOP_NODE = 1 << 3             # 8  TODO: not used. can be removed?
+FLAG_ARC_HAS_OUTPUT = 1 << 4        # 16
+FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
+
+# all characters
+CHARS = set()
 
 
 class State:
     """
     State Class
     """
-    def __init__(self, id=''):
+    def __init__(self, id=None):
         self.id = id
         self.final = False
         self.trans_map = {}
@@ -96,9 +108,6 @@ class FST:
             if s.is_final():
                 print(s.id, 'final', s.final_output, sep='\t')
 
-# all characters
-CHARS = set()
-
 
 # naive implementation for building fst
 # http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698
@@ -115,7 +124,7 @@ def create_minimum_transducer(inputs):
         s = fstDict.member(state)
         if s is None:
             # if no equal state exists, insert new one ant return it
-            s = state.deepcopy("S" + str(fstDict.size()))
+            s = state.deepcopy(fstDict.size())
             fstDict.insert(s)
         return s
 
@@ -126,6 +135,8 @@ def create_minimum_transducer(inputs):
             i += 1
         return i
 
+    current_word = bytes()
+    current_output = bytes()
     # main loop
     for (current_word, current_output) in inputs:
         for c in current_word:
@@ -194,118 +205,165 @@ def create_minimum_transducer(inputs):
     return fstDict
 
 
-class OP(Enum):
-    MINC = 1  # Match or INCrement
-    MBRK = 2  # Match or BReaK
-    AINC = 3  # Accept and INCrement
-    ACCP = 5  # ACCePt
+def compileFST(fst):
+    """
+    convert FST to byte array
+    """
+    arcs = []
+    address = {}
+    cnt = 0
+    for s in fst.dictionary:
+        # print(address)
+        for i, (c, v) in enumerate(sorted(s.trans_map.items(), reverse=True)):
+            bary = bytearray()
+            flag = 0
+            output_size, output = 0, bytes()
+            if i == 0:
+                flag += FLAG_LAST_ARC
+            if v['output']:
+                flag += FLAG_ARC_HAS_OUTPUT
+                output_size = len(v['output'])
+                output = v['output']
+            # encode flag, label, output_size, output, relative target address
+            bary += pack('b', flag)
+            bary += pack('B', c)
+            if output_size > 0:
+                bary += pack('i', output_size)
+                bary += output
+            next_addr = address.get(v['state'].id)
+            assert next_addr is not None
+            target = cnt - next_addr + 1
+            assert target > 0
+            bary += pack('i', target)
+            # add the arc represented in bytes
+            arcs.append(bytes(bary))
+            # address count up
+            cnt += 1
+        if s.is_final():
+            bary = bytearray()
+            # final state
+            flag = FLAG_FINAL_ARC
+            output_size, output = 0, bytes()
+            if s.final_output and any(len(e) > 0 for e in s.final_output):
+                # the arc has final output
+                flag += FLAG_ARC_HAS_FINAL_OUTPUT
+                output_size = sum(len(e) for e in s.final_output) + len(s.final_output) - 1
+                output = b'\x1a'.join(s.final_output)
+            if not s.trans_map:
+                flag += FLAG_LAST_ARC
+            # encode flag, output size, output
+            bary += pack('b', flag)
+            if output_size > 0:
+                bary += pack('i', output_size)
+                bary += output
+            # add the arc represented in bytes
+            arcs.append(bytes(bary))
+            # address count up
+            cnt += 1
+        address[s.id] = cnt
+    arcs.reverse()
+    return arcs
 
 
-class INST:
-    def __init__(self, num, op, ch=None, jump=None, output=None):
-        self.num = num
-        self.op = op
-        self.ch = ch
-        self.jump = jump
-        self.output = output
+def save(file, arcs):
+    with open(file, 'bw') as f:
+        f.write(b''.join(arcs))
+        f.flush()
+
+
+class Arc:
+    """
+    Arc class
+    """
+    def __init__(self, addr):
+        self.addr = addr
+        self.flag = 0
+        self.label = 0
+        self.output = bytes()
+        self.final_output = [b'']
+        self.target = 0
 
     def __str__(self):
-        return '%d\t%s\t%s\t%s\t%s' % (
-            self.num,
-            self.op.name,
-            self.ch if self.ch else '',
-            str(self.jump) if self.jump else '',
-            self.output if self.output else ''
-        )
+        return "addr=%d, flag=%d, label=%s, target=%d, output=%s, final_output=%s" \
+               % (self.addr, self.flag, self.label, self.target, str(self.output), str(self.final_output))
 
 
-def fst2instructions(fst):
+def loadCompiledFST(file):
+    data = bytearray()
+    with open(file, 'br') as f:
+        buf = f.read(1024)
+        if buf:
+            data += buf
+    data = bytes(data)
     arcs = []
-    state_range = {}
-    for s in reversed(fst.dictionary):
-        state_range[s.id] = {'first': len(arcs), 'last': len(arcs)}
-        if s.is_final():
-            arc = {'state': s, 'ch': None, 'next': None, 'output': s.final_output}
-            arcs.append(arc)
-            state_range[s.id]['last'] += 1
-        for (c, v) in s.trans_map.items():
-            arc = {'state': s, 'ch': c, 'next': v['state'], 'output': v['output'] if v['output'] else bytes()}
-            arcs.append(arc)
-        state_range[s.id]['last'] += len(s.trans_map) - 1
-
-    instructions = []
-    for (i, arc) in enumerate(arcs):
-        num = i
-        ch = arc['ch']
-        jump = state_range[arc['next'].id]['first'] - i if arc['next'] else None
-        output = arc['output'] if arc['output'] else None
-        op = None
-        if arc['state'].is_final():
-            if not arc['state'].trans_map:
-                op = OP.ACCP
-            elif num != state_range[arc['state'].id]['last']:
-                op = OP.AINC
-            else:
-                op = OP.MBRK
+    while data:
+        arc = Arc(len(arcs))
+        flag, data = unpack('b', data[:1])[0], data[1:]
+        arc.flag = flag
+        if flag & FLAG_FINAL_ARC:
+            if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
+                output_size, data = unpack('i', data[:4])[0], data[4:]
+                output, data = data[:output_size].split(b'\x1a'), data[output_size:]
+                arc.final_output = output
         else:
-            if num != state_range[arc['state'].id]['last']:
-                op = OP.MINC
-            else:
-                op = OP.MBRK
+            label, data = unpack('B', data[:1])[0], data[1:]
+            arc.label = label
+            if flag & FLAG_ARC_HAS_OUTPUT:
+                output_size, data = unpack('i', data[:4])[0], data[4:]
+                output, data = data[:output_size], data[output_size:]
+                arc.output = output
+            target, data = unpack('i', data[:4])[0], data[4:]
+            arc.target = target
+        logging.debug(arc)
+        arcs.append(arc)
+    return arcs
 
-        instructions.append(INST(num, op, ch, jump, output))
 
-    return instructions
-
-
-class VM:
-    def __init__(self, instructions):
-        self.insts = instructions
+class Matcher:
+    def __init__(self, arcs):
+        self.arcs = arcs
 
     def run(self, word):
+        logging.debug('word=' + str([c for c in word]))
         outputs = set()
         accept = False
         buf = bytearray()
         i = 0
         cnt = 0
-        while cnt < len(self.insts):
-            inst = self.insts[cnt]
-            if inst.op == OP.MINC:
+        while cnt < len(self.arcs):
+            logging.debug(str(i) + ", " + str(cnt))
+            arc = self.arcs[cnt]
+            if arc.flag & FLAG_FINAL_ARC > 0:
+                # accepted
+                accept = True
+                for out in arc.final_output:
+                    outputs.add(bytes(buf + out))
+                if arc.flag & FLAG_LAST_ARC:
+                    break
+                cnt += 1
+            elif arc.flag & FLAG_LAST_ARC:
                 if i >= len(word):
                     break
-                if word[i] == inst.ch:
-                    if inst.output:
-                        buf += inst.output
+                if word[i] == arc.label:
+                    buf += arc.output
                     i += 1
-                    cnt += inst.jump
+                    cnt += arc.target
+                else:
+                    break
+            else:
+                if i >= len(word):
+                    break
+                if word[i] == arc.label:
+                    buf += arc.output
+                    i += 1
+                    cnt += arc.target
                 else:
                     cnt += 1
-            elif inst.op == OP.MBRK:
-                if i >= len(word):
-                    break
-                if word[i] == inst.ch:
-                    if inst.output:
-                        buf += inst.output
-                    i += 1
-                    cnt += inst.jump
-                else:
-                    break
-            elif inst.op == OP.AINC:
-                for out in inst.output:
-                    outputs.add(bytes(buf + out))
-                    accept = True
-                cnt += 1
-            elif inst.op == OP.ACCP:
-                for out in inst.output:
-                    outputs.add(bytes(buf + out))
-                    accept = True
-                break
-            else:
-                break
         return accept, outputs
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     inputs1 = [
         ('apr'.encode('utf-8'), '30'.encode('utf-8')),
         ('aug'.encode('utf-8'), '31'.encode('utf-8')),
@@ -316,13 +374,19 @@ if __name__ == '__main__':
         ('jul'.encode('utf-8'), '31'.encode('utf-8')),
         ('jun'.encode('utf-8'), '30'.encode('utf-8'))
     ]
-    print('-- state transitions --')
     dict = create_minimum_transducer(inputs1)
-    dict.print_dictionary()
-    print('-- instructions --')
-    insts = fst2instructions(dict)
-    for inst in insts:
-        print(inst)
+    #dict.print_dictionary()
+    arcs = compileFST(dict)
+    save('dict1.dat', arcs)
+    arcs = loadCompiledFST('dict1.dat')
+    m = Matcher(arcs)
+    print(m.run('apr'.encode('utf-8')))
+    print(m.run('aug'.encode('utf-8')))
+    print(m.run('dec'.encode('utf-8')))
+    print(m.run('feb'.encode('utf-8')))
+    print(m.run('jan'.encode('utf-8')))
+    print(m.run('jul'.encode('utf-8')))
+    print(m.run('jun'.encode('utf-8')))
 
     print("\n\n")
 
@@ -333,10 +397,14 @@ if __name__ == '__main__':
         ('なし'.encode('utf-8'), '10'.encode('utf-8')),
         ('もも'.encode('utf-8'), '20'.encode('utf-8')),
     ]
-    print('-- state transitions --')
     dict = create_minimum_transducer(inputs2)
-    dict.print_dictionary()
-    print('-- instructions --')
-    insts = fst2instructions(dict)
-    for inst in insts:
-        print(inst)
+    #dict.print_dictionary()
+    arcs = compileFST(dict)
+    save('dict2.dat', arcs)
+    arcs = loadCompiledFST('dict2.dat')
+    m = Matcher(arcs)
+    print(m.run('さくら'.encode('utf-8')))
+    print(m.run('さくらんぼ'.encode('utf-8')))
+    print(m.run('すもも'.encode('utf-8')))
+    print(m.run('なし'.encode('utf-8')))
+    print(m.run('もも'.encode('utf-8')))
