@@ -1,6 +1,7 @@
 import copy
 from struct import pack, unpack
 import logging
+import time
 
 # bit flags to represent class of arcs
 # refer to Apache Lucene FST's implementation
@@ -81,6 +82,8 @@ class State:
                 self.trans_map == other.trans_map and \
                 self.final_output == other.final_output
 
+    def __hash__(self):
+        return hash(str(self.final) + str(self.trans_map) + str(self.final_output))
 
 class FST:
     """
@@ -88,18 +91,17 @@ class FST:
     """
     def __init__(self):
         self.dictionary = []
+        self.dict_map = {}
 
     def size(self):
         return len(self.dictionary)
 
     def member(self, state):
-        for s in self.dictionary:
-            if s == state:
-                return s
-        return None
+        return self.dict_map.get(hash(state))
 
     def insert(self, state):
         self.dictionary.append(state)
+        self.dict_map[hash(state)] = state
 
     def print_dictionary(self):
         for s in reversed(self.dictionary):
@@ -112,6 +114,11 @@ class FST:
 # naive implementation for building fst
 # http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698
 def create_minimum_transducer(inputs):
+    _start = time.time()
+    _last_printed = 0
+    inputs_size = len(inputs)
+    logging.info('input size: %d' % inputs_size)
+
     fstDict = FST()
     buffer = []
     buffer.append(State())  # insert 'initial' state
@@ -137,8 +144,14 @@ def create_minimum_transducer(inputs):
 
     current_word = bytes()
     current_output = bytes()
+    processed = 0
     # main loop
     for (current_word, current_output) in inputs:
+        logging.debug('current word: ' + str(current_word))
+        logging.debug('current_output: ' + str(current_output))
+
+        assert(current_word >= prev_word)
+
         for c in current_word:
             CHARS.add(c)
 
@@ -196,11 +209,20 @@ def create_minimum_transducer(inputs):
         # preserve current word for next loop
         prev_word = current_word
 
+        # progress
+        processed += 1
+        _elapsed = round(time.time() - _start)
+        if _elapsed % 30 == 0 and _elapsed > _last_printed:
+            progress = processed / inputs_size * 100
+            logging.info('elapsed=%dsec, progress: %f %%' % (_elapsed, progress))
+            _last_printed = _elapsed
+
     # minimize the last word
     for i in range(len(current_word), 0, -1):
         buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
 
     find_minimized(buffer[0])
+    logging.info('num of state: %d' % fstDict.size())
 
     return fstDict
 
@@ -261,6 +283,7 @@ def compileFST(fst):
             # address count up
             cnt += 1
         address[s.id] = cnt
+    logging.info('compiled arcs size: %d' % len(arcs))
     arcs.reverse()
     return arcs
 
@@ -288,13 +311,16 @@ class Arc:
                % (self.addr, self.flag, self.label, self.target, str(self.output), str(self.final_output))
 
 
+BUF_SIZE = 1024
 def loadCompiledFST(file):
     data = bytearray()
     with open(file, 'br') as f:
-        buf = f.read(1024)
-        if buf:
+        buf = f.read(BUF_SIZE)
+        while buf:
             data += buf
+            buf = f.read(BUF_SIZE)
     data = bytes(data)
+    logging.info('dictionary size (in bytes): %d' % len(data))
     arcs = []
     while data:
         arc = Arc(len(arcs))
@@ -316,6 +342,7 @@ def loadCompiledFST(file):
             arc.target = target
         logging.debug(arc)
         arcs.append(arc)
+    logging.info('loaded arcs size: %d' % len(arcs))
     return arcs
 
 
