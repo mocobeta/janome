@@ -1,5 +1,6 @@
 import copy
 from struct import pack, unpack
+from collections import OrderedDict
 import logging
 import time
 
@@ -53,20 +54,13 @@ class State:
 
     def output(self, char):
         if char in self.trans_map:
-            return bytes(self.trans_map[char]['output'])
+            return self.trans_map[char]['output']
         else:
             return bytes()
 
     def set_output(self, char, out):
         if char in self.trans_map:
             self.trans_map[char]['output'] = bytes(out)
-
-    def deepcopy(self, id):
-        state = State(id)
-        state.final = self.final
-        state.trans_map = copy.deepcopy(self.trans_map)
-        state.final_output = copy.deepcopy(self.final_output)
-        return state
 
     def clear(self):
         self.final = False
@@ -86,26 +80,35 @@ class State:
         return hash(str(self.final) + str(self.trans_map) + str(self.final_output))
 
 
+def copy_state(src, id):
+    state = State(id)
+    state.final = src.final
+    for c, t in src.trans_map.items():
+        state.set_transition(c, copy.copy(t['state']))
+        state.set_output(c, t['output'])
+    state.final_output = copy.copy(src.final_output)
+    return state
+
+
 class FST:
     """
     FST (final dictionary) class
     """
     def __init__(self):
-        self.dictionary = []
-        self.dict_map = {}
+        # must preserve inserting order
+        self.dictionary = OrderedDict()
 
     def size(self):
         return len(self.dictionary)
 
     def member(self, state):
-        return self.dict_map.get(hash(state))
+        return self.dictionary.get(hash(state))
 
     def insert(self, state):
-        self.dictionary.append(state)
-        self.dict_map[hash(state)] = state
+        self.dictionary[hash(state)] = state
 
     def print_dictionary(self):
-        for s in reversed(self.dictionary):
+        for s in self.dictionary.values():
             for (c, v) in s.trans_map.items():
                 print(s.id, c, v['state'].id, v['output'], sep='\t')
             if s.is_final():
@@ -128,11 +131,11 @@ def create_minimum_transducer(inputs):
     prev_word = bytes()
 
     def find_minimized(state):
-        # if an equal state exists in the dictionary, use that
+        # if an equivalent state exists in the dictionary, use that
         s = fstDict.member(state)
         if s is None:
-            # if no equal state exists, insert new one ant return it
-            s = state.deepcopy(fstDict.size())
+            # if no equivalent state exists, insert new one and return it
+            s = copy_state(state, fstDict.size())
             fstDict.insert(s)
         return s
 
@@ -235,7 +238,7 @@ def compileFST(fst):
     arcs = []
     address = {}
     cnt = 0
-    for s in fst.dictionary:
+    for s in fst.dictionary.values():
         # print(address)
         for i, (c, v) in enumerate(sorted(s.trans_map.items(), reverse=True)):
             bary = bytearray()
@@ -312,16 +315,7 @@ class Arc:
                % (self.addr, self.flag, self.label, self.target, str(self.output), str(self.final_output))
 
 
-BUF_SIZE = 1024
-def loadCompiledFST(file):
-    data = bytearray()
-    with open(file, 'br') as f:
-        buf = f.read(BUF_SIZE)
-        while buf:
-            data += buf
-            buf = f.read(BUF_SIZE)
-    data = bytes(data)
-    logging.info('dictionary size (in bytes): %d' % len(data))
+def bytes2arcs(data):
     arcs = []
     while data:
         arc = Arc(len(arcs))
@@ -345,6 +339,19 @@ def loadCompiledFST(file):
         arcs.append(arc)
     logging.info('loaded arcs size: %d' % len(arcs))
     return arcs
+
+
+BUF_SIZE = 1024
+def loadCompiledFST(file):
+    data = bytearray()
+    with open(file, 'br') as f:
+        buf = f.read(BUF_SIZE)
+        while buf:
+            data += buf
+            buf = f.read(BUF_SIZE)
+    data = bytes(data)
+    logging.info('dictionary size (in bytes): %d' % len(data))
+    return bytes2arcs(data)
 
 
 class Matcher:
