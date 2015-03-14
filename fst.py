@@ -80,10 +80,11 @@ class State:
             return \
                 self.final == other.final and \
                 self.trans_map == other.trans_map and \
-                self.final_output == other.final_output
+                self.final_output == other.final_output and \
+                self.output == other.output
 
     def __hash__(self):
-        return hash(str(self.final) + str(self.trans_map) + str(self.final_output))
+        return hash(str(self.final) + str(self.trans_map) + str(self.final_output) + str(self.output))
 
 class FST:
     """
