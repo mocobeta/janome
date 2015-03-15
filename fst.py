@@ -182,7 +182,7 @@ def create_minimum_transducer(inputs):
             output = buffer[j - 1].output(current_word[j - 1])
             k = 0
             while k < len(output) and k < len(current_output) and output[k] == current_output[k]:
-                common_prefix += pack('b', output[k])
+                common_prefix += pack('B', output[k])
                 k += 1
             word_suffix = output[len(common_prefix):]
 
