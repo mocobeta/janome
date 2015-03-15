@@ -427,44 +427,44 @@ class Matcher:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     inputs1 = [
-        ('apr'.encode('utf-8'), '30'.encode('utf-8')),
-        ('aug'.encode('utf-8'), '31'.encode('utf-8')),
-        ('dec'.encode('utf-8'), '31'.encode('utf-8')),
-        ('feb'.encode('utf-8'), '28'.encode('utf-8')),
-        ('feb'.encode('utf-8'), '29'.encode('utf-8')),
-        ('jan'.encode('utf-8'), '31'.encode('utf-8')),
-        ('jul'.encode('utf-8'), '31'.encode('utf-8')),
-        ('jun'.encode('utf-8'), '30'.encode('utf-8'))
+        ('apr'.encode('utf8'), '30'.encode('utf8')),
+        ('aug'.encode('utf8'), '31'.encode('utf8')),
+        ('dec'.encode('utf8'), '31'.encode('utf8')),
+        ('feb'.encode('utf8'), '28'.encode('utf8')),
+        ('feb'.encode('utf8'), '29'.encode('utf8')),
+        ('jan'.encode('utf8'), '31'.encode('utf8')),
+        ('jul'.encode('utf8'), '31'.encode('utf8')),
+        ('jun'.encode('utf8'), '30'.encode('utf8'))
     ]
     dict = create_minimum_transducer(inputs1)
     data = compileFST(dict)
 
     m = Matcher(data)
-    print(m.run('apr'.encode('utf-8')))
-    print(m.run('aug'.encode('utf-8')))
-    print(m.run('dec'.encode('utf-8')))
-    print(m.run('feb'.encode('utf-8')))
-    print(m.run('jan'.encode('utf-8')))
-    print(m.run('jul'.encode('utf-8')))
-    print(m.run('jun'.encode('utf-8')))
-    print(m.run('mar'.encode('utf-8')))
+    print(m.run('apr'.encode('utf8')))
+    print(m.run('aug'.encode('utf8')))
+    print(m.run('dec'.encode('utf8')))
+    print(m.run('feb'.encode('utf8')))
+    print(m.run('jan'.encode('utf8')))
+    print(m.run('jul'.encode('utf8')))
+    print(m.run('jun'.encode('utf8')))
+    print(m.run('mar'.encode('utf8')))
 
     print("\n\n")
 
 
     inputs2 = [
-        ('さくら'.encode('utf-8'), '10'.encode('utf-8')),
-        ('さくらんぼ'.encode('utf-8'), '11'.encode('utf-8')),
-        ('すもも'.encode('utf-8'), '20'.encode('utf-8')),
-        ('なし'.encode('utf-8'), '10'.encode('utf-8')),
-        ('もも'.encode('utf-8'), '20'.encode('utf-8')),
+        ('さくら'.encode('utf8'), '10'.encode('utf8')),
+        ('さくらんぼ'.encode('utf8'), '11'.encode('utf8')),
+        ('すもも'.encode('utf8'), '20'.encode('utf8')),
+        ('なし'.encode('utf8'), '10'.encode('utf8')),
+        ('もも'.encode('utf8'), '20'.encode('utf8')),
     ]
     dict = create_minimum_transducer(inputs2)
     #dict.print_dictionary()
     data = compileFST(dict)
     m = Matcher(data)
-    print(m.run('さくら'.encode('utf-8')))
-    print(m.run('さくらんぼ'.encode('utf-8')))
-    print(m.run('すもも'.encode('utf-8')))
-    print(m.run('なし'.encode('utf-8')))
-    print(m.run('もも'.encode('utf-8')))
+    print(m.run('さくら'.encode('utf8')))
+    print(m.run('さくらんぼ'.encode('utf8')))
+    print(m.run('すもも'.encode('utf8')))
+    print(m.run('なし'.encode('utf8')))
+    print(m.run('もも'.encode('utf8')))

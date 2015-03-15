@@ -13,7 +13,7 @@ def build_dict(enc, outfile, *files):
                 line = line.rstrip()
                 (surface, sep, tail) = line.partition(',')
                 output = '.'.join(tail.split(',')[:3])
-                entries[bytes(surface, encoding='utf8')] = bytes(output, encoding='utf-8')
+                entries[bytes(surface, encoding='utf8')] = bytes(output, encoding='utf8')
     inputs = [(k, v) for k, v in sorted(entries.items())]
 
     _t1 = time.time()
