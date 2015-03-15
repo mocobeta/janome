@@ -7,6 +7,7 @@ import fst
 from fst import Matcher
 
 import unittest
+from struct import pack, unpack
 
 
 class TestFST(unittest.TestCase):
@@ -14,40 +15,40 @@ class TestFST(unittest.TestCase):
     def test_create_minimum_transducer1(self):
         dict_file = '/tmp/dict1.dat'
         inputs = [
-            ('apr'.encode('utf8'), '30'.encode('utf8')),
-            ('aug'.encode('utf8'), '31'.encode('utf8')),
-            ('dec'.encode('utf8'), '31'.encode('utf8')),
-            ('feb'.encode('utf8'), '28'.encode('utf8')),
-            ('feb'.encode('utf8'), '29'.encode('utf8')),
-            ('jan'.encode('utf8'), '31'.encode('utf8')),
-            ('jul'.encode('utf8'), '31'.encode('utf8')),
-            ('jun'.encode('utf8'), '30'.encode('utf8')),
-            ('may'.encode('utf8'), '31'.encode('utf8'))
+            ('apr'.encode('utf8'), pack('i', 30)),
+            ('aug'.encode('utf8'), pack('i', 31)),
+            ('dec'.encode('utf8'), pack('i', 31)),
+            ('feb'.encode('utf8'), pack('i', 28)),
+            ('feb'.encode('utf8'), pack('i', 29)),
+            ('jan'.encode('utf8'), pack('i', 31)),
+            ('jul'.encode('utf8'), pack('i', 31)),
+            ('jun'.encode('utf8'), pack('i', 30)),
+            ('may'.encode('utf8'), pack('i', 31))
         ]
         dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)
         # accepted strings
-        self.assertEqual((True, set(['30'.encode('utf-8')])), m.run('apr'.encode('utf8')))
-        self.assertEqual((True, set(['31'.encode('utf-8')])), m.run('aug'.encode('utf8')))
-        self.assertEqual((True, set(['31'.encode('utf-8')])), m.run('dec'.encode('utf8')))
-        self.assertEqual((True, set(['28'.encode('utf-8'), '29'.encode('utf8')])), m.run('feb'.encode('utf8')))
-        self.assertEqual((True, set(['31'.encode('utf-8')])), m.run('jan'.encode('utf8')))
-        self.assertEqual((True, set(['31'.encode('utf-8')])), m.run('jul'.encode('utf8')))
-        self.assertEqual((True, set(['30'.encode('utf-8')])), m.run('jun'.encode('utf8')))
-        self.assertEqual((True, set(['31'.encode('utf-8')])), m.run('may'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 30)])), m.run('apr'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 31)])), m.run('aug'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 31)])), m.run('dec'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 28), pack('i', 29)])), m.run('feb'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 31)])), m.run('jan'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 31)])), m.run('jul'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 30)])), m.run('jun'.encode('utf8')))
+        self.assertEqual((True, set([pack('i', 31)])), m.run('may'.encode('utf8')))
         # not accepted string
         self.assertEqual((False, set()), m.run('mar'))
 
     def test_create_minimum_transducer2(self):
         dict_file = '/tmp/dict2.dat'
         inputs = [
-            ('さくら'.encode('utf8'), '10'.encode('utf8')),
-            ('さくらんぼ'.encode('utf8'), '11'.encode('utf8')),
-            ('すもも'.encode('utf8'), '20'.encode('utf8')),
-            ('なし'.encode('utf8'), '10'.encode('utf8')),
-            ('もも'.encode('utf8'), '20'.encode('utf8')),
+            ('さくら'.encode('utf8'), '白'.encode('utf8')),
+            ('さくらんぼ'.encode('utf8'), '赤'.encode('utf8')),
+            ('すもも'.encode('utf8'), '赤'.encode('utf8')),
+            ('なし'.encode('utf8'), '茶'.encode('utf8')),
+            ('もも'.encode('utf8'), '桃'.encode('utf8')),
         ]
         dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
@@ -56,11 +57,11 @@ class TestFST(unittest.TestCase):
 
         m = Matcher(file=dict_file)
         # accepted strings
-        self.assertEqual((True, set(['10'.encode('utf8')])), m.run('さくら'.encode('utf8')))
-        self.assertEqual((True, set(['10'.encode('utf8'), '11'.encode('utf8')])), m.run('さくらんぼ'.encode('utf8')))
-        self.assertEqual((True, set(['20'.encode('utf8')])), m.run('すもも'.encode('utf8')))
-        self.assertEqual((True, set(['10'.encode('utf8')])), m.run('なし'.encode('utf8')))
-        self.assertEqual((True, set(['20'.encode('utf8')])), m.run('もも'.encode('utf8')))
+        self.assertEqual((True, set(['白'.encode('utf8')])), m.run('さくら'.encode('utf8')))
+        self.assertEqual((True, set(['白'.encode('utf8'), '赤'.encode('utf8')])), m.run('さくらんぼ'.encode('utf8')))
+        self.assertEqual((True, set(['赤'.encode('utf8')])), m.run('すもも'.encode('utf8')))
+        self.assertEqual((True, set(['茶'.encode('utf8')])), m.run('なし'.encode('utf8')))
+        self.assertEqual((True, set(['桃'.encode('utf8')])), m.run('もも'.encode('utf8')))
         # not accepted string
         self.assertEqual((False, set()), m.run('りんご'.encode('utf8')))
 
