@@ -258,9 +258,7 @@ def compileFST(fst):
                 bary += output
             next_addr = address.get(v['state'].id)
             assert next_addr is not None
-            #target = cnt - next_addr + 1
             target = (pos + len(bary) + 4) - next_addr
-            #logging.debug('pos=%d, next=%d, target=%d' % (pos+len(bary)+4, next_addr, target))
             assert target > 0
             bary += pack('i', target)
             # add the arc represented in bytes
@@ -290,7 +288,6 @@ def compileFST(fst):
             # address count up
             cnt += 1
             pos += len(bary)
-        #address[s.id] = cnt
         address[s.id] = pos
 
     logging.debug(address)
