@@ -25,12 +25,9 @@ class TestFST(unittest.TestCase):
             ('may'.encode('utf-8'), '31'.encode('utf-8'))
         ]
         dictionary = fst.create_minimum_transducer(inputs)
-        arcs = fst.compileFST(dictionary)
-        fst.save(dict_file, arcs)
-        self.assertGreater(os.path.getsize(dict_file), 0)
+        data = fst.compileFST(dictionary)
 
-        arcs = fst.loadCompiledFST(dict_file)
-        m = Matcher(arcs)
+        m = Matcher(data)
         # accepted strings
         self.assertEqual((True, set(['30'.encode('utf-8')])), m.run('apr'.encode('utf-8')))
         self.assertEqual((True, set(['31'.encode('utf-8')])), m.run('aug'.encode('utf-8')))
@@ -53,12 +50,11 @@ class TestFST(unittest.TestCase):
             ('もも'.encode('utf-8'), '20'.encode('utf-8')),
         ]
         dictionary = fst.create_minimum_transducer(inputs)
-        arcs = fst.compileFST(dictionary)
-        fst.save(dict_file, arcs)
+        data = fst.compileFST(dictionary)
+        fst.save(dict_file, data)
         self.assertGreater(os.path.getsize(dict_file), 0)
 
-        arcs = fst.loadCompiledFST(dict_file)
-        m = Matcher(arcs)
+        m = Matcher(file=dict_file)
         # accepted strings
         self.assertEqual((True, set(['10'.encode('utf-8')])), m.run('さくら'.encode('utf-8')))
         self.assertEqual((True, set(['10'.encode('utf-8'), '11'.encode('utf-8')])), m.run('さくらんぼ'.encode('utf-8')))

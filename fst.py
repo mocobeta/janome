@@ -191,7 +191,7 @@ def create_minimum_transducer(inputs):
 
             # re-set jth state's output to suffix or set final state output
             for c in CHARS:
-                # FIXME: terrible loop...
+                # TODO: optimize this
                 if buffer[j].transition(c) is not None:
                     new_output = buffer[j].output(c) + word_suffix
                     buffer[j].set_output(c, new_output)
@@ -287,14 +287,26 @@ def compileFST(fst):
             # address count up
             cnt += 1
         address[s.id] = cnt
+    logging.debug(arcs)
     logging.info('compiled arcs size: %d' % len(arcs))
     arcs.reverse()
-    return arcs
+    return b''.join(arcs)
 
 
-def save(file, arcs):
+def save(file, data):
+    if not data:
+        return
     with open(file, 'bw') as f:
-        f.write(b''.join(arcs))
+        f.write(data)
+        f.flush()
+
+
+def save_as_module(file, data):
+    if not data:
+        return
+    with open(file, 'w') as f:
+        f.write('DICT_DATA=')
+        f.write(str(data))
         f.flush()
 
 
@@ -302,8 +314,7 @@ class Arc:
     """
     Arc class
     """
-    def __init__(self, addr):
-        self.addr = addr
+    def __init__(self):
         self.flag = 0
         self.label = 0
         self.output = bytes()
@@ -311,52 +322,75 @@ class Arc:
         self.target = 0
 
     def __str__(self):
-        return "addr=%d, flag=%d, label=%s, target=%d, output=%s, final_output=%s" \
-               % (self.addr, self.flag, self.label, self.target, str(self.output), str(self.final_output))
+        return "flag=%d, label=%s, target=%d, output=%s, final_output=%s" \
+               % (self.flag, self.label, self.target, str(self.output), str(self.final_output))
 
 
-def bytes2arcs(data):
-    arcs = []
-    while data:
-        arc = Arc(len(arcs))
-        flag, data = unpack('b', data[:1])[0], data[1:]
-        arc.flag = flag
+def next_arc(data, skip=1):
+    assert skip > 0
+
+    pos = 0
+    # seek next arc's position
+    for i in range(0, skip - 1):
+        flag = unpack('b', data[pos:pos+1])[0]
+        pos += 1
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
-                output_size, data = unpack('i', data[:4])[0], data[4:]
-                output, data = data[:output_size].split(b'\x1a'), data[output_size:]
-                arc.final_output = output
+                pos += 4 + unpack('i', data[pos:pos+4])[0]  # skip final_outputs
         else:
-            label, data = unpack('B', data[:1])[0], data[1:]
-            arc.label = label
+            pos += 1  # skip label
             if flag & FLAG_ARC_HAS_OUTPUT:
-                output_size, data = unpack('i', data[:4])[0], data[4:]
-                output, data = data[:output_size], data[output_size:]
-                arc.output = output
-            target, data = unpack('i', data[:4])[0], data[4:]
-            arc.target = target
-        logging.debug(arc)
-        arcs.append(arc)
-    logging.info('loaded arcs size: %d' % len(arcs))
-    return arcs
+                pos += 4 + unpack('i', data[pos:pos+4])[0]  # skip outputs
+            pos += 4  # skip target
 
-
-BUF_SIZE = 1024
-def loadCompiledFST(file):
-    data = bytearray()
-    with open(file, 'br') as f:
-        buf = f.read(BUF_SIZE)
-        while buf:
-            data += buf
-            buf = f.read(BUF_SIZE)
-    data = bytes(data)
-    logging.info('dictionary size (in bytes): %d' % len(data))
-    return bytes2arcs(data)
+    # create the arc
+    arc = Arc()
+    # read flab
+    flag = unpack('b', data[pos:pos+1])[0]
+    arc.flag = flag
+    pos += 1
+    if flag & FLAG_FINAL_ARC:
+        if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
+            # read final outputs
+            final_output_size = unpack('i', data[pos:pos+4])[0]
+            pos += 4
+            final_output = data[pos:pos+final_output_size]
+            arc.final_output = final_output.split(b'\x1a')
+            pos += final_output_size
+    else:
+        # read label
+        label = unpack('B', data[pos:pos+1])[0]
+        arc.label = label
+        pos += 1
+        if flag & FLAG_ARC_HAS_OUTPUT:
+            # read output
+            output_size = unpack('i', data[pos:pos+4])[0]
+            pos += 4
+            output = data[pos:pos+output_size]
+            arc.output = output
+            pos += output_size
+        # read target's (relative) address
+        target = unpack('i', data[pos:pos+4])[0]
+        arc.target = target
+        pos += 4
+    logging.debug(arc)
+    return arc, data[pos:]
 
 
 class Matcher:
-    def __init__(self, arcs):
-        self.arcs = arcs
+    BUF_SIZE = 1024
+
+    def __init__(self, data=None, file=None):
+        if data:
+            self.data = data
+        elif file:
+            data = bytearray()
+            with open(file, 'br') as f:
+                buf = f.read(Matcher.BUF_SIZE)
+                while buf:
+                    data += buf
+                    buf = f.read(Matcher.BUF_SIZE)
+            self.data = bytes(data)
 
     def run(self, word):
         logging.debug('word=' + str([c for c in word]))
@@ -364,25 +398,25 @@ class Matcher:
         accept = False
         buf = bytearray()
         i = 0
-        cnt = 0
-        while cnt < len(self.arcs):
-            logging.debug(str(i) + ", " + str(cnt))
-            arc = self.arcs[cnt]
-            if arc.flag & FLAG_FINAL_ARC > 0:
+        skip = 1
+        _data = copy.copy(self.data)
+        while _data:
+            arc, _data = next_arc(_data, skip)
+            if arc.flag & FLAG_FINAL_ARC:
                 # accepted
                 accept = True
                 for out in arc.final_output:
                     outputs.add(bytes(buf + out))
-                if arc.flag & FLAG_LAST_ARC:
+                if arc.flag & FLAG_LAST_ARC or i >= len(word):
                     break
-                cnt += 1
+                skip = 1
             elif arc.flag & FLAG_LAST_ARC:
                 if i >= len(word):
                     break
                 if word[i] == arc.label:
                     buf += arc.output
                     i += 1
-                    cnt += arc.target
+                    skip = arc.target
                 else:
                     break
             else:
@@ -391,9 +425,9 @@ class Matcher:
                 if word[i] == arc.label:
                     buf += arc.output
                     i += 1
-                    cnt += arc.target
+                    skip = arc.target
                 else:
-                    cnt += 1
+                    skip = 1
         return accept, outputs
 
 
@@ -411,10 +445,8 @@ if __name__ == '__main__':
     ]
     dict = create_minimum_transducer(inputs1)
     #dict.print_dictionary()
-    arcs = compileFST(dict)
-    save('dict1.dat', arcs)
-    arcs = loadCompiledFST('dict1.dat')
-    m = Matcher(arcs)
+    data = compileFST(dict)
+    m = Matcher(data)
     print(m.run('apr'.encode('utf-8')))
     print(m.run('aug'.encode('utf-8')))
     print(m.run('dec'.encode('utf-8')))
@@ -422,8 +454,10 @@ if __name__ == '__main__':
     print(m.run('jan'.encode('utf-8')))
     print(m.run('jul'.encode('utf-8')))
     print(m.run('jun'.encode('utf-8')))
+    print(m.run('mar'.encode('utf-8')))
 
     print("\n\n")
+
 
     inputs2 = [
         ('さくら'.encode('utf-8'), '10'.encode('utf-8')),
@@ -434,10 +468,8 @@ if __name__ == '__main__':
     ]
     dict = create_minimum_transducer(inputs2)
     #dict.print_dictionary()
-    arcs = compileFST(dict)
-    save('dict2.dat', arcs)
-    arcs = loadCompiledFST('dict2.dat')
-    m = Matcher(arcs)
+    data = compileFST(dict)
+    m = Matcher(data)
     print(m.run('さくら'.encode('utf-8')))
     print(m.run('さくらんぼ'.encode('utf-8')))
     print(m.run('すもも'.encode('utf-8')))

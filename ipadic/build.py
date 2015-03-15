@@ -19,16 +19,15 @@ def build_dict(enc, outfile, *files):
     _t1 = time.time()
     dict = create_minimum_transducer(inputs)
     logging.info('Build FST done. ' + str(time.time() - _t1) + ' sec.')
-    #dict.print_dictionary()
     _t2 = time.time()
-    arcs = compileFST(dict)
+    data = compileFST(dict)
     logging.info('Compile FST done. ' + str(time.time() - _t2) + ' sec.')
-    save(outfile, arcs)
+    save_as_module(outfile, data)
 
 
 if __name__ == '__main__':
     import logging
     logging.basicConfig(level=logging.INFO)
-    enc = sys.argv[1]
-    outfile = sys.argv[2]
-    build_dict(enc, outfile, *sys.argv[3:])
+    enc = 'euc-jp'
+    outfile = 'data.py'
+    build_dict(enc, outfile, *sys.argv[1:])
