@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import copy
 from struct import pack, unpack
 from collections import OrderedDict
@@ -294,23 +296,6 @@ def compileFST(fst):
     logging.info('compiled arcs size: %d' % len(arcs))
     arcs.reverse()
     return b''.join(arcs)
-
-
-def save(file, data):
-    if not data:
-        return
-    with open(file, 'bw') as f:
-        f.write(data)
-        f.flush()
-
-
-def save_as_module(file, data):
-    if not data:
-        return
-    with open(file, 'w') as f:
-        f.write('DICT_DATA=')
-        f.write(str(data))
-        f.flush()
 
 
 class Arc:
