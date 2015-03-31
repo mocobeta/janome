@@ -5,7 +5,7 @@ sys.path.insert(0, parent_dir)
 from pathlib import Path
 import time
 from fst import *
-from dict import *
+from dic import *
 from struct import pack
 
 FILE_CHAR_DEF = 'char.def'
@@ -42,6 +42,20 @@ def build_dict(dicdir, enc):
     save_fstdata(compiledFST, compresslevel=9)
     save_entries(entries, compresslevel=9)
 
+    # save connection costs as dict
+    matrix_file = Path(dicdir, FILE_MATRIX_DEF)
+    conn_costs = {}
+    with matrix_file.open(encoding=enc) as f:
+        size1, size2 = f.readline().split(' ')
+        matrix_size = int(size1) * int(size2)
+        for line in f:
+            line = line.strip()
+            id1, id2, cost = line.split(' ')
+            key = '%s,%s' % (id1, id2)
+            val = int(cost)
+            conn_costs[key] = val
+        assert len(conn_costs) == matrix_size
+    save_connections(conn_costs, compresslevel=9)
 
 if __name__ == '__main__':
     import logging

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 IPADIC_DIR=$1
-# UTF8_DIR=${IPADIC_DIR}/utf8
 
 if [ -z ${IPADIC_DIR} ]; then
   echo "Usage: ./build.sh <mecab ipadic dir>"
@@ -16,4 +15,4 @@ fi
 # build dictionary (saved as python module.)
 python build.py ${IPADIC_DIR} euc-jp
 
-echo "Done."
+echo "Build done."

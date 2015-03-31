@@ -2,13 +2,18 @@
 
 import os
 import pickle
-import gzip
+import gzip, bz2
 from struct import unpack
 from fst import Matcher
 
 
 FILE_FST_DATA = 'fst.data'
 FILE_ENTRIES = 'entries.data'
+FILE_CONNECTIONS = 'connections.data'
+
+MODULE_FST_DATA = 'fstdata.py'
+MODULE_ENTRIES = 'entries.py'
+MODULE_CONNECTIONS = 'connections.py'
 
 
 def save_fstdata(data, compresslevel=0, dir='.'):
@@ -19,6 +24,11 @@ def save_fstdata(data, compresslevel=0, dir='.'):
 def save_entries(entries, compresslevel=0, dir='.'):
     path = os.path.join(dir, FILE_ENTRIES)
     _save(path, pickle.dumps(entries), compresslevel)
+
+
+def save_connections(connections, compresslevel=0, dir='.'):
+    path = os.path.join(dir, FILE_CONNECTIONS)
+    _save(path, pickle.dumps(connections), compresslevel)
 
 
 def _save(file, data, compresslevel):
@@ -39,9 +49,10 @@ def _save_as_module(file, data):
 
 
 class Dictionary:
-    def __init__(self, compiledFST, entries):
+    def __init__(self, compiledFST, entries, connections):
         self.matcher = Matcher(compiledFST)
         self.entries = entries
+        self.connections = connections
 
     def lookup(self, s):
         (matched, outputs) = self.matcher.run(s.encode('utf8'))
@@ -60,5 +71,8 @@ class SystemDictionary(Dictionary):
         with gzip.open(os.path.join(dicdir, FILE_ENTRIES), 'rb') as f:
             entries = pickle.load(f)
         assert entries is not None
-        Dictionary.__init__(self, compiledFST, entries)
-
+        connections = None
+        with gzip.open(os.path.join(dicdir, FILE_CONNECTIONS), 'rb') as f:
+            connections = pickle.load(f)
+        assert connections is not None
+        Dictionary.__init__(self, compiledFST, entries, connections)
