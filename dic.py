@@ -7,6 +7,7 @@ from struct import unpack
 from fst import Matcher
 import traceback
 import logging
+import sys
 
 
 FILE_FST_DATA = 'fst.data'
@@ -19,18 +20,18 @@ MODULE_CONNECTIONS = 'connections.py'
 
 
 def save_fstdata(data, compresslevel=0, dir='.'):
-    path = os.path.join(dir, FILE_FST_DATA)
-    _save(path, data, compresslevel)
+    #_save(os.path.join(dir, FILE_FST_DATA), data, compresslevel)
+    _save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
 
 
 def save_entries(entries, compresslevel=0, dir='.'):
-    path = os.path.join(dir, FILE_ENTRIES)
-    _save(path, pickle.dumps(entries), compresslevel)
+    #_save(os.path.join(dir, FILE_ENTRIES), pickle.dumps(entries), compresslevel)
+    _save_as_module(os.path.join(dir, MODULE_ENTRIES), entries)
 
 
 def save_connections(connections, compresslevel=0, dir='.'):
-    path = os.path.join(dir, FILE_CONNECTIONS)
-    _save(path, pickle.dumps(connections), compresslevel)
+    #_save(os.path.join(dir, FILE_CONNECTIONS), pickle.dumps(connections), compresslevel)
+    _save_as_module(os.path.join(dir, MODULE_CONNECTIONS), connections)
 
 
 def _save(file, data, compresslevel):
@@ -49,7 +50,7 @@ def _save_as_module(file, data):
         f.write(str(data))
         f.flush()
 
-
+"""
 class DictEntry:
     def __init__(self, entry):
         surface, left_id, right_id, cost, part_of_speech, infl_form, infl_type, base_form, reading, phonetic = entry
@@ -68,7 +69,7 @@ class DictEntry:
         return "(%s,%s,%s,%d,%s,%s,%s,%s,%s,%s)" % \
                (self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech,
                self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic)
-
+"""
 
 class Dictionary:
     def __init__(self, compiledFST, entries, connections):
@@ -81,12 +82,13 @@ class Dictionary:
         if not matched:
             return []
         try:
-            return [DictEntry(self.entries[unpack('I', e)[0]]) for e in outputs]
+            return [self.entries[unpack('I', e)[0]] for e in outputs]
         except Exception as e:
             logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logging.error('input=%s' % s)
             logging.error('outputs=%s' % str(outputs))
             traceback.format_exc()
+            sys.exit(1)
 
     def get_trans_cost(self, id1, id2):
         key = '%s,%s' % (id1, id2)

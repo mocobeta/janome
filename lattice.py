@@ -29,13 +29,23 @@ class Node(BaseNode):
     """
     def __init__(self, dict_entry):
         super(Node, self).__init__()
-        self.entry = dict_entry
-        self.left_id = dict_entry.left_id
-        self.right_id = dict_entry.right_id
-        self.cost = dict_entry.cost
+        surface, left_id, right_id, cost, part_of_speech, infl_form, infl_type, base_form, reading, phonetic = dict_entry
+        self.surface = surface
+        self.left_id = left_id
+        self.right_id = right_id
+        self.cost = cost
+        self.part_of_speech = part_of_speech
+        self.infl_form = infl_form
+        self.infl_type = infl_type
+        self.base_form = base_form
+        self.reading = reading
+        self.phonetic = phonetic
 
     def __str__(self):
-        return str(self.entry) + ' [back_pos=%d]' % self.back_pos
+        return "(%s,%s,%s,%d,%s,%s,%s,%s,%s,%s) [back_pos=%d,back_index=%d]" % \
+               (self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech,
+                self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic,
+                self.back_pos, self.back_index)
 
 
 class BOS(BaseNode):
@@ -83,7 +93,7 @@ class Lattice:
         node.index = len(self.snodes[self.p])
         self.snodes[self.p].append(node)
         if isinstance(node, Node):
-            self.enodes[self.p + len(node.entry.surface)].append(node)
+            self.enodes[self.p + len(node.surface)].append(node)
         else:
             self.enodes[self.p + 1].append(node)
 
@@ -131,4 +141,4 @@ if __name__ == '__main__':
     min_cost_path = lattice.backward()
     for node in min_cost_path:
         if isinstance(node, Node):
-            print(node.entry.surface + '\t' + node.entry.part_of_speech)
+            print(node.surface + '\t' + node.part_of_speech)
