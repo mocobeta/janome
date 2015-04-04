@@ -5,6 +5,8 @@ import pickle
 import gzip, bz2
 from struct import unpack
 from fst import Matcher
+import traceback
+import logging
 
 
 FILE_FST_DATA = 'fst.data'
@@ -48,6 +50,26 @@ def _save_as_module(file, data):
         f.flush()
 
 
+class DictEntry:
+    def __init__(self, entry):
+        surface, left_id, right_id, cost, part_of_speech, infl_form, infl_type, base_form, reading, phonetic = entry
+        self.surface = surface
+        self.left_id = left_id
+        self.right_id = right_id
+        self.cost = cost
+        self.part_of_speech = part_of_speech
+        self.infl_form = infl_form
+        self.infl_type = infl_type
+        self.base_form = base_form
+        self.reading = reading
+        self.phonetic = phonetic
+
+    def __str__(self):
+        return "(%s,%s,%s,%d,%s,%s,%s,%s,%s,%s)" % \
+               (self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech,
+               self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic)
+
+
 class Dictionary:
     def __init__(self, compiledFST, entries, connections):
         self.matcher = Matcher(compiledFST)
@@ -58,7 +80,17 @@ class Dictionary:
         (matched, outputs) = self.matcher.run(s.encode('utf8'))
         if not matched:
             return []
-        return [self.entries[unpack('I', e)[0]] for e in outputs]
+        try:
+            return [DictEntry(self.entries[unpack('I', e)[0]]) for e in outputs]
+        except Exception as e:
+            logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logging.error('input=%s' % s)
+            logging.error('outputs=%s' % str(outputs))
+            traceback.format_exc()
+
+    def get_trans_cost(self, id1, id2):
+        key = '%s,%s' % (id1, id2)
+        return self.connections.get(key)
 
 
 class SystemDictionary(Dictionary):
