@@ -126,7 +126,7 @@ class Lattice:
 
 
 if __name__ == '__main__':
-    from ipadic import SYS_DIC
+    from sysdic import SYS_DIC
     s = '４日夜、満月が地球の影に完全に入る「皆既月食」が起きた。'
     lattice = Lattice(len(s), SYS_DIC)
     pos = 0

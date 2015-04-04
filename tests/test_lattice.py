@@ -7,13 +7,13 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from lattice import *
-import ipadic
+from sysdic import SYS_DIC
 import unittest
 
 
 class TestLattice(unittest.TestCase):
     def test_initialize_lattice(self):
-        lattice = Lattice(5, ipadic.SYS_DIC)
+        lattice = Lattice(5, SYS_DIC)
         self.assertEqual(7, len(lattice.snodes))
         self.assertTrue(isinstance(lattice.snodes[0][0], BOS))
         self.assertEqual(8, len(lattice.enodes))
@@ -21,8 +21,8 @@ class TestLattice(unittest.TestCase):
 
     def test_add_forward_end(self):
         s = 'すもも'
-        lattice = Lattice(len(s), ipadic.SYS_DIC)
-        entries = ipadic.SYS_DIC.lookup(s)
+        lattice = Lattice(len(s), SYS_DIC)
+        entries = SYS_DIC.lookup(s)
         for entry in entries:
             lattice.add(Node(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -32,7 +32,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = ipadic.SYS_DIC.lookup(s[1:])
+        entries = SYS_DIC.lookup(s[1:])
         for entry in entries:
             lattice.add(Node(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -41,7 +41,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = ipadic.SYS_DIC.lookup(s[2:])
+        entries = SYS_DIC.lookup(s[2:])
         for entry in entries:
             lattice.add(Node(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -55,10 +55,10 @@ class TestLattice(unittest.TestCase):
 
     def test_backward(self):
         s = 'すもももももももものうち'
-        lattice = Lattice(len(s), ipadic.SYS_DIC)
+        lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = ipadic.SYS_DIC.lookup(s[pos:])
+            entries = SYS_DIC.lookup(s[pos:])
             for e in entries:
                 lattice.add(Node(e))
             pos += lattice.forward()

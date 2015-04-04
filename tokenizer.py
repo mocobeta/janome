@@ -19,8 +19,8 @@ class Token:
 
 class Tokenizer:
     def __init__(self):
-        import ipadic
-        self.sys_dic = ipadic.SYS_DIC
+        from sysdic import SYS_DIC
+        self.sys_dic = SYS_DIC
 
     def tokenize(self, text):
         text = text.strip()
