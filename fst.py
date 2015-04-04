@@ -18,6 +18,7 @@ FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
 # all characters
 CHARS = set()
 
+FINAL_OUTPUT_SPLITTER = b'\xff\xff\xff\xff'
 
 class State:
     """
@@ -180,16 +181,16 @@ def create_minimum_transducer(inputs):
         # set state outputs
         for j in range(1, pref_len + 1):
             # divide (j-1)th state's output to (common) prefix and suffix
-            common_prefix = bytearray()
+            common_prefix = []
             output = buffer[j - 1].output(current_word[j - 1])
             k = 0
             while k < len(output) and k < len(current_output) and output[k] == current_output[k]:
-                common_prefix += pack('B', output[k])
+                common_prefix.append(output[k])
                 k += 1
             word_suffix = output[len(common_prefix):]
 
             # re-set (j-1)'th state's output to prefix
-            buffer[j - 1].set_output(current_word[j - 1], common_prefix)
+            buffer[j - 1].set_output(current_word[j - 1], bytes(common_prefix))
 
             # re-set jth state's output to suffix or set final state output
             for c in CHARS:
@@ -276,8 +277,8 @@ def compileFST(fst):
             if s.final_output and any(len(e) > 0 for e in s.final_output):
                 # the arc has final output
                 flag += FLAG_ARC_HAS_FINAL_OUTPUT
-                output_size = sum(len(e) for e in s.final_output) + len(s.final_output) - 1
-                output = b'\x1a'.join(s.final_output)
+                output = FINAL_OUTPUT_SPLITTER.join(s.final_output)
+                output_size = len(output)
             if not s.trans_map:
                 flag += FLAG_LAST_ARC
             # encode flag, output size, output
@@ -315,19 +316,9 @@ class Arc:
 
 
 class Matcher:
-    BUF_SIZE = 1024
-
-    def __init__(self, dict_data=None, file=None):
+    def __init__(self, dict_data):
         if dict_data:
             self.data = dict_data
-        elif file:
-            data = bytearray()
-            with open(file, 'br') as f:
-                buf = f.read(Matcher.BUF_SIZE)
-                while buf:
-                    data += buf
-                    buf = f.read(Matcher.BUF_SIZE)
-            self.data = bytes(data)
 
     def run(self, word):
         # logging.debug('word=' + str([c for c in word]))
@@ -382,7 +373,7 @@ class Matcher:
                 final_output_size = unpack('i', self.data[pos:pos+4])[0]
                 pos += 4
                 final_output = self.data[pos:pos+final_output_size]
-                arc.final_output = final_output.split(b'\x1a')
+                arc.final_output = final_output.split(FINAL_OUTPUT_SPLITTER)
                 pos += final_output_size
         else:
             # read label
@@ -409,8 +400,8 @@ class Matcher:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     inputs1 = [
-        ('apr'.encode('utf8'), '30'.encode('utf8')),
-        ('aug'.encode('utf8'), '31'.encode('utf8')),
+        ('apr'.encode('utf8'), '30'),
+        ('aug'.encode('utf8'), '31'),
         ('dec'.encode('utf8'), '31'.encode('utf8')),
         ('feb'.encode('utf8'), '28'.encode('utf8')),
         ('feb'.encode('utf8'), '29'.encode('utf8')),
@@ -424,29 +415,3 @@ if __name__ == '__main__':
     m = Matcher(data)
     print(m.run('apr'.encode('utf8')))
     print(m.run('aug'.encode('utf8')))
-    print(m.run('dec'.encode('utf8')))
-    print(m.run('feb'.encode('utf8')))
-    print(m.run('jan'.encode('utf8')))
-    print(m.run('jul'.encode('utf8')))
-    print(m.run('jun'.encode('utf8')))
-    print(m.run('mar'.encode('utf8')))
-
-    print("\n\n")
-
-
-    inputs2 = [
-        ('さくら'.encode('utf8'), '10'.encode('utf8')),
-        ('さくらんぼ'.encode('utf8'), '11'.encode('utf8')),
-        ('すもも'.encode('utf8'), '20'.encode('utf8')),
-        ('なし'.encode('utf8'), '10'.encode('utf8')),
-        ('もも'.encode('utf8'), '20'.encode('utf8')),
-    ]
-    dict = create_minimum_transducer(inputs2)
-    #dict.print_dictionary()
-    data = compileFST(dict)
-    m = Matcher(data)
-    print(m.run('さくら'.encode('utf8')))
-    print(m.run('さくらんぼ'.encode('utf8')))
-    print(m.run('すもも'.encode('utf8')))
-    print(m.run('なし'.encode('utf8')))
-    print(m.run('もも'.encode('utf8')))
