@@ -12,7 +12,12 @@ if [ ! -e ${IPADIC_DIR} ]; then
   exit 1
 fi
 
+ENC=$2
+if [ -z ${ENC} ]; then
+  ENC=euc-jp
+fi
+
 # build dictionary (saved as python module.)
-python build.py ${IPADIC_DIR} euc-jp
+python build.py ${IPADIC_DIR} ${ENC}
 
 echo "Build done."

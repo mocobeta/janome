@@ -21,14 +21,14 @@ def build_dict(dicdir, enc):
         with path.open(encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
-                surface, leftId, rightId, cost, \
-                pos, posDetail1, posDetail2, posDetail3, \
-                inflForm, inflType, baseForm, reading, phonetic = \
+                surface, left_id, right_id, cost, \
+                pos_major, pos_minor1, pos_minor2, pos_minor3, \
+                infl_form, infl_type, base_form, reading, phonetic = \
                     line.split(',')
-                posExpr = ','.join([pos, posDetail1, posDetail2, posDetail3])
-                word_id = len(surfaces)
-                surfaces.append((surface.encode('utf8'), pack('I', word_id)))
-                entries.append((leftId, rightId, int(cost), posExpr, inflForm, inflType, baseForm, reading, phonetic))
+                part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
+                morph_id = len(surfaces)
+                surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
+                entries.append((surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic))
     inputs = sorted(surfaces)  # inputs must be sorted.
 
     assert len(surfaces) == len(entries)
@@ -56,6 +56,7 @@ def build_dict(dicdir, enc):
             conn_costs[key] = val
         assert len(conn_costs) == matrix_size
     save_connections(conn_costs, compresslevel=9)
+
 
 if __name__ == '__main__':
     import logging
