@@ -14,7 +14,8 @@ with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
 setup(
     name='Janome',
     version='0.0.1',
-    packages=['sysdic'],
-    py_modules=['janome','dic','fst','lattice','tokenizer']
+    package_dir={'janome':''},
+    packages=['janome','janome.sysdic'],
+    py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer']
 )
 
