@@ -15,7 +15,6 @@ FILE_MATRIX_DEF = 'matrix.def'
 
 def build_dict(dicdir, enc, outdir='.'):
     surfaces = []  # inputs/outputs for FST. the FST maps string(surface form) to int(word id)
-    #entries = []   # dictionary entries
     entries = {}  # dictionary entries
     csv_files = Path(dicdir).glob('*.csv')
     for path in csv_files:
@@ -40,8 +39,8 @@ def build_dict(dicdir, enc, outdir='.'):
     _t2 = time.time()
     compiledFST = compileFST(fst)
     logging.info('Compile FST done. ' + str(time.time() - _t2) + ' sec.')
-    save_fstdata(compiledFST, compresslevel=9, dir=outdir)
-    save_entries(entries, compresslevel=9, dir=outdir)
+    save_fstdata(compiledFST, dir=outdir)
+    save_entries(entries, dir=outdir)
 
     # save connection costs as dict
     matrix_file = Path(dicdir, FILE_MATRIX_DEF)
@@ -56,7 +55,67 @@ def build_dict(dicdir, enc, outdir='.'):
             val = int(cost)
             conn_costs[key] = val
         assert len(conn_costs) == matrix_size
-    save_connections(conn_costs, compresslevel=9, dir=outdir)
+    save_connections(conn_costs, dir=outdir)
+
+
+def build_unknown_dict(dicdir, enc, outdir='.'):
+    categories = {}
+    coderange = []
+    with open(os.path.join(dicdir, FILE_CHAR_DEF), encoding=enc) as f:
+        for line in f:
+            line = line.strip()
+            line = line.replace('\t', ' ')
+            if line.startswith('#'):
+                continue
+            if line.startswith('0x'):
+                # codepoints for each category
+                cols = [col for col in line.split(' ') if col]  # ignore empty string
+                if len(cols) < 2:
+                    continue
+                codepoints_range = cols[0].split('..')
+                codepoints_from = int(codepoints_range[0], 16)
+                codepoints_to = int(codepoints_range[1], 16) if len(codepoints_range) == 2 else codepoints_from
+                cate = cols[1].strip()
+                assert cate in categories
+                _range = {'from': codepoints_from, 'to': codepoints_to, 'cate': cate}
+                if len(cols) >= 3:
+                    # has compatible categories
+                    cates = []
+                    for cate in cols[2:]:
+                        if not cate:
+                            continue
+                        elif cate.startswith('#'):
+                            break
+                        cates.append(cate)
+                    if cates:
+                        assert all(cate in categories for cate in cates)
+                        _range['compat_cates'] = cates
+                coderange.append(_range)
+            else:
+                # category definition
+                cols = [col for col in line.split(' ') if col]  # ignore empty string
+                if len(cols) < 4:
+                    continue
+                invoke = True if cols[1] == '1' else False
+                group = True if cols[2] == '1' else False
+                length = int(cols[3])
+                categories[cols[0]] = {'INVOKE': invoke, 'GROUP': group, 'LENGTH': length}
+
+    unknowns = {}
+    with open(os.path.join(dicdir, FILE_UNK_DEF), encoding=enc) as f:
+        for line in f:
+            line = line.strip()
+            cate, left_id, right_id, cost, \
+            pos_major, pos_minor1, pos_minor2, pos_minor3, _1, _2, _3 = \
+                line.split(',')
+            part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
+            assert cate in categories
+            if cate not in unknowns:
+                unknowns[cate] = []
+            unknowns[cate].append((left_id, right_id, int(cost), part_of_speech))
+
+    save_chardefs((categories, coderange), dir=outdir)
+    save_unknowns(unknowns, dir=outdir)
 
 
 def pre_compile(outdir='.'):
@@ -65,6 +124,8 @@ def pre_compile(outdir='.'):
     py_compile.compile(os.path.join(outdir, MODULE_FST_DATA))
     py_compile.compile(os.path.join(outdir, MODULE_ENTRIES))
     py_compile.compile(os.path.join(outdir, MODULE_CONNECTIONS))
+    py_compile.compile(os.path.join(outdir, MODULE_CHARDEFS))
+    py_compile.compile(os.path.join(outdir, MODULE_UNKNOWNS))
     logging.info('Pre-compile data done. ' + str(time.time() - _t1) + ' sec.')
 
 if __name__ == '__main__':
@@ -74,4 +135,5 @@ if __name__ == '__main__':
     enc = sys.argv[2]
     outdir = sys.argv[3] if len(sys.argv) > 3 else '.'
     build_dict(dicdir, enc, outdir)
-    #pre_compile(outdir)
+    # pre_compile(outdir)
+    build_unknown_dict(dicdir, enc, outdir)

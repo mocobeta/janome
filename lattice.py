@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from enum import Enum
+
+
+class NodeType(Enum):
+    SYS_DICT = 1
+    USER_DICT = 2
+    UNKNOWN = 3
+
 
 class BaseNode:
     """
@@ -21,13 +29,15 @@ class BaseNode:
         # position and index info for Lattice#backward() method
         self.back_pos = -1
         self.back_index = -1
+        # node type
+        self.node_type = NodeType.SYS_DICT
 
 
 class Node(BaseNode):
     """
     Node class
     """
-    def __init__(self, dict_entry):
+    def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         super(Node, self).__init__()
         surface, left_id, right_id, cost, part_of_speech, infl_form, infl_type, base_form, reading, phonetic = dict_entry
         self.surface = surface
@@ -40,6 +50,7 @@ class Node(BaseNode):
         self.base_form = base_form
         self.reading = reading
         self.phonetic = phonetic
+        self.node_type = node_type
 
     def __str__(self):
         return "(%s,%s,%s,%d,%s,%s,%s,%s,%s,%s) [back_pos=%d,back_index=%d]" % \
