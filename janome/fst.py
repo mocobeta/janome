@@ -190,19 +190,19 @@ def create_minimum_transducer(inputs):
             word_suffix = output[len(common_prefix):]
 
             # re-set (j-1)'th state's output to prefix
-            buffer[j - 1].set_output(current_word[j - 1], bytes(common_prefix))
+            buffer[j - 1].set_output(current_word[j - 1], common_prefix)
 
             # re-set jth state's output to suffix or set final state output
             for c in CHARS:
                 # TODO: optimize this
                 if buffer[j].transition(c) is not None:
-                    new_output = buffer[j].output(c) + word_suffix
+                    new_output = word_suffix + buffer[j].output(c)
                     buffer[j].set_output(c, new_output)
             # or, set final state output if it's a final state
             if buffer[j].is_final():
                 tmp_set = set()
                 for tmp_str in buffer[j].state_output():
-                    tmp_set.add(tmp_str + word_suffix)
+                    tmp_set.add(word_suffix + tmp_str)
                 buffer[j].set_state_output(tmp_set)
 
             # update current output (subtract prefix)
@@ -257,13 +257,13 @@ def compileFST(fst):
             bary += pack('b', flag)
             bary += pack('B', c)
             if output_size > 0:
-                bary += pack('i', output_size)
+                bary += pack('I', output_size)
                 bary += output
             next_addr = address.get(v['state'].id)
             assert next_addr is not None
             target = (pos + len(bary) + 4) - next_addr
             assert target > 0
-            bary += pack('i', target)
+            bary += pack('I', target)
             # add the arc represented in bytes
             arcs.append(bytes(bary))
             # address count up
@@ -284,7 +284,7 @@ def compileFST(fst):
             # encode flag, output size, output
             bary += pack('b', flag)
             if output_size > 0:
-                bary += pack('i', output_size)
+                bary += pack('I', output_size)
                 bary += output
             # add the arc represented in bytes
             arcs.append(bytes(bary))
@@ -370,7 +370,7 @@ class Matcher:
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
                 # read final outputs
-                final_output_size = unpack('i', self.data[pos:pos+4])[0]
+                final_output_size = unpack('I', self.data[pos:pos+4])[0]
                 pos += 4
                 final_output = self.data[pos:pos+final_output_size]
                 arc.final_output = final_output.split(FINAL_OUTPUT_SPLITTER)
@@ -382,13 +382,13 @@ class Matcher:
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
                 # read output
-                output_size = unpack('i', self.data[pos:pos+4])[0]
+                output_size = unpack('I', self.data[pos:pos+4])[0]
                 pos += 4
                 output = self.data[pos:pos+output_size]
                 arc.output = output
                 pos += output_size
             # read target's (relative) address
-            target = unpack('i', self.data[pos:pos+4])[0]
+            target = unpack('I', self.data[pos:pos+4])[0]
             arc.target = target
             pos += 4
         incr = pos - addr

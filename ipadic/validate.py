@@ -2,8 +2,11 @@ import os, sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from dic import SystemDictionary
-SYS_DIC = SystemDictionary(".")
+from janome.dic import Dictionary
+from sysdic import fstdata, entries, connections, chardef, unknowns
+
+SYS_DIC = Dictionary(fstdata.DATA, entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
+
 import struct
 import logging
 import sys
@@ -14,8 +17,7 @@ if __name__ == '__main__':
     WORDS = []
     with open(words_file) as f:
         for line in f:
-            word = line.strip()
-            WORDS.append(word)
+            WORDS.append(line)
     invalid_count = 0
     for word in WORDS:
         (matched, outputs) = SYS_DIC.matcher.run(word.encode('utf8'))
@@ -24,7 +26,12 @@ if __name__ == '__main__':
             invalid_count += 1
         for o in outputs:
             try:
-                struct.unpack('I', o)
+                word_id = struct.unpack('I', o)[0]
+                try:
+                    entry = SYS_DIC.entries[word_id]
+                except:
+                    print('Cannot find entry for %s, %d' % (word, word_id))
+                    invalid_count += 1
             except:
                 print('Invalid output for %s, %s' % (word, str(o)))
                 invalid_count += 1

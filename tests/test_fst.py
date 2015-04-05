@@ -16,7 +16,7 @@ class TestFST(unittest.TestCase):
     def test_create_minimum_transducer1(self):
         inputs = [
             ('apr'.encode('utf8'), pack('I', 30)),
-            ('aug'.encode('utf8'), pack('I', 32)),
+            ('aug'.encode('utf8'), pack('I', 31)),
             ('dec'.encode('utf8'), pack('I', 31)),
             ('feb'.encode('utf8'), pack('I', 28)),
             ('feb'.encode('utf8'), pack('I', 29)),
@@ -31,7 +31,7 @@ class TestFST(unittest.TestCase):
         m = Matcher(data)
         # accepted strings
         self.assertEqual((True, set([pack('I', 30)])), m.run('apr'.encode('utf8')))
-        self.assertEqual((True, set([pack('I', 32)])), m.run('aug'.encode('utf8')))
+        self.assertEqual((True, set([pack('I', 31)])), m.run('aug'.encode('utf8')))
         self.assertEqual((True, set([pack('I', 31)])), m.run('dec'.encode('utf8')))
         self.assertEqual((True, set([pack('I', 28), pack('I', 29)])), m.run('feb'.encode('utf8')))
         self.assertEqual((True, set([pack('I', 31)])), m.run('jan'.encode('utf8')))
