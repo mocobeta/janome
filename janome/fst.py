@@ -18,7 +18,6 @@ FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
 # all characters
 CHARS = set()
 
-FINAL_OUTPUT_SPLITTER = b'\xff\xff\xff\xff'
 
 class State:
     """
@@ -273,19 +272,22 @@ def compileFST(fst):
             bary = bytearray()
             # final state
             flag = FLAG_FINAL_ARC
-            output_size, output = 0, bytes()
+            output_count = 0
             if s.final_output and any(len(e) > 0 for e in s.final_output):
                 # the arc has final output
                 flag += FLAG_ARC_HAS_FINAL_OUTPUT
-                output = FINAL_OUTPUT_SPLITTER.join(s.final_output)
-                output_size = len(output)
+                output_count = len(s.final_output)
             if not s.trans_map:
                 flag += FLAG_LAST_ARC
             # encode flag, output size, output
             bary += pack('b', flag)
-            if output_size > 0:
-                bary += pack('I', output_size)
-                bary += output
+            if output_count:
+                bary += pack('I', output_count)
+                for out in s.final_output:
+                    output_size = len(out)
+                    bary += pack('I', output_size)
+                    if output_size:
+                        bary += out
             # add the arc represented in bytes
             arcs.append(bytes(bary))
             # address count up
@@ -370,11 +372,16 @@ class Matcher:
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
                 # read final outputs
-                final_output_size = unpack('I', self.data[pos:pos+4])[0]
+                final_output_count = unpack('I', self.data[pos:pos+4])[0]
                 pos += 4
-                final_output = self.data[pos:pos+final_output_size]
-                arc.final_output = final_output.split(FINAL_OUTPUT_SPLITTER)
-                pos += final_output_size
+                buf = []
+                for c in range(0, final_output_count):
+                    output_size = unpack('I', self.data[pos:pos+4])[0]
+                    pos += 4
+                    if output_size:
+                        buf.append(self.data[pos:pos+output_size])
+                        pos += output_size
+                arc.final_output = buf
         else:
             # read label
             label = unpack('B', self.data[pos:pos+1])[0]
