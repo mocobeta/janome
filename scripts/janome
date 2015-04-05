@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dir=$(cd $(dirname $0)/.. && pwd)
+dir=$(cd $(dirname $0) && pwd)
 
 if [ -p /dev/stdin ] ; then
   text=`cat -`
