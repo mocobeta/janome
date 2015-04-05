@@ -4,8 +4,8 @@ sys.path.insert(0, parent_dir)
 
 from pathlib import Path
 import time
-from fst import *
-from dic import *
+from janome.fst import *
+from janome.dic import *
 from struct import pack
 
 FILE_CHAR_DEF = 'char.def'

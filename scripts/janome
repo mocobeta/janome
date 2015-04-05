@@ -4,5 +4,5 @@ dir=$(cd $(dirname $0)/.. && pwd)
 
 if [ -p /dev/stdin ] ; then
   text=`cat -`
-  python ${dir}/tokenizer.py ${text}
+  python ${dir}/main.py ${text}
 fi

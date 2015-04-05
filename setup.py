@@ -2,8 +2,7 @@ from setuptools import setup
 
 import os
 from zipfile import ZipFile
-import py_compile
-from dic import *
+from janome.dic import *
 
 dicdir = 'ipadic'
 
@@ -14,8 +13,7 @@ with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
 setup(
     name='Janome',
     version='0.0.1',
-    package_dir={'janome':''},
-    packages=['janome','janome.sysdic'],
+    packages=['janome','sysdic'],
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer']
 )
 

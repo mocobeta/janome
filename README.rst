@@ -2,12 +2,15 @@
 janome
 ========
 
-.. note:: This is a skelton. NOT working.
+Janome is a Japanese morphological analysis engine written in pure Python.
+
+Requirements
+=============
+
+Python 3.4 or above is required.
 
 Install
 ========
-
-Strongly recommend install in a python virtual env.
 
 .. code:: bash
 
@@ -26,19 +29,32 @@ Run
 .. code:: bash
 
   (venv) $ python
-  >>> import janome
-  >>> args = ['moco']
-  >>> janome.main(args)
-  Hello moco !
-  Janome is a Japanese morphological analysis engine written in pure Python.
+  >>> from janome.tokenizer import Tokenizer
+  >>> t = Tokenizer()
+  >>> for token in t.tokenize('すもももももももものうち'):
+  ...     print(token)
+  ...
+  すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
+  も   	助詞,係助詞,*,*,*,*,も,モ,モ
+  もも 	名詞,一般,*,*,*,*,もも,モモ,モモ
+  も	    助詞,係助詞,*,*,*,*,も,モ,モ
+  もも	  名詞,一般,*,*,*,*,もも,モモ,モモ
+  の	    助詞,連体化,*,*,*,*,の,ノ,ノ
+  うち	  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
 or
 
 .. code:: bash
 
-  (venv) $ ./scripts/janome.sh
-  Hello Anonymous !
-  Janome is a Japanese morphological analysis engine written in pure Python.
+  $ echo 'すもももももももものうち' | janome/scripts/janome
+  すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
+  も 		助詞,係助詞,*,*,*,*,も,モ,モ
+  もも		名詞,一般,*,*,*,*,もも,モモ,モモ
+  も	  	助詞,係助詞,*,*,*,*,も,モ,モ
+  もも		名詞,一般,*,*,*,*,もも,モモ,モモ
+  の		  助詞,連体化,*,*,*,*,の,ノ,ノ
+  うち		名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
+
 
 Test
 ======

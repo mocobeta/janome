@@ -3,12 +3,12 @@ import os, sys
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
-import fst
-from fst import Matcher
+from janome import fst
+from janome.fst import Matcher
 
 import unittest
 from struct import pack
-import dic
+import janome.dic
 
 
 class TestFST(unittest.TestCase):
