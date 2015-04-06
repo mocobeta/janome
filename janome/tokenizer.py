@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
 from .lattice import Lattice, Node, BOS, EOS, NodeType
+from .dic import UserDictionary, CompiledUserDictionary
 
 
 class Token:
@@ -20,9 +22,20 @@ class Token:
 
 
 class Tokenizer:
-    def __init__(self, max_unknown_length=1024):
+    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024):
         from sysdic import SYS_DIC
         self.sys_dic = SYS_DIC
+        if udic:
+            if udic.endswith('.csv'):
+                # build user dictionary from CSV
+                self.user_dic = UserDictionary(udic, udic_enc, udic_type, SYS_DIC.connections)
+            elif os.path.isdir(udic):
+                # load compiled user dictionary
+                self.user_dic = CompiledUserDictionary(udic, SYS_DIC.connections)
+            else:
+                self.user_dic = None
+        else:
+            self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
     def tokenize(self, text):
@@ -30,6 +43,13 @@ class Tokenizer:
         lattice = Lattice(len(text), self.sys_dic)
         pos = 0
         while pos < len(text):
+            # user dictionary
+            if self.user_dic:
+                entries = self.user_dic.lookup(text[pos:])
+                for e in entries:
+                    lattice.add(Node(e, NodeType.USER_DICT))
+                matched = len(entries) > 0
+
             # system dictionary
             entries = self.sys_dic.lookup(text[pos:])
             for e in entries:
@@ -40,11 +60,9 @@ class Tokenizer:
             cate, _ = self.sys_dic.char_category(text[pos])
             if cate and (not matched or self.sys_dic.unkown_invoked_always(cate)):
                 # unknown word length
-                # if not grouping, set to 1.
-                length = self.sys_dic.unknown_length(cate) if self.sys_dic.unknown_grouping(cate) else 1
+                length = self.sys_dic.unknown_length(cate) \
+                    if not self.sys_dic.unknown_grouping(cate) else self.max_unknown_length
                 assert length >= 0
-                if length == 0:
-                    length = self.max_unknown_length
                 # buffer for unknown word
                 buf = text[pos]
                 for p in range(pos + 1, min(len(text), pos + length + 1)):
