@@ -28,33 +28,19 @@ Python 3.4+ インタプリタ
 バージョン
 -----------------
 
-0.1.0
+0.1.3
 
 インストール
 ---------------
 
 PyPI
-^^^^^
+^^^^
 
-
-ソースからビルド
-^^^^^^^^^^^^^^^^^^^^
-
-Github のリポジトリを clone してください.
+`https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
 ::
 
-  $ git clone https://github.com/mocobeta/janome.git
-
-  (venv)$ python -V
-  Python 3.4.2
-
-  (venv) $ python setup.py install
-  Finished processing dependencies for Janome==0.1.0
-
-  (venv) $ pip freeze
-  Janome==0.1.0
-
+  $ pip install janome
 
 使い方
 -----------
@@ -97,8 +83,7 @@ userdic.csv ::
 
   (venv) $ python
   >>> from janome.tokenizer import Tokenizer
-  >>> t = Tokenizer("../tests/user_ipadic.csv")
-  >>> t = Tokenizer(udic="user_ipadic.csv", udic_enc="utf8")
+  >>> t = Tokenizer(udic="userdic.csv", udic_enc="utf8")
   >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   ...   print(token)
   ...
@@ -130,14 +115,14 @@ userdic.csv ::
 
   >>> from janome.dic import UserDictionary
   >>> from sysdic import connections
-  >>> user_dict = UserDictionary("../tests/user_ipadic.csv", "utf8", "ipadic", connections)
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", connections)
   >>> user_dict.save("/tmp/userdic")
 
 これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
 
 ::
 
-  >>> t = Tokenizer("/home/moco/tmp/userdic")
+  >>> t = Tokenizer("/tmp/userdic")
 
 
 よくある（かもしれない）質問
@@ -209,7 +194,7 @@ Copyright(C) @moco_beta All rights reserved.
 History
 ----------
 
-* 2015.04.08 バージョン 0.1.0 公開
+* 2015.04.08 Version 0.1.3 公開
 
 .. Indices and tables
 .. ==================

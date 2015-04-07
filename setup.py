@@ -7,9 +7,10 @@ from janome.dic import *
 
 dicdir = 'ipadic'
 
-print('Unzip dictionary data...')
-with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
-    zf.extractall()
+if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdic.zip')):
+    print('Unzip dictionary data...')
+    with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
+        zf.extractall()
 
 print('Precompile dictionary data...')
 py_compile.compile(os.path.join('sysdic', MODULE_FST_DATA))
@@ -18,7 +19,7 @@ py_compile.compile(os.path.join('sysdic', MODULE_CONNECTIONS))
 py_compile.compile(os.path.join('sysdic', MODULE_CHARDEFS))
 py_compile.compile(os.path.join('sysdic', MODULE_UNKNOWNS))
 
-version = '0.1.0'
+version = '0.1.3'
 name = 'janome'
 short_description = '`janome` is a package for Japanese Morphological Analysis.'
 long_description = """\
@@ -34,7 +35,7 @@ See http://mocobeta.github.io/janome/ (for Japanese)
 
 History
 -------
-0.1.0 (2015-4-8)
+0.1.3 (2015-4-8)
 ~~~~~~~~~~~~~~~~~~
 * first release
 
@@ -49,7 +50,7 @@ classifiers = [
 
 setup(
     name='Janome',
-    version='0.1.0',
+    version='0.1.3',
     description='Japanese morphological analysis engine.',
     author='Tomoko Uchida',
     author_email='tomoko.uchida.1111@gmail.com',
