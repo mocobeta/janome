@@ -17,10 +17,10 @@ Install
 .. code:: bash
 
   (venv) $ python setup.py install
-  Finished processing dependencies for Janome==0.0.1
+  Finished processing dependencies for Janome==0.1.0
 
   (venv) $ pip freeze
-  Janome==0.0.1
+  Janome==0.1.0
 
 Run
 ====
