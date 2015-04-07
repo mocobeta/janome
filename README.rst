@@ -4,6 +4,8 @@ janome
 
 Janome is a Japanese morphological analysis engine written in pure Python.
 
+For general documentation: http://mocobeta.github.io/janome/
+
 Requirements
 =============
 
@@ -13,9 +15,6 @@ Install
 ========
 
 .. code:: bash
-
-  (venv)$ python -V
-  Python 3.4.2
 
   (venv) $ python setup.py install
   Finished processing dependencies for Janome==0.0.1
@@ -42,40 +41,12 @@ Run
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
-or
+License
+========
 
-.. code:: bash
+Apache License 2.0
 
-  $ echo 'すもももももももものうち' | janome/scripts/janome
-  すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
-  も    助詞,係助詞,*,*,*,*,も,モ,モ
-  もも  名詞,一般,*,*,*,*,もも,モモ,モモ
-  も    助詞,係助詞,*,*,*,*,も,モ,モ
-  もも  名詞,一般,*,*,*,*,もも,モモ,モモ
-  の    助詞,連体化,*,*,*,*,の,ノ,ノ
-  うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
+Copyright
+==========
 
-
-Test
-======
-
-.. code:: bash
-
-  (venv) $ python tests/test_janome.py 
-  .
-  ----------------------------------------------------------------------
-  Ran 1 test in 0.000s
-
-  OK
-
-Uninstall
-===========
-
-.. code:: bash
-
-  (venv) $ pip uninstall janome
-  Uninstalling Janome:
-    /path/to/venv/lib/python3.4/site-packages/Janome-0.0.1-py3.4.egg
-  Proceed (y/n)? y
-    Successfully uninstalled Janome
-
+Copyright(C) @moco_beta All rights reserved.
