@@ -41,7 +41,7 @@ History
 """
 
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache License 2.0",
     "Programming Language :: Python",
     "Topic :: Natural Language :: Japanese",
