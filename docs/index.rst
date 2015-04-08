@@ -9,7 +9,7 @@ Welcome to janome's documentation!
 Janome とは
 -----------
 
-Janome (蛇目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
+Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
 
 依存ライブラリなしで簡単にインストールでき, アプリケーションに組み込みやすいシンプルな API を備える形態素解析ライブラリを目指しています.
 
@@ -134,11 +134,11 @@ A. インタプリタ起動直後の, 初回の Tokenizer インスタンス生�
 
 Q. 解析結果の精度は.
 
-A. 辞書, 言語モデルともに Mecab のデフォルトシステム辞書をそのまま使わせていただいているため, バグがなければ, MeCab と同等の解析結果になると思います.
+A. 辞書, 言語モデルともに MeCab のデフォルトシステム辞書をそのまま使わせていただいているため, バグがなければ, MeCab と同等の解析結果になると思います.
 
 Q. 形態素解析の速度は.
 
-A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒といったところのようです. mecab-python の10倍程度遅いくらい？ 向上させていきたいですが, いまのところは速度を追うのがメインの目的ではないです.
+A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒といったところのようです. mecab-python の10倍程度(長い文章だとそれ以上)遅い, というところでしょうか. 性能向上させていきたいですが, いまのところは速度を追うのがメインの目的ではないです.
 
 Q. 実装（データ構造, アルゴリズム）について.
 
@@ -151,9 +151,9 @@ Janome は Lucene の単語辞書やクエリパーサで使われている FST 
 
 Q. Python 2 系への対応は.
 
-A. デスヨネー. 3 系で導入されたバイナリシーケンス型 (bytes, bytearray) を多用しているので, 簡単にはいかないかも...
+A. デスヨネー.
 
-Q. 学習機ついてないの.
+Q. 学習器ついてないの.
 
 A. 今のところありません.
 
@@ -167,13 +167,13 @@ A. やりたいです!
 
 Q. バグ見つけた or なんか変 or 改善要望
 
-A. @moco_beta 宛につぶやくか, Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください.
+A. `@moco_beta <https://twitter.com/moco_beta>`_ 宛につぶやくか, Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください.
 
 
 やりたいことリスト
 ---------------------
 
-* ラティスの可視化
+* 単語グラフ(ラティス)の可視化
 * neologd 対応
 * UniDic 対応
 * N-Best パス
@@ -189,7 +189,7 @@ Apache License 2.0
 Copyright
 -----------
 
-Copyright(C) @moco_beta All rights reserved.
+Copyright(C) 2015, @moco_beta All rights reserved.
 
 History
 ----------

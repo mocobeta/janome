@@ -49,4 +49,4 @@ Apache License 2.0
 Copyright
 ==========
 
-Copyright(C) @moco_beta All rights reserved.
+Copyright(C) 2015, @moco_beta All rights reserved.
