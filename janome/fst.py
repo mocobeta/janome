@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import division
 import copy
 from struct import pack, unpack
 from collections import OrderedDict
@@ -33,8 +34,8 @@ FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
 CHARS = set()
 
 
-class State:
-    """
+class State(object):
+    u"""
     State Class
     """
     def __init__(self, id=None):
@@ -57,13 +58,13 @@ class State:
 
     def set_transition(self, char, state):
         self.trans_map[char] = {'state': state,
-                                'output': bytes() if char not in self.trans_map else self.trans_map[char]['output']}
+                                'output': str() if char not in self.trans_map else self.trans_map[char]['output']}
 
     def state_output(self):
         return self.final_output
 
     def set_state_output(self, output):
-        self.final_output = set([bytes(e) for e in output])
+        self.final_output = set([str(e) for e in output])
 
     def clear_state_output(self):
         self.final_output = set()
@@ -72,11 +73,11 @@ class State:
         if char in self.trans_map:
             return self.trans_map[char]['output']
         else:
-            return bytes()
+            return str()
 
     def set_output(self, char, out):
         if char in self.trans_map:
-            self.trans_map[char]['output'] = bytes(out)
+            self.trans_map[char]['output'] = str(out)
 
     def clear(self):
         self.final = False
@@ -93,7 +94,7 @@ class State:
                 self.final_output == other.final_output
 
     def __hash__(self):
-        return hash(str(self.final) + str(self.trans_map) + str(self.final_output))
+        return hash(unicode(self.final) + unicode(self.trans_map) + unicode(self.final_output))
 
 
 def copy_state(src, id):
@@ -106,8 +107,8 @@ def copy_state(src, id):
     return state
 
 
-class FST:
-    """
+class FST(object):
+    u"""
     FST (final dictionary) class
     """
     def __init__(self):
@@ -126,9 +127,9 @@ class FST:
     def print_dictionary(self):
         for s in self.dictionary.values():
             for (c, v) in s.trans_map.items():
-                print(s.id, c, v['state'].id, v['output'], sep='\t')
+                print '\t'.join([unicode(s.id), unicode(c), unicode(v['state'].id), unicode(v['output'])])
             if s.is_final():
-                print(s.id, 'final', s.final_output, sep='\t')
+                print '\t'.join([unicode(s.id), unicode('final'), unicode(s.final_output)])
 
 
 # naive implementation for building fst
@@ -144,7 +145,7 @@ def create_minimum_transducer(inputs):
     buffer.append(State())  # insert 'initial' state
 
     # previous word
-    prev_word = bytes()
+    prev_word = str()
 
     def find_minimized(state):
         # if an equivalent state exists in the dictionary, use that
@@ -162,13 +163,13 @@ def create_minimum_transducer(inputs):
             i += 1
         return i
 
-    current_word = bytes()
-    current_output = bytes()
+    current_word = str()
+    current_output = str()
     processed = 0
     # main loop
     for (current_word, current_output) in inputs:
-        logging.debug('current word: ' + str(current_word))
-        logging.debug('current_output: ' + str(current_output))
+        # logging.debug('current word: ' + unicode(current_word))
+        # logging.debug('current_output: ' + unicode(current_output))
 
         assert(current_word >= prev_word)
 
@@ -182,17 +183,17 @@ def create_minimum_transducer(inputs):
             buffer.append(State())
 
         # set state transitions
-        for i in range(len(prev_word), pref_len, -1):
+        for i in xrange(len(prev_word), pref_len, -1):
             buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
-        for i in range(pref_len + 1, len(current_word) + 1):
+        for i in xrange(pref_len + 1, len(current_word) + 1):
             buffer[i].clear()
             buffer[i - 1].set_transition(current_word[i - 1], buffer[i])
         if current_word != prev_word:
             buffer[len(current_word)].set_final(True)
-            buffer[len(current_word)].set_state_output(set([bytes()]))
+            buffer[len(current_word)].set_state_output(set([str()]))
 
         # set state outputs
-        for j in range(1, pref_len + 1):
+        for j in xrange(1, pref_len + 1):
             # divide (j-1)th state's output to (common) prefix and suffix
             common_prefix = []
             output = buffer[j - 1].output(current_word[j - 1])
@@ -203,7 +204,7 @@ def create_minimum_transducer(inputs):
             word_suffix = output[len(common_prefix):]
 
             # re-set (j-1)'th state's output to prefix
-            buffer[j - 1].set_output(current_word[j - 1], common_prefix)
+            buffer[j - 1].set_output(current_word[j - 1], ''.join(common_prefix))
 
             # re-set jth state's output to suffix or set final state output
             for c in CHARS:
@@ -238,7 +239,7 @@ def create_minimum_transducer(inputs):
             _last_printed = _elapsed
 
     # minimize the last word
-    for i in range(len(current_word), 0, -1):
+    for i in xrange(len(current_word), 0, -1):
         buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
 
     find_minimized(buffer[0])
@@ -248,7 +249,7 @@ def create_minimum_transducer(inputs):
 
 
 def compileFST(fst):
-    """
+    u"""
     convert FST to byte array representing arcs
     """
     arcs = []
@@ -259,7 +260,7 @@ def compileFST(fst):
         for i, (c, v) in enumerate(sorted(s.trans_map.items(), reverse=True)):
             bary = bytearray()
             flag = 0
-            output_size, output = 0, bytes()
+            output_size, output = 0, str()
             if i == 0:
                 flag += FLAG_LAST_ARC
             if v['output']:
@@ -268,7 +269,7 @@ def compileFST(fst):
                 output = v['output']
             # encode flag, label, output_size, output, relative target address
             bary += pack('b', flag)
-            bary += pack('B', c)
+            bary += pack('c', c)
             if output_size > 0:
                 bary += pack('I', output_size)
                 bary += output
@@ -278,7 +279,7 @@ def compileFST(fst):
             assert target > 0
             bary += pack('I', target)
             # add the arc represented in bytes
-            arcs.append(bytes(bary))
+            arcs.append(str(bary))
             # address count up
             cnt += 1
             pos += len(bary)
@@ -303,7 +304,7 @@ def compileFST(fst):
                     if output_size:
                         bary += out
             # add the arc represented in bytes
-            arcs.append(bytes(bary))
+            arcs.append(str(bary))
             # address count up
             cnt += 1
             pos += len(bary)
@@ -312,26 +313,26 @@ def compileFST(fst):
     logging.debug(address)
     logging.info('compiled arcs size: %d' % len(arcs))
     arcs.reverse()
-    return b''.join(arcs)
+    return ''.join(arcs)
 
 
-class Arc:
-    """
+class Arc(object):
+    u"""
     Arc class
     """
     def __init__(self):
         self.flag = 0
         self.label = 0
-        self.output = bytes()
-        self.final_output = [b'']
+        self.output = str()
+        self.final_output = ['']
         self.target = 0
 
     def __str__(self):
         return "flag=%d, label=%s, target=%d, output=%s, final_output=%s" \
-               % (self.flag, self.label, self.target, str(self.output), str(self.final_output))
+               % (self.flag, self.label, self.target, unicode(self.output, encoding='utf8'), unicode(self.final_output, encoding='utf8'))
 
 
-class Matcher:
+class Matcher(object):
     def __init__(self, dict_data):
         if dict_data:
             self.data = dict_data
@@ -349,7 +350,7 @@ class Matcher:
                 # accepted
                 accept = True
                 for out in arc.final_output:
-                    outputs.add(bytes(buf + out))
+                    outputs.add(str(buf + out))
                 if arc.flag & FLAG_LAST_ARC or i >= len(word):
                     break
                 pos += incr
@@ -389,7 +390,7 @@ class Matcher:
                 final_output_count = unpack('I', self.data[pos:pos+4])[0]
                 pos += 4
                 buf = []
-                for c in range(0, final_output_count):
+                for c in xrange(0, final_output_count):
                     output_size = unpack('I', self.data[pos:pos+4])[0]
                     pos += 4
                     if output_size:
@@ -398,7 +399,7 @@ class Matcher:
                 arc.final_output = buf
         else:
             # read label
-            label = unpack('B', self.data[pos:pos+1])[0]
+            label = unpack('c', self.data[pos:pos+1])[0]
             arc.label = label
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
@@ -421,18 +422,18 @@ class Matcher:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     inputs1 = [
-        ('apr'.encode('utf8'), '30'),
-        ('aug'.encode('utf8'), '31'),
-        ('dec'.encode('utf8'), '31'.encode('utf8')),
-        ('feb'.encode('utf8'), '28'.encode('utf8')),
-        ('feb'.encode('utf8'), '29'.encode('utf8')),
-        ('jan'.encode('utf8'), '31'.encode('utf8')),
-        ('jul'.encode('utf8'), '31'.encode('utf8')),
-        ('jun'.encode('utf8'), '30'.encode('utf8'))
+        (u'apr'.encode(u'utf8'), u'30'),
+        (u'aug'.encode(u'utf8'), u'31'),
+        (u'dec'.encode(u'utf8'), u'31'.encode(u'utf8')),
+        (u'feb'.encode(u'utf8'), u'28'.encode(u'utf8')),
+        (u'feb'.encode(u'utf8'), u'29'.encode(u'utf8')),
+        (u'jan'.encode(u'utf8'), u'31'.encode(u'utf8')),
+        (u'jul'.encode(u'utf8'), u'31'.encode(u'utf8')),
+        (u'jun'.encode(u'utf8'), u'30'.encode(u'utf8'))
     ]
     dict = create_minimum_transducer(inputs1)
     data = compileFST(dict)
 
     m = Matcher(data)
-    print(m.run('apr'.encode('utf8')))
-    print(m.run('aug'.encode('utf8')))
+    print m.run(u'apr'.encode(u'utf8'))
+    print m.run(u'aug'.encode(u'utf8'))

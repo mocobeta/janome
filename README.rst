@@ -1,36 +1,41 @@
-========
-janome
-========
+=========
+janomePy2
+=========
 
-Janome is a Japanese morphological analysis engine written in pure Python.
+janomePy2 is a Japanese morphological analysis engine written in pure Python. (Python 2 compatible version.)
 
-For general documentation: http://mocobeta.github.io/janome/ (for Japanese)
+General documentation: http://mocobeta.github.io/janome/ (for Japanese)
 
 Requirements
 =============
 
-Python 3.4 or above is required.
+Python 2.7 is required.
+
+For Python 3 users, please install janome.
 
 Install
 ========
 
+[Note] This consumes about 3 to 4 GB memory for building.
+
 .. code:: bash
 
   (venv) $ python setup.py install
-  Finished processing dependencies for Janome==0.1.3
+  Finished processing dependencies for JanomePy2==0.1.4
 
   (venv) $ pip freeze
-  Janome==0.1.3
+  JanomePy2==0.1.4
+
 
 Run
 ====
 
 .. code:: bash
 
-  (venv) $ python
+  (env) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize('すもももももももものうち'):
+  >>> for token in t.tokenize(u'すもももももももものうち'):
   ...     print(token)
   ...
   すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -49,4 +54,4 @@ Apache License 2.0
 Copyright
 ==========
 
-Copyright(C) 2015, @moco_beta All rights reserved.
+Copyright(C) 2015, moco_beta. All rights reserved.

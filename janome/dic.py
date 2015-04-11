@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,17 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import with_statement
 import os
 import pickle
-import gzip, bz2
+import gzip
 from struct import pack, unpack
 from .fst import Matcher, create_minimum_transducer, compileFST
 import traceback
 import logging
 import sys
+from io import open
 
+SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sysdic")
 
-# FILE_FST_DATA = 'fst.data'
+FILE_FST_DATA = 'fst.data'
 # FILE_ENTRIES = 'entries.data'
 # FILE_CONNECTIONS = 'connections.data'
 
@@ -38,25 +41,25 @@ FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
 
 def save_fstdata(data, dir='.'):
-    #_save(os.path.join(dir, FILE_FST_DATA), data, compresslevel)
-    _save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
+    _save(os.path.join(dir, FILE_FST_DATA), data, 9)
+    #_save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
 
 
-def save_entries(entries, dir='.'):
+def save_entries(entries, dir=u'.'):
     #_save(os.path.join(dir, FILE_ENTRIES), pickle.dumps(entries), compresslevel)
     _save_as_module(os.path.join(dir, MODULE_ENTRIES), entries)
 
 
-def save_connections(connections, dir='.'):
+def save_connections(connections, dir=u'.'):
     #_save(os.path.join(dir, FILE_CONNECTIONS), pickle.dumps(connections), compresslevel)
     _save_as_module(os.path.join(dir, MODULE_CONNECTIONS), connections)
 
 
-def save_chardefs(chardefs, dir='.'):
+def save_chardefs(chardefs, dir=u'.'):
     _save_as_module(os.path.join(dir, MODULE_CHARDEFS), chardefs)
 
 
-def save_unknowns(unknowns, dir='.'):
+def save_unknowns(unknowns, dir=u'.'):
     _save_as_module(os.path.join(dir, MODULE_UNKNOWNS), unknowns)
 
 
@@ -80,13 +83,13 @@ def _save_as_module(file, data):
     if not data:
         return
     with open(file, 'w') as f:
-        f.write('DATA=')
-        f.write(str(data))
+        f.write(u'DATA=')
+        f.write(unicode(data))
         f.flush()
 
 
-class Dictionary:
-    """
+class Dictionary(object):
+    u"""
     Base dictionary class
     """
     def __init__(self, compiledFST, entries, connections):
@@ -101,10 +104,10 @@ class Dictionary:
             return []
         try:
             return [self.entries[unpack('I', e)[0]] for e in outputs]
-        except Exception as e:
+        except Exception, e:
             logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logging.error('input=%s' % s)
-            logging.error('outputs=%s' % str(outputs))
+            logging.error('outputs=%s' % unicode(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -114,18 +117,18 @@ class Dictionary:
 
 
 class SystemDictionary(Dictionary):
-    """
+    u"""
     System dictionary class
     """
-    def __init__(self, compiledFST, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, compiledFST, entries, connections)
+    def __init__(self, entries, connections, chardefs, unknowns):
+        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
         self.char_categories = chardefs[0]
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns
 
     def char_category(self, c):
         for chr_range in self.char_ranges:
-            if ord(c) in range(chr_range['from'], chr_range['to'] + 1):
+            if ord(c) in xrange(chr_range['from'], chr_range['to'] + 1):
                 cate = chr_range['cate']
                 compate_cates = chr_range['compat_cates'] if 'compat_cates' in chr_range else []
                 return cate, compate_cates
@@ -148,7 +151,7 @@ class SystemDictionary(Dictionary):
 
 
 class UserDictionary(Dictionary):
-    """
+    u"""
     User dictionary class (uncompiled)
     """
     def __init__(self, user_dict, enc, type, connections):
@@ -179,14 +182,14 @@ class UserDictionary(Dictionary):
     def save(self, to_dir, compressionlevel=9):
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
             raise Exception('Not a directory : %s' % to_dir)
-        else:
-            os.makedirs(to_dir, mode=0o755, exist_ok=True)
+        elif not os.path.exists(to_dir):
+            os.makedirs(to_dir, mode=0755)
         _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST, compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
 
 class CompiledUserDictionary(Dictionary):
-    """
+    u"""
     User dictionary class (compiled)
     """
     def __init__(self, dic_dir, connections):
@@ -195,7 +198,7 @@ class CompiledUserDictionary(Dictionary):
 
     def load_dict(self, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
-            raise FileNotFoundError('No such directory : ' % dic_dir)
+            raise Exception('No such directory : ' % dic_dir)
         compiledFST = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
         return compiledFST, entries

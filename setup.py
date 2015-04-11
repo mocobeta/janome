@@ -13,21 +13,20 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
         zf.extractall()
 
 print('Precompile dictionary data...')
-py_compile.compile(os.path.join('sysdic', MODULE_FST_DATA))
 py_compile.compile(os.path.join('sysdic', MODULE_ENTRIES))
 py_compile.compile(os.path.join('sysdic', MODULE_CONNECTIONS))
 py_compile.compile(os.path.join('sysdic', MODULE_CHARDEFS))
 py_compile.compile(os.path.join('sysdic', MODULE_UNKNOWNS))
 
-version = '0.1.3'
-name = 'janome'
+version = '0.1.4'
+name = 'janomePy2'
 short_description = '`janome` is a package for Japanese Morphological Analysis.'
 long_description = """\
 `janome` is a package for Japanese Morphological Analysis.
 
 Requirements
 ------------
-* Python 3.4 or later (not support 2.x)
+* Python 2.7 or later (not support 3.x)
 
 Features
 --------
@@ -35,7 +34,7 @@ See http://mocobeta.github.io/janome/ (for Japanese)
 
 History
 -------
-0.1.3 (2015-4-8)
+0.1.4 (2015-4-11)
 ~~~~~~~~~~~~~~~~~~
 * first release
 
@@ -49,13 +48,14 @@ classifiers = [
     ]
 
 setup(
-    name='Janome',
-    version='0.1.3',
+    name='JanomePy2',
+    version='0.1.4',
     description='Japanese morphological analysis engine.',
     author='Tomoko Uchida',
     author_email='tomoko.uchida.1111@gmail.com',
     url='http://mocobeta.github.io/janome/',
     packages=['janome','sysdic'],
+    package_data={'sysdic': ['fst.data']},
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer']
 )
 

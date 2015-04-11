@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class TestLattice(unittest.TestCase):
         self.assertTrue(isinstance(lattice.enodes[1][0], BOS))
 
     def test_add_forward_end(self):
-        s = 'すもも'
+        s = u'すもも'
         lattice = Lattice(len(s), SYS_DIC)
         entries = SYS_DIC.lookup(s)
         for entry in entries:
@@ -68,7 +68,7 @@ class TestLattice(unittest.TestCase):
         self.assertTrue(isinstance(lattice.enodes[5][0], EOS))
 
     def test_backward(self):
-        s = 'すもももももももものうち'
+        s = u'すもももももももものうち'
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
@@ -80,13 +80,13 @@ class TestLattice(unittest.TestCase):
         min_cost_path = lattice.backward()
         self.assertEqual(9, len(min_cost_path))
         self.assertTrue(isinstance(min_cost_path[0], BOS))
-        self.assertEqual('すもも', min_cost_path[1].surface)
-        self.assertEqual('も', min_cost_path[2].surface)
-        self.assertEqual('もも', min_cost_path[3].surface)
-        self.assertEqual('も', min_cost_path[4].surface)
-        self.assertEqual('もも', min_cost_path[5].surface)
-        self.assertEqual('の', min_cost_path[6].surface)
-        self.assertEqual('うち', min_cost_path[7].surface)
+        self.assertEqual(u'すもも', min_cost_path[1].surface)
+        self.assertEqual(u'も', min_cost_path[2].surface)
+        self.assertEqual(u'もも', min_cost_path[3].surface)
+        self.assertEqual(u'も', min_cost_path[4].surface)
+        self.assertEqual(u'もも', min_cost_path[5].surface)
+        self.assertEqual(u'の', min_cost_path[6].surface)
+        self.assertEqual(u'うち', min_cost_path[7].surface)
         self.assertTrue(isinstance(min_cost_path[8], EOS))
 
 
