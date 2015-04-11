@@ -16,7 +16,7 @@
 
 import os
 import pickle
-import gzip, bz2
+import gzip
 from struct import pack, unpack
 from .fst import Matcher, create_minimum_transducer, compileFST
 import traceback
@@ -24,7 +24,9 @@ import logging
 import sys
 
 
-# FILE_FST_DATA = 'fst.data'
+SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sysdic")
+
+FILE_FST_DATA = 'fst.data'
 # FILE_ENTRIES = 'entries.data'
 # FILE_CONNECTIONS = 'connections.data'
 
@@ -38,8 +40,8 @@ FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
 
 def save_fstdata(data, dir='.'):
-    #_save(os.path.join(dir, FILE_FST_DATA), data, compresslevel)
-    _save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
+    _save(os.path.join(dir, FILE_FST_DATA), data, 9)
+    # _save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
 
 
 def save_entries(entries, dir='.'):
@@ -117,8 +119,8 @@ class SystemDictionary(Dictionary):
     """
     System dictionary class
     """
-    def __init__(self, compiledFST, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, compiledFST, entries, connections)
+    def __init__(self, entries, connections, chardefs, unknowns):
+        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
         self.char_categories = chardefs[0]
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns

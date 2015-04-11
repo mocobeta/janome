@@ -20,15 +20,20 @@ Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
+master リポジトリが janome 用, 2x_support ブランチが janomePy2 用です.
+
 動作に必要なソフトウェア
 --------------------------
 
-Python 3.4+ インタプリタ
+Python 2.7 または Python 3.4+ インタプリタ
 
 バージョン
 -----------------
 
-0.1.3
+janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor version が同じなら同等の動作をします.
+
+* janome: 0.1.4
+* janomePy2: 0.1.4
 
 インストール
 ---------------
@@ -36,13 +41,20 @@ Python 3.4+ インタプリタ
 PyPI
 ^^^^
 
-.. WARNING:: バイナリ配布だと、PyPI のサイズ制限に引っかかったため、ソース配布になっています. ビルド時, 辞書の事前コンパイルのためにそれなりのメモリを必要とします(3~4GB程度, 使う様子). 貧弱なマシンや、他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください. 辞書のもたせ方を工夫するなど, 今後改善を検討したいと思っております.
+注意: バイナリ配布だと、PyPI のサイズ制限に引っかかったため、ソース配布になっています。ビルド時にそれなりのメモリを必要とします(最大3GB程度の様子). 貧弱なマシンや、他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください.
 
-`https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
+for Python 3.4+ users: `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
-.. code-block:: shell
+.. code-block:: bash
 
   $ pip install janome
+
+for Python 2.7 users: `https://pypi.python.org/pypi/JanomePy2 <https://pypi.python.org/pypi/JanomePy2>`_
+
+.. code-block:: bash
+
+  $ pip install janomePy2
+
 
 使い方
 -----------
@@ -51,12 +63,12 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
 
 戻り値は Token オブジェクトのリストです. Token は表層形や品詞といった形態素情報を含みます. 詳しくは help() や `ソースコード <https://github.com/mocobeta/janome/blob/master/janome/tokenizer.py>`_ をご参照ください.
 
-.. code-block:: python
+::
 
   (venv) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize('すもももももももものうち'):
+  >>> for token in t.tokenize(u'すもももももももものうち'):
   ...     print(token)
   ...
   すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -81,12 +93,12 @@ userdic.csv ::
   東武スカイツリーライン,1288,1288,4700,名詞,固有名詞,一般,*,*,*,東武スカイツリーライン,トウブスカイツリーライン,トウブスカイツリーライン
   とうきょうスカイツリー駅,1288,1288,4143,名詞,固有名詞,一般,*,*,*,とうきょうスカイツリー駅,トウキョウスカイツリーエキ,トウキョウスカイツリーエキ
 
-.. code-block:: python
+::
 
   (venv) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer(udic="userdic.csv", udic_enc="utf8")
-  >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+  >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   ...   print(token)
   ...
 
@@ -113,9 +125,7 @@ userdic.csv ::
 
 現在のところ, コンパイルのためのツールはありませんが, API を使ってコンパイルが行えます.
 
-辞書のコンパイル 
-
-.. code-block:: python
+辞書のコンパイル ::
 
   >>> from janome.dic import UserDictionary
   >>> from sysdic import connections
@@ -124,7 +134,7 @@ userdic.csv ::
 
 これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
 
-.. code-block:: python
+::
 
   >>> t = Tokenizer("/tmp/userdic")
 
@@ -142,7 +152,7 @@ A. 辞書, 言語モデルともに MeCab のデフォルトシステム辞書�
 
 Q. 形態素解析の速度は.
 
-A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒程度のようです. ざっくり比較すると, mecab-python の10倍程度(長い文章だとそれ以上)遅い, というくらいでしょうか. 性能向上させていきたいですが, 現在のところは速度を追うのがメインの目的ではないです.
+A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒といったところのようです. mecab-python の10倍程度(長い文章だとそれ以上)遅い, というところでしょうか. 性能向上させていきたいですが, いまのところは速度を追うのがメインの目的ではないです.
 
 Q. 実装（データ構造, アルゴリズム）について.
 
@@ -155,7 +165,7 @@ Janome は Lucene の単語辞書やクエリパーサで使われている FST 
 
 Q. Python 2 系への対応は.
 
-A. デスヨネー.
+A. デスヨネー. -> 対応しました. janomePy2 をご利用ください.
 
 Q. 学習器ついてないの.
 
@@ -193,12 +203,13 @@ Apache License 2.0
 Copyright
 -----------
 
-Copyright(C) 2015, moco_beta. All rights reserved.
+Copyright(C) 2015, @moco_beta All rights reserved.
 
 History
 ----------
 
-* 2015.04.08 Version 0.1.3 公開
+* 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
+* 2015.04.08 janome Version 0.1.3 公開
 
 .. Indices and tables
 .. ==================

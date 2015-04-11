@@ -21,14 +21,14 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from janome.dic import *
-from sysdic import fstdata, entries, connections, chardef, unknowns
+from sysdic import entries, connections, chardef, unknowns
 
 import unittest
 
 
 class TestDictionary(unittest.TestCase):
     def test_system_dictionary(self):
-        sys_dic = SystemDictionary(fstdata.DATA, entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
         self.assertEqual(7, len(sys_dic.lookup('形態素')))
         self.assertEqual(1, sys_dic.get_trans_cost('0', '1'))
         self.assertEqual(('HIRAGANA', []), sys_dic.char_category('あ'))

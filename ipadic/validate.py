@@ -19,10 +19,10 @@ import os, sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from janome.dic import Dictionary
-from sysdic import fstdata, entries, connections, chardef, unknowns
+from janome.dic import SystemDictionary
+from sysdic import entries, connections, chardef, unknowns
 
-SYS_DIC = Dictionary(fstdata.DATA, entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
+SYS_DIC = SystemDictionary(entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
 
 import struct
 import logging
