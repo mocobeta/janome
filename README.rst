@@ -14,6 +14,8 @@ Python 3.4 or above is required.
 Install
 ========
 
+.. WARNING:: This consumes about 3 to 4 GB memory.
+
 .. code:: bash
 
   (venv) $ python setup.py install
@@ -49,4 +51,4 @@ Apache License 2.0
 Copyright
 ==========
 
-Copyright(C) 2015, @moco_beta All rights reserved.
+Copyright(C) 2015, moco_beta. All rights reserved.
