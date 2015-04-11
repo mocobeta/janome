@@ -20,15 +20,20 @@ Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
+master リポジトリが janome 用, 2x_support ブランチが janomePy2 用です.
+
 動作に必要なソフトウェア
 --------------------------
 
-Python 3.4+ インタプリタ
+Python 2.7 または Python 3.4+ インタプリタ
 
 バージョン
 -----------------
 
-0.1.3
+janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor version が同じなら同等の動作をします.
+
+* janome: 0.1.4
+* janomePy2: 0.1.4
 
 インストール
 ---------------
@@ -38,11 +43,18 @@ PyPI
 
 注意: バイナリ配布だと、PyPI のサイズ制限に引っかかったため、ソース配布になっています。ビルド時にそれなりのメモリを必要とします(最大3GB程度の様子). 貧弱なマシンや、他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください.
 
-`https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
+for Python 3.4+ users: `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
-::
+.. code-block:: bash
 
   $ pip install janome
+
+for Python 2.7 users: `https://pypi.python.org/pypi/JanomePy2 <https://pypi.python.org/pypi/JanomePy2>`_
+
+.. code-block:: bash
+
+  $ pip install janomePy2
+
 
 使い方
 -----------
@@ -56,7 +68,7 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
   (venv) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize('すもももももももものうち'):
+  >>> for token in t.tokenize(u'すもももももももものうち'):
   ...     print(token)
   ...
   すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -86,7 +98,7 @@ userdic.csv ::
   (venv) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer(udic="userdic.csv", udic_enc="utf8")
-  >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+  >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   ...   print(token)
   ...
 
@@ -153,7 +165,7 @@ Janome は Lucene の単語辞書やクエリパーサで使われている FST 
 
 Q. Python 2 系への対応は.
 
-A. デスヨネー.
+A. デスヨネー. -> 対応しました. janomePy2 をご利用ください.
 
 Q. 学習器ついてないの.
 
@@ -196,7 +208,8 @@ Copyright(C) 2015, @moco_beta All rights reserved.
 History
 ----------
 
-* 2015.04.08 Version 0.1.3 公開
+* 2015.04.11 janome Version 0.1.4 / janomePy2 0.1.4 公開
+* 2015.04.08 janome Version 0.1.3 公開
 
 .. Indices and tables
 .. ==================
