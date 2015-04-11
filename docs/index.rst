@@ -41,7 +41,9 @@ janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor vers
 PyPI
 ^^^^
 
-注意: バイナリ配布だと、PyPI のサイズ制限に引っかかったため、ソース配布になっています。ビルド時にそれなりのメモリを必要とします(最大3GB程度の様子). 貧弱なマシンや、他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください.
+.. WARNING:: バイナリ配布だと PyPI のサイズ制限に引っかかったため, ソース配布になっています. ビルド時に 3~4 GB程度のメモリを必要とします. 貧弱なマシンや, 他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください.
+
+.. NOTE:: Windows の 32 bit 版 Python だとビルド時に Meomory Error でこけます. 64 bit 版を使ってください.
 
 for Python 3.4+ users: `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
@@ -78,6 +80,19 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
   もも  名詞,一般,*,*,*,*,もも,モモ,モモ
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
+
+for janomePy2 Windows users
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+janomePy2 の Token.__str__() の戻りは utf8 なので, そのまま出力すると文字化けします. decode('utf8') をかけてください.
+
+::
+
+  > python
+  >>> from janome.tokenizer import Tokenizer
+  >>> t = Tokenizer()
+  >>> for token in t.tokenize(u'すもももももももものうち'):
+  ...     print(str(token).decode('utf8'))
 
 
 ユーザー定義辞書を使う
@@ -152,7 +167,7 @@ A. 辞書, 言語モデルともに MeCab のデフォルトシステム辞書�
 
 Q. 形態素解析の速度は.
 
-A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒といったところのようです. mecab-python の10倍程度(長い文章だとそれ以上)遅い, というところでしょうか. 性能向上させていきたいですが, いまのところは速度を追うのがメインの目的ではないです.
+A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒でした. mecab-python の10倍程度(長い文章だとそれ以上)遅い, というくらいでしょうか. 性能向上させていきたいですが, いまのところは速度を追うのがメインの目的ではないです.
 
 Q. 実装（データ構造, アルゴリズム）について.
 
@@ -165,7 +180,7 @@ Janome は Lucene の単語辞書やクエリパーサで使われている FST 
 
 Q. Python 2 系への対応は.
 
-A. デスヨネー. -> 対応しました. janomePy2 をご利用ください.
+A. デスヨネー. => 対応しました. janomePy2 をご利用ください.
 
 Q. 学習器ついてないの.
 
@@ -173,7 +188,7 @@ A. 今のところありません.
 
 Q. Janome ってどういう意味.
 
-A. ikawaha さんの, Go で書かれた形態素解析器 Kagome にあやかりつつ, 蛇(Python)をかけて命名しました. 日本語のJaともかかっているのは takuya-a さんに言われて気づきました :)
+A. ikawaha さんの, Go で書かれた形態素解析器 kagome にあやかりつつ, 蛇(Python)をかけて命名しました. 日本語のJaともかかっているのは takuya-a さんに言われて気づきました :)
 
 Q. `neologd <https://github.com/neologd/mecab-ipadic-neologd>`_ 内包版はないの.
 
@@ -203,7 +218,7 @@ Apache License 2.0
 Copyright
 -----------
 
-Copyright(C) 2015, @moco_beta All rights reserved.
+Copyright(C) 2015, moco_beta. All rights reserved.
 
 History
 ----------
