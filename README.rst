@@ -14,7 +14,7 @@ Python 3.4 or above is required.
 Install
 ========
 
-.. WARNING:: This consumes about 3 to 4 GB memory.
+[Note] This consumes about 3 to 4 GB memory for building.
 
 .. code:: bash
 
