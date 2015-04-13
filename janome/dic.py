@@ -23,7 +23,9 @@ from .fst import Matcher, create_minimum_transducer, compileFST
 import traceback
 import logging
 import sys
-from io import open
+
+PY3 = sys.version_info[0] == 3
+
 
 SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sysdic")
 
@@ -104,10 +106,10 @@ class Dictionary(object):
             return []
         try:
             return [self.entries[unpack('I', e)[0]] for e in outputs]
-        except Exception, e:
+        except Exception as e:
             logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logging.error('input=%s' % s)
-            logging.error('outputs=%s' % unicode(outputs))
+            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -128,7 +130,7 @@ class SystemDictionary(Dictionary):
 
     def char_category(self, c):
         for chr_range in self.char_ranges:
-            if ord(c) in xrange(chr_range['from'], chr_range['to'] + 1):
+            if ord(c) in range(chr_range['from'], chr_range['to'] + 1):
                 cate = chr_range['cate']
                 compate_cates = chr_range['compat_cates'] if 'compat_cates' in chr_range else []
                 return cate, compate_cates
@@ -183,7 +185,7 @@ class UserDictionary(Dictionary):
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
             raise Exception('Not a directory : %s' % to_dir)
         elif not os.path.exists(to_dir):
-            os.makedirs(to_dir, mode=0755)
+            os.makedirs(to_dir, mode=int('0755', 8))
         _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST, compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
