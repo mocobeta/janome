@@ -28,6 +28,8 @@ import struct
 import logging
 import sys
 
+PY3 = sys.version_info[0] == 3
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     words_file = sys.argv[1]
@@ -37,7 +39,10 @@ if __name__ == '__main__':
             WORDS.append(line)
     invalid_count = 0
     for word in WORDS:
-        (matched, outputs) = SYS_DIC.matcher.run(word.decode('utf8').encode('utf8'))
+        if PY3:
+            (matched, outputs) = SYS_DIC.matcher.run(word.encode('utf8'))
+        else:
+            (matched, outputs) = SYS_DIC.matcher.run(word.decode('utf8').encode('utf8'))
         if not matched:
             print('No match for %s' % word)
             invalid_count += 1

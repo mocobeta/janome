@@ -54,10 +54,10 @@ def build_dict(dicdir, enc, outdir=u'.'):
 
     _t1 = time.time()
     fst = create_minimum_transducer(inputs)
-    logging.info('Build FST done. ' + unicode(time.time() - _t1) + ' sec.')
+    logging.info('Build FST done. ' + str(time.time() - _t1) + ' sec.')
     _t2 = time.time()
     compiledFST = compileFST(fst)
-    logging.info('Compile FST done. ' + unicode(time.time() - _t2) + ' sec.')
+    logging.info('Compile FST done. ' + str(time.time() - _t2) + ' sec.')
     save_fstdata(compiledFST, dir=outdir)
     save_entries(entries, dir=outdir)
 
@@ -145,7 +145,7 @@ def pre_compile(outdir=u'.'):
     py_compile.compile(os.path.join(outdir, MODULE_CONNECTIONS))
     py_compile.compile(os.path.join(outdir, MODULE_CHARDEFS))
     py_compile.compile(os.path.join(outdir, MODULE_UNKNOWNS))
-    logging.info('Pre-compile data done. ' + unicode(time.time() - _t1) + ' sec.')
+    logging.info('Pre-compile data done. ' + str(time.time() - _t1) + ' sec.')
 
 if __name__ == '__main__':
     import logging
