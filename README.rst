@@ -48,7 +48,10 @@ Run
 License
 ========
 
-Apache License 2.0
+Licensed under Apache License 2.0 and uses the MeCab-IPADIC dictionary/statistical model.
+
+See LICENSE.txt and NOTICE.txt for license details.
+
 
 Copyright
 ==========
