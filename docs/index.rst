@@ -41,9 +41,9 @@ janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor vers
 PyPI
 ^^^^
 
-.. WARNING:: バイナリ配布だと PyPI のサイズ制限に引っかかったため, ソース配布になっています. ビルド時に 3~4 GB程度のメモリを必要とします. 貧弱なマシンや, 他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください.
+.. WARNING:: バイナリ配布だと PyPI のサイズ制限に引っかかったため, ソース配布になっています. ビルド時に 3~4 GB程度のメモリを必要とします. 貧弱なマシンや, 他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください. (改善検討中...)
 
-.. NOTE:: Windows の 32 bit 版 Python だとビルド時に Meomory Error でこけます. 64 bit 版を使ってください.
+.. NOTE:: 上記の理由により, 現行バージョンでは 32 bit 版 Python だとビルド時に Meomory Error でこけます. 64 bit 版を使ってください.
 
 for Python 3.4+ users: `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
