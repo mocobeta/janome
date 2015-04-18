@@ -419,7 +419,10 @@ class Matcher(object):
                 arc.final_output = buf
         else:
             # read label
-            label = unpack('B', self.data[pos:pos+1])[0]
+            if PY3:
+                label = unpack('B', self.data[pos:pos+1])[0]
+            else:
+                label = unpack('c', self.data[pos:pos+1])[0]
             arc.label = label
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:

@@ -15,10 +15,12 @@
 # limitations under the License.
 
 
+import sys
 import os
 from .lattice import Lattice, Node, BOS, EOS, NodeType
 from .dic import UserDictionary, CompiledUserDictionary
 
+PY3 = sys.version_info[0] == 3
 
 class Token:
     def __init__(self, node):
