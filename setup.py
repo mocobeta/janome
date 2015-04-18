@@ -26,7 +26,7 @@ long_description = """\
 
 Requirements
 ------------
-* Python 3.4 or later (not support 2.x)
+* Python 2.7 and Python 3.4+
 
 Features
 --------

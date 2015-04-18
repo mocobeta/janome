@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import with_statement
 import os
+import io
 import pickle
 import gzip
 from struct import pack, unpack
@@ -23,6 +25,7 @@ import traceback
 import logging
 import sys
 
+PY3 = sys.version_info[0] == 3
 
 SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sysdic")
 
@@ -44,21 +47,21 @@ def save_fstdata(data, dir='.'):
     # _save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
 
 
-def save_entries(entries, dir='.'):
+def save_entries(entries, dir=u'.'):
     #_save(os.path.join(dir, FILE_ENTRIES), pickle.dumps(entries), compresslevel)
     _save_as_module(os.path.join(dir, MODULE_ENTRIES), entries)
 
 
-def save_connections(connections, dir='.'):
+def save_connections(connections, dir=u'.'):
     #_save(os.path.join(dir, FILE_CONNECTIONS), pickle.dumps(connections), compresslevel)
     _save_as_module(os.path.join(dir, MODULE_CONNECTIONS), connections)
 
 
-def save_chardefs(chardefs, dir='.'):
+def save_chardefs(chardefs, dir=u'.'):
     _save_as_module(os.path.join(dir, MODULE_CHARDEFS), chardefs)
 
 
-def save_unknowns(unknowns, dir='.'):
+def save_unknowns(unknowns, dir=u'.'):
     _save_as_module(os.path.join(dir, MODULE_UNKNOWNS), unknowns)
 
 
@@ -82,13 +85,16 @@ def _save_as_module(file, data):
     if not data:
         return
     with open(file, 'w') as f:
-        f.write('DATA=')
-        f.write(str(data))
+        f.write(u'DATA=')
+        if PY3:
+            f.write(str(data))
+        else:
+            f.write(unicode(data))
         f.flush()
 
 
-class Dictionary:
-    """
+class Dictionary(object):
+    u"""
     Base dictionary class
     """
     def __init__(self, compiledFST, entries, connections):
@@ -106,7 +112,7 @@ class Dictionary:
         except Exception as e:
             logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logging.error('input=%s' % s)
-            logging.error('outputs=%s' % str(outputs))
+            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -116,7 +122,7 @@ class Dictionary:
 
 
 class SystemDictionary(Dictionary):
-    """
+    u"""
     System dictionary class
     """
     def __init__(self, entries, connections, chardefs, unknowns):
@@ -150,7 +156,7 @@ class SystemDictionary(Dictionary):
 
 
 class UserDictionary(Dictionary):
-    """
+    u"""
     User dictionary class (uncompiled)
     """
     def __init__(self, user_dict, enc, type, connections):
@@ -161,7 +167,7 @@ class UserDictionary(Dictionary):
     def buildipadic(self, user_dict, enc):
         surfaces = []
         entries = {}
-        with open(user_dict, encoding=enc) as f:
+        with io.open(user_dict, encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \
@@ -181,14 +187,14 @@ class UserDictionary(Dictionary):
     def save(self, to_dir, compressionlevel=9):
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
             raise Exception('Not a directory : %s' % to_dir)
-        else:
-            os.makedirs(to_dir, mode=0o755, exist_ok=True)
+        elif not os.path.exists(to_dir):
+            os.makedirs(to_dir, mode=int('0755', 8))
         _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST, compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
 
 class CompiledUserDictionary(Dictionary):
-    """
+    u"""
     User dictionary class (compiled)
     """
     def __init__(self, dic_dir, connections):
@@ -197,7 +203,7 @@ class CompiledUserDictionary(Dictionary):
 
     def load_dict(self, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
-            raise FileNotFoundError('No such directory : ' % dic_dir)
+            raise Exception('No such directory : ' % dic_dir)
         compiledFST = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
         return compiledFST, entries

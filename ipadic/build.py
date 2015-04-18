@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
 # limitations under the License.
 
 
+from __future__ import with_statement
 import os, sys
+from io import open
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from pathlib import Path
 import time
+import glob
 from janome.fst import *
 from janome.dic import *
 from struct import pack
@@ -30,12 +32,12 @@ FILE_UNK_DEF = 'unk.def'
 FILE_MATRIX_DEF = 'matrix.def'
 
 
-def build_dict(dicdir, enc, outdir='.'):
+def build_dict(dicdir, enc, outdir=u'.'):
     surfaces = []  # inputs/outputs for FST. the FST maps string(surface form) to int(word id)
     entries = {}  # dictionary entries
-    csv_files = Path(dicdir).glob('*.csv')
+    csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
     for path in csv_files:
-        with path.open(encoding=enc) as f:
+        with open(path, encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \
@@ -60,9 +62,9 @@ def build_dict(dicdir, enc, outdir='.'):
     save_entries(entries, dir=outdir)
 
     # save connection costs as dict
-    matrix_file = Path(dicdir, FILE_MATRIX_DEF)
+    matrix_file = os.path.join(dicdir, FILE_MATRIX_DEF)
     conn_costs = {}
-    with matrix_file.open(encoding=enc) as f:
+    with open(matrix_file, encoding=enc) as f:
         size1, size2 = f.readline().split(' ')
         matrix_size = int(size1) * int(size2)
         for line in f:
@@ -75,7 +77,7 @@ def build_dict(dicdir, enc, outdir='.'):
     save_connections(conn_costs, dir=outdir)
 
 
-def build_unknown_dict(dicdir, enc, outdir='.'):
+def build_unknown_dict(dicdir, enc, outdir=u'.'):
     categories = {}
     coderange = []
     with open(os.path.join(dicdir, FILE_CHAR_DEF), encoding=enc) as f:
@@ -135,7 +137,7 @@ def build_unknown_dict(dicdir, enc, outdir='.'):
     save_unknowns(unknowns, dir=outdir)
 
 
-def pre_compile(outdir='.'):
+def pre_compile(outdir=u'.'):
     import py_compile
     _t1 = time.time()
     py_compile.compile(os.path.join(outdir, MODULE_FST_DATA))

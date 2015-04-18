@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import unittest
 class TestDictionary(unittest.TestCase):
     def test_system_dictionary(self):
         sys_dic = SystemDictionary(entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
-        self.assertEqual(7, len(sys_dic.lookup('形態素')))
+        self.assertEqual(7, len(sys_dic.lookup(u'形態素')))
         self.assertEqual(1, sys_dic.get_trans_cost('0', '1'))
-        self.assertEqual(('HIRAGANA', []), sys_dic.char_category('あ'))
+        self.assertEqual(('HIRAGANA', []), sys_dic.char_category(u'あ'))
         self.assertTrue(sys_dic.unkown_invoked_always('ALPHA'))
         self.assertFalse(sys_dic.unkown_invoked_always('KANJI'))
         self.assertTrue(sys_dic.unknown_grouping('NUMERIC'))
@@ -42,7 +42,7 @@ class TestDictionary(unittest.TestCase):
         # create user dictionary from csv
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
                                   enc='utf8', type='ipadic', connections=connections)
-        self.assertEqual(1, len(user_dic.lookup('東京スカイツリー')))
+        self.assertEqual(1, len(user_dic.lookup(u'東京スカイツリー')))
 
         # save compiled dictionary
         dic_dir = os.path.join(parent_dir, 'tests/userdic')
@@ -52,8 +52,8 @@ class TestDictionary(unittest.TestCase):
 
         # load compiled dictionary
         compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections)
-        self.assertEqual(1, len(compiled_user_dic.lookup('とうきょうスカイツリー駅')))
+        self.assertEqual(1, len(compiled_user_dic.lookup(u'とうきょうスカイツリー駅')))
 
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     unittest.main()

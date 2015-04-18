@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import os, sys
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,24 +59,24 @@ class TestFST(unittest.TestCase):
 
     def test_create_minimum_transducer2(self):
         inputs = [
-            ('さくら'.encode('utf8'), '白'.encode('utf8')),
-            ('さくらんぼ'.encode('utf8'), '赤'.encode('utf8')),
-            ('すもも'.encode('utf8'), '赤'.encode('utf8')),
-            ('なし'.encode('utf8'), '茶'.encode('utf8')),
-            ('もも'.encode('utf8'), '桃'.encode('utf8')),
+            (u'さくら'.encode('utf8'), u'白'.encode('utf8')),
+            (u'さくらんぼ'.encode('utf8'), u'赤'.encode('utf8')),
+            (u'すもも'.encode('utf8'), u'赤'.encode('utf8')),
+            (u'なし'.encode('utf8'), u'茶'.encode('utf8')),
+            (u'もも'.encode('utf8'), u'桃'.encode('utf8')),
         ]
         dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)
         # accepted strings
-        self.assertEqual((True, set(['白'.encode('utf8')])), m.run('さくら'.encode('utf8')))
-        self.assertEqual((True, set(['白'.encode('utf8'), '赤'.encode('utf8')])), m.run('さくらんぼ'.encode('utf8')))
-        self.assertEqual((True, set(['赤'.encode('utf8')])), m.run('すもも'.encode('utf8')))
-        self.assertEqual((True, set(['茶'.encode('utf8')])), m.run('なし'.encode('utf8')))
-        self.assertEqual((True, set(['桃'.encode('utf8')])), m.run('もも'.encode('utf8')))
+        self.assertEqual((True, set([u'白'.encode('utf8')])), m.run(u'さくら'.encode('utf8')))
+        self.assertEqual((True, set([u'白'.encode('utf8'), u'赤'.encode(u'utf8')])), m.run(u'さくらんぼ'.encode('utf8')))
+        self.assertEqual((True, set([u'赤'.encode('utf8')])), m.run(u'すもも'.encode('utf8')))
+        self.assertEqual((True, set([u'茶'.encode('utf8')])), m.run(u'なし'.encode('utf8')))
+        self.assertEqual((True, set([u'桃'.encode('utf8')])), m.run(u'もも'.encode('utf8')))
         # not accepted string
-        self.assertEqual((False, set()), m.run('みかん'.encode('utf8')))
+        self.assertEqual((False, set()), m.run(u'みかん'.encode('utf8')))
 
 
 if __name__ == '__main__':

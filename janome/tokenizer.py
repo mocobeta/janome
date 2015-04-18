@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
 # limitations under the License.
 
 
+import sys
 import os
 from .lattice import Lattice, Node, BOS, EOS, NodeType
 from .dic import UserDictionary, CompiledUserDictionary
 
+PY3 = sys.version_info[0] == 3
 
 class Token:
     def __init__(self, node):
@@ -29,11 +31,17 @@ class Token:
         self.base_form = node.base_form
         self.reading = node.reading
         self.phonetic = node.phonetic
-        self.node_type = node.node_type.name
+        self.node_type = node.node_type
 
     def __str__(self):
-        return '%s\t%s,%s,%s,%s,%s,%s' % \
+        if PY3:
+            return '%s\t%s,%s,%s,%s,%s,%s' % \
                (self.surface, self.part_of_speech, self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic)
+        else:
+            return '%s\t%s,%s,%s,%s,%s,%s' % \
+               (self.surface.encode('utf8'), self.part_of_speech.encode('utf8'),
+                self.infl_form.encode('utf8'), self.infl_type.encode('utf8'),
+                self.base_form.encode('utf8'), self.reading.encode('utf8'), self.phonetic.encode('utf8'))
 
 
 class Tokenizer:

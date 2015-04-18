@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright [2015] [moco_beta]
+# Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,16 +15,13 @@
 # limitations under the License.
 
 
-from enum import Enum
+class NodeType:
+    SYS_DICT = "SYS_DICT"
+    USER_DICT = "USER_DICT"
+    UNKNOWN = "UNKNOWN"
 
 
-class NodeType(Enum):
-    SYS_DICT = 1
-    USER_DICT = 2
-    UNKNOWN = 3
-
-
-class BaseNode:
+class BaseNode(object):
     """
     Base node class
     """
@@ -153,7 +150,7 @@ class Lattice:
 
 if __name__ == '__main__':
     from sysdic import SYS_DIC
-    s = '４日夜、満月が地球の影に完全に入る「皆既月食」が起きた。'
+    s = u'４日夜、満月が地球の影に完全に入る「皆既月食」が起きた。'
     lattice = Lattice(len(s), SYS_DIC)
     pos = 0
     while pos < len(s):
