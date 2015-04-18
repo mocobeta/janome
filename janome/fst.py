@@ -81,7 +81,7 @@ class State(object):
 
     def set_output(self, char, out):
         if char in self.trans_map:
-            self.trans_map[char]['output'] = str(out)
+            self.trans_map[char]['output'] = bytes(out)
 
     def clear(self):
         self.final = False
@@ -197,7 +197,7 @@ def create_minimum_transducer(inputs):
             buffer[i - 1].set_transition(current_word[i - 1], buffer[i])
         if current_word != prev_word:
             buffer[len(current_word)].set_final(True)
-            buffer[len(current_word)].set_state_output(set([str()]))
+            buffer[len(current_word)].set_state_output(set([bytes()]))
 
         # set state outputs
         for j in range(1, pref_len + 1):
@@ -211,7 +211,10 @@ def create_minimum_transducer(inputs):
             word_suffix = output[len(common_prefix):]
 
             # re-set (j-1)'th state's output to prefix
-            buffer[j - 1].set_output(current_word[j - 1], ''.join(common_prefix))
+            if PY3:
+                buffer[j - 1].set_output(current_word[j - 1], common_prefix)
+            else:
+                buffer[j - 1].set_output(current_word[j - 1], ''.join(common_prefix))
 
             # re-set jth state's output to suffix or set final state output
             for c in CHARS:
@@ -276,7 +279,10 @@ def compileFST(fst):
                 output = v['output']
             # encode flag, label, output_size, output, relative target address
             bary += pack('b', flag)
-            bary += pack('B', c)
+            if PY3:
+                bary += pack('B', c)
+            else:
+                bary += pack('c', c)
             if output_size > 0:
                 bary += pack('I', output_size)
                 bary += output
