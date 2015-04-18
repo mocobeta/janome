@@ -18,7 +18,7 @@ py_compile.compile(os.path.join('sysdic', MODULE_CONNECTIONS))
 py_compile.compile(os.path.join('sysdic', MODULE_CHARDEFS))
 py_compile.compile(os.path.join('sysdic', MODULE_UNKNOWNS))
 
-version = '0.1.4'
+version = '0.2.0'
 name = 'janome'
 short_description = '`janome` is a package for Japanese Morphological Analysis.'
 long_description = """\
@@ -53,7 +53,7 @@ classifiers = [
 
 setup(
     name='Janome',
-    version='0.1.4',
+    version='0.2.0',
     description='Japanese morphological analysis engine.',
     author='Tomoko Uchida',
     author_email='tomoko.uchida.1111@gmail.com',

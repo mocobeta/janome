@@ -1,8 +1,8 @@
-=========
-janomePy2
-=========
+=======
+janome
+=======
 
-janomePy2 is a Japanese morphological analysis engine written in pure Python. (Python 2 compatible version.)
+janome is a Japanese morphological analysis engine written in pure Python.
 
 General documentation: http://mocobeta.github.io/janome/ (for Japanese)
 
