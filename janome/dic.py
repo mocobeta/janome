@@ -16,6 +16,7 @@
 
 from __future__ import with_statement
 import os
+import io
 import pickle
 import gzip
 from struct import pack, unpack
@@ -164,7 +165,7 @@ class UserDictionary(Dictionary):
     def buildipadic(self, user_dict, enc):
         surfaces = []
         entries = {}
-        with open(user_dict, encoding=enc) as f:
+        with io.open(user_dict, encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \

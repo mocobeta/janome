@@ -29,7 +29,7 @@ import unittest
 class TestDictionary(unittest.TestCase):
     def test_system_dictionary(self):
         dic_dir = os.path.join(parent_dir, "sysdic")
-        sys_dic = SystemDictionary(dic_dir, entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
         self.assertEqual(7, len(sys_dic.lookup(u'形態素')))
         self.assertEqual(1, sys_dic.get_trans_cost('0', '1'))
         self.assertEqual(('HIRAGANA', []), sys_dic.char_category(u'あ'))
