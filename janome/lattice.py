@@ -107,7 +107,7 @@ class Lattice:
 
     def add(self, node):
         for i, enode in enumerate(self.enodes[self.p]):
-            cost = self.dic.get_trans_cost(enode.right_id, node.right_id) + node.cost
+            cost = self.dic.get_trans_cost(enode.right_id, node.left_id) + node.cost
             if enode.min_cost + cost < node.min_cost:
                 node.min_cost = enode.min_cost + cost
                 node.back_index = enode.index
