@@ -360,7 +360,7 @@ class Matcher(object):
         if dict_data:
             self.data = dict_data
 
-    def run(self, word):
+    def run(self, word, common_prefix_match=True):
         # logging.debug('word=' + str([c for c in word]))
         outputs = set()
         accept = False
@@ -373,10 +373,11 @@ class Matcher(object):
                 # accepted
                 accept = True
                 for out in arc.final_output:
-                    if PY3:
-                        outputs.add(bytes(buf + out))
-                    else:
-                        outputs.add(str(buf + out))
+                    if common_prefix_match or i >= len(word):
+                        if PY3:
+                            outputs.add(bytes(buf + out))
+                        else:
+                            outputs.add(str(buf + out))
                 if arc.flag & FLAG_LAST_ARC or i >= len(word):
                     break
                 pos += incr

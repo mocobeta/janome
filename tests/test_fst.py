@@ -78,6 +78,34 @@ class TestFST(unittest.TestCase):
         # not accepted string
         self.assertEqual((False, set()), m.run(u'みかん'.encode('utf8')))
 
+    def test_common_prefix_match(self):
+        inputs = [
+            (u'す'.encode('utf8'), pack('I', 1)),
+            (u'すも'.encode('utf8'), pack('I', 2)),
+            (u'すもも'.encode('utf8'), pack('I', 3))
+        ]
+        dictionary = fst.create_minimum_transducer(inputs)
+        data = fst.compileFST(dictionary)
+
+        m = Matcher(data)
+        # matches 'す', 'すも', 'すもも'
+        expected_outputs = set([pack('I', 1), pack('I', 2), pack('I', 3)])
+        self.assertEqual((True, expected_outputs), m.run(u'すもも'.encode('utf8'), True))
+        self.assertEqual((True, expected_outputs), m.run(u'すもも'.encode('utf8')))
+
+    def test_perfect_match(self):
+        inputs = [
+            (u'す'.encode('utf8'), pack('I', 1)),
+            (u'すも'.encode('utf8'), pack('I', 2)),
+            (u'すもも'.encode('utf8'), pack('I', 3))
+        ]
+        dictionary = fst.create_minimum_transducer(inputs)
+        data = fst.compileFST(dictionary)
+
+        m = Matcher(data)
+        # matches 'すもも'
+        expected_outputs = set([pack('I', 3)])
+        self.assertEqual((True, expected_outputs), m.run(u'すもも'.encode('utf8'), False))
 
 if __name__ == '__main__':
     unittest.main()
