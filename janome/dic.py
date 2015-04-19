@@ -31,7 +31,7 @@ SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 
 FILE_FST_DATA = 'fst.data'
 # FILE_ENTRIES = 'entries.data'
-# FILE_CONNECTIONS = 'connections.data'
+FILE_CONNECTIONS = 'connections.data'
 
 MODULE_FST_DATA = 'fstdata.py'
 MODULE_ENTRIES = 'entries.py'
@@ -41,6 +41,7 @@ MODULE_UNKNOWNS = 'unknowns.py'
 
 FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
+
 
 def save_fstdata(data, dir='.'):
     _save(os.path.join(dir, FILE_FST_DATA), data, 9)
@@ -53,8 +54,8 @@ def save_entries(entries, dir=u'.'):
 
 
 def save_connections(connections, dir=u'.'):
-    #_save(os.path.join(dir, FILE_CONNECTIONS), pickle.dumps(connections), compresslevel)
-    _save_as_module(os.path.join(dir, MODULE_CONNECTIONS), connections)
+    _save(os.path.join(dir, FILE_CONNECTIONS), connections, 9)
+    # _save_as_module(os.path.join(dir, MODULE_CONNECTIONS), connections)
 
 
 def save_chardefs(chardefs, dir=u'.'):
@@ -97,11 +98,12 @@ class Dictionary(object):
     u"""
     Base dictionary class
     """
-    def __init__(self, compiledFST, entries, connections):
-        self.compiledFST = compiledFST
-        self.matcher = Matcher(compiledFST)
+    def __init__(self, dictFST, entries, connectionsFST):
+        self.compiledFST = dictFST
+        self.matcher = Matcher(dictFST)
         self.entries = entries
-        self.connections = connections
+        self.connectionsFST = connectionsFST
+        self.matcher_conn = Matcher(connectionsFST)
 
     def lookup(self, s):
         (matched, outputs) = self.matcher.run(s.encode('utf8'))
@@ -118,15 +120,26 @@ class Dictionary(object):
 
     def get_trans_cost(self, id1, id2):
         key = '%s,%s' % (id1, id2)
-        return self.connections.get(key)
+        (matched, outputs) = self.matcher_conn.run(key.encode('utf8'), False)
+        if not matched:
+            return None
+        try:
+            assert len(outputs) == 1
+            return unpack('i', list(outputs)[0])[0]
+        except Exception as e:
+            logging.error('Cannot load connections data. The dictionary may be corrupted?')
+            logging.error('key=%s' % key)
+            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            traceback.format_exc()
+            sys.exit(1)
 
 
 class SystemDictionary(Dictionary):
     u"""
     System dictionary class
     """
-    def __init__(self, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
+    def __init__(self, entries, chardefs, unknowns):
+        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, _load(os.path.join(SYSDIC_DIR, FILE_CONNECTIONS)))
         self.char_categories = chardefs[0]
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns
@@ -159,10 +172,10 @@ class UserDictionary(Dictionary):
     u"""
     User dictionary class (uncompiled)
     """
-    def __init__(self, user_dict, enc, type, connections):
+    def __init__(self, user_dict, enc, type, connectionsFST):
         build_method = getattr(self, 'build' + type)
-        compiledFST, entries = build_method(user_dict, enc)
-        Dictionary.__init__(self, compiledFST, entries, connections)
+        dictFST, entries = build_method(user_dict, enc)
+        Dictionary.__init__(self, dictFST, entries, connectionsFST)
 
     def buildipadic(self, user_dict, enc):
         surfaces = []
@@ -181,15 +194,15 @@ class UserDictionary(Dictionary):
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
         fst = create_minimum_transducer(inputs)
-        compiledFST = compileFST(fst)
-        return compiledFST, entries
+        dictFST = compileFST(fst)
+        return dictFST, entries
 
     def save(self, to_dir, compressionlevel=9):
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
             raise Exception('Not a directory : %s' % to_dir)
         elif not os.path.exists(to_dir):
             os.makedirs(to_dir, mode=int('0755', 8))
-        _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST, compressionlevel)
+        _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.dictFST, compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
 
@@ -197,13 +210,13 @@ class CompiledUserDictionary(Dictionary):
     u"""
     User dictionary class (compiled)
     """
-    def __init__(self, dic_dir, connections):
-        compiledFST, entries = self.load_dict(dic_dir)
-        Dictionary.__init__(self, compiledFST, entries, connections)
+    def __init__(self, dic_dir, connectionsFST):
+        dictFST, entries = self.load_dict(dic_dir)
+        Dictionary.__init__(self, dictFST, entries, connectionsFST)
 
     def load_dict(self, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
             raise Exception('No such directory : ' % dic_dir)
-        compiledFST = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
+        dictFST = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
-        return compiledFST, entries
+        return dictFST, entries

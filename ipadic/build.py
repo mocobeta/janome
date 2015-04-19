@@ -26,6 +26,7 @@ import glob
 from janome.fst import *
 from janome.dic import *
 from struct import pack
+import pickle
 
 FILE_CHAR_DEF = 'char.def'
 FILE_UNK_DEF = 'unk.def'
@@ -47,7 +48,7 @@ def build_dict(dicdir, enc, outdir=u'.'):
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
+                entries[morph_id] = pickle.dumps((surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic))
     inputs = sorted(surfaces)  # inputs must be sorted.
 
     assert len(surfaces) == len(entries)
@@ -63,7 +64,7 @@ def build_dict(dicdir, enc, outdir=u'.'):
 
     # save connection costs as dict
     matrix_file = os.path.join(dicdir, FILE_MATRIX_DEF)
-    conn_costs = {}
+    conn_costs = []
     with open(matrix_file, encoding=enc) as f:
         size1, size2 = f.readline().split(' ')
         matrix_size = int(size1) * int(size2)
@@ -71,10 +72,12 @@ def build_dict(dicdir, enc, outdir=u'.'):
             line = line.strip()
             id1, id2, cost = line.split(' ')
             key = '%s,%s' % (id1, id2)
-            val = int(cost)
-            conn_costs[key] = val
+            conn_costs.append((key.encode('utf8'), pack('i', int(cost))))
         assert len(conn_costs) == matrix_size
-    save_connections(conn_costs, dir=outdir)
+    inputs_conn = sorted(conn_costs)
+    fst_conn = create_minimum_transducer(inputs_conn)
+    compiledFST_conn = compileFST(fst_conn)
+    save_connections(compiledFST_conn, dir=outdir)
 
 
 def build_unknown_dict(dicdir, enc, outdir=u'.'):
@@ -140,9 +143,9 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
 def pre_compile(outdir=u'.'):
     import py_compile
     _t1 = time.time()
-    py_compile.compile(os.path.join(outdir, MODULE_FST_DATA))
+    # py_compile.compile(os.path.join(outdir, MODULE_FST_DATA))
     py_compile.compile(os.path.join(outdir, MODULE_ENTRIES))
-    py_compile.compile(os.path.join(outdir, MODULE_CONNECTIONS))
+    # py_compile.compile(os.path.join(outdir, MODULE_CONNECTIONS))
     py_compile.compile(os.path.join(outdir, MODULE_CHARDEFS))
     py_compile.compile(os.path.join(outdir, MODULE_UNKNOWNS))
     logging.info('Pre-compile data done. ' + str(time.time() - _t1) + ' sec.')
