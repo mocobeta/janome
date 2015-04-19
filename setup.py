@@ -14,7 +14,6 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
 
 print('Precompile dictionary data...')
 py_compile.compile(os.path.join('sysdic', MODULE_ENTRIES))
-py_compile.compile(os.path.join('sysdic', MODULE_CONNECTIONS))
 py_compile.compile(os.path.join('sysdic', MODULE_CHARDEFS))
 py_compile.compile(os.path.join('sysdic', MODULE_UNKNOWNS))
 
