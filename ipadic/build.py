@@ -26,7 +26,6 @@ import glob
 from janome.fst import *
 from janome.dic import *
 from struct import pack
-import pickle
 
 FILE_CHAR_DEF = 'char.def'
 FILE_UNK_DEF = 'unk.def'
@@ -48,17 +47,13 @@ def build_dict(dicdir, enc, outdir=u'.'):
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = pickle.dumps((surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic))
+                entries[morph_id] = (surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
     inputs = sorted(surfaces)  # inputs must be sorted.
 
     assert len(surfaces) == len(entries)
 
-    _t1 = time.time()
     fst = create_minimum_transducer(inputs)
-    logging.info('Build FST done. ' + str(time.time() - _t1) + ' sec.')
-    _t2 = time.time()
     compiledFST = compileFST(fst)
-    logging.info('Compile FST done. ' + str(time.time() - _t2) + ' sec.')
     save_fstdata(compiledFST, dir=outdir)
     save_entries(entries, dir=outdir)
 
@@ -140,12 +135,10 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
     save_unknowns(unknowns, dir=outdir)
 
 
-def pre_compile(outdir=u'.'):
+def pre_compile(outdir='.'):
     import py_compile
     _t1 = time.time()
-    # py_compile.compile(os.path.join(outdir, MODULE_FST_DATA))
     py_compile.compile(os.path.join(outdir, MODULE_ENTRIES))
-    # py_compile.compile(os.path.join(outdir, MODULE_CONNECTIONS))
     py_compile.compile(os.path.join(outdir, MODULE_CHARDEFS))
     py_compile.compile(os.path.join(outdir, MODULE_UNKNOWNS))
     logging.info('Pre-compile data done. ' + str(time.time() - _t1) + ' sec.')
@@ -157,5 +150,4 @@ if __name__ == '__main__':
     enc = sys.argv[2]
     outdir = sys.argv[3] if len(sys.argv) > 3 else '.'
     build_dict(dicdir, enc, outdir)
-    # pre_compile(outdir)
     build_unknown_dict(dicdir, enc, outdir)

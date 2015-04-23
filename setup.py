@@ -2,7 +2,6 @@ from setuptools import setup
 
 import os
 from zipfile import ZipFile
-import py_compile
 from janome.dic import *
 
 dicdir = 'ipadic'
@@ -11,11 +10,6 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
     print('Unzip dictionary data...')
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
-
-print('Precompile dictionary data...')
-py_compile.compile(os.path.join('sysdic', MODULE_ENTRIES))
-py_compile.compile(os.path.join('sysdic', MODULE_CHARDEFS))
-py_compile.compile(os.path.join('sysdic', MODULE_UNKNOWNS))
 
 version = '0.2.0'
 name = 'janome'
@@ -58,7 +52,7 @@ setup(
     author_email='tomoko.uchida.1111@gmail.com',
     url='http://mocobeta.github.io/janome/',
     packages=['janome','sysdic'],
-    package_data={'sysdic': ['fst.data']},
+    package_data={'sysdic': ['fst.data', 'connections.data']},
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer']
 )
 
