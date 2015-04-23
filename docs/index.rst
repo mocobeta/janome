@@ -3,13 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. role:: strike
+
 Welcome to janome's documentation!
 ==================================
 
-Janome とは
+janome とは
 -----------
 
-Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
+janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
 
 依存ライブラリなしで簡単にインストールでき, アプリケーションに組み込みやすいシンプルな API を備える形態素解析ライブラリを目指しています.
 
@@ -20,7 +22,6 @@ Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
-master リポジトリが janome 用, 2x_support ブランチが janomePy2 用です.
 
 動作に必要なソフトウェア
 --------------------------
@@ -30,10 +31,12 @@ Python 2.7 または Python 3.4+ インタプリタ
 バージョン
 -----------------
 
-janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor version が同じなら同等の動作をします.
+:strike:`janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor version が同じなら同等の動作をします.`
 
-* janome: 0.1.4
-* janomePy2: 0.1.4
+janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
+
+* janome: 0.2.0
+* :strike:`janomePy2: 0.1.4`
 
 インストール
 ---------------
@@ -41,21 +44,17 @@ janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor vers
 PyPI
 ^^^^
 
-.. WARNING:: バイナリ配布だと PyPI のサイズ制限に引っかかったため, ソース配布になっています. ビルド時に 3~4 GB程度のメモリを必要とします. 貧弱なマシンや, 他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください. (改善検討中...)
+.. WARNING:: pip でのビルド時に 3~4 GB程度のメモリを必要とします. 貧弱なマシンや, 他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください. (改善検討中...)
 
 .. NOTE:: 上記の理由により, 現行バージョンでは 32 bit 版 Python だとビルド時に Meomory Error でこけます. 64 bit 版を使ってください.
 
-for Python 3.4+ users: `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
+`https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
 .. code-block:: bash
 
   $ pip install janome
 
-for Python 2.7 users: `https://pypi.python.org/pypi/JanomePy2 <https://pypi.python.org/pypi/JanomePy2>`_
-
-.. code-block:: bash
-
-  $ pip install janomePy2
+:strike:`for Python 2.7 users: https://pypi.python.org/pypi/JanomePy2`
 
 
 使い方
@@ -63,7 +62,7 @@ for Python 2.7 users: `https://pypi.python.org/pypi/JanomePy2 <https://pypi.pyth
 
 janome.tokenizer パッケージの Tokenizer オブジェクトを作り, tokenize() メソッドに解析したい文字列を渡します.
 
-戻り値は Token オブジェクトのリストです. Token は表層形や品詞といった形態素情報を含みます. 詳しくは help() や `ソースコード <https://github.com/mocobeta/janome/blob/master/janome/tokenizer.py>`_ をご参照ください.
+戻り値は Token オブジェクトのリストです. Token は表層形や品詞といった形態素情報を含みます. 詳しくは dir() や `ソースコード <https://github.com/mocobeta/janome/blob/master/janome/tokenizer.py>`_ をご参照ください.
 
 ::
 
@@ -81,10 +80,10 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
-for janomePy2 Windows users
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+for Windows users
+^^^^^^^^^^^^^^^^^
 
-janomePy2 の Token.__str__() の戻りは utf8 なので, そのまま出力すると文字化けします. decode('utf8') をかけてください.
+文字化けする場合は decode('utf8') をかけてください.
 
 ::
 
@@ -98,7 +97,7 @@ janomePy2 の Token.__str__() の戻りは utf8 なので, そのまま出力す
 ユーザー定義辞書を使う
 -------------------------
 
-ユーザー定義辞書のフォーマットは, Mecab 辞書と同じです. たとえば以下のような CSV ファイルを作成し, Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します.
+ユーザー定義辞書のフォーマットは, MeCab 辞書と同じです. たとえば以下のような CSV ファイルを作成し, Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します.
 
 辞書フォーマットは MeCab の `ドキュメント <http://mecab.googlecode.com/svn/trunk/mecab/doc/dic.html>`_ をご参照ください.
 
@@ -171,7 +170,7 @@ A. 文章の長さによりますが, 手元の PC では 1 センテンスあ�
 
 Q. 実装（データ構造, アルゴリズム）について.
 
-A. 辞書は, FST (正確には Minimal Acyclic Subsequential Transducer, `論文 <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698>`_) を使っています. 実装は `Apache Lucene <https://lucene.apache.org/core/>`_ (Kuromoji) と `Kagome <https://github.com/ikawaha/kagome>`_ を参考にさせていただきました. エンジンはオーソドックスなビタビで, ほぼ `自然言語処理の基礎 <http://www.amazon.co.jp/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86%E3%81%AE%E5%9F%BA%E7%A4%8E-%E5%A5%A5%E6%9D%91-%E5%AD%A6/dp/4339024511>`_ の3章だけ読んで書きました.
+A. 辞書は, FST (正確には Minimal Acyclic Subsequential Transducer, `論文 <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698>`_) を使っています. 実装は `Apache Lucene <https://lucene.apache.org/core/>`_ (Kuromoji) と `kagome <https://github.com/ikawaha/kagome>`_ を参考にさせていただきました. エンジンはオーソドックスなビタビで, ほぼ `自然言語処理の基礎 <http://www.amazon.co.jp/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86%E3%81%AE%E5%9F%BA%E7%A4%8E-%E5%A5%A5%E6%9D%91-%E5%AD%A6/dp/4339024511>`_ の3章だけ読んで書きました.
 
 Janome は Lucene の単語辞書やクエリパーサで使われている FST について調べていて生まれました. もしも内部実装にご興味があれば, 以下もどうぞ.
 
@@ -180,7 +179,7 @@ Janome は Lucene の単語辞書やクエリパーサで使われている FST 
 
 Q. Python 2 系への対応は.
 
-A. デスヨネー. => 対応しました. janomePy2 をご利用ください.
+A. デスヨネー. => 対応しました. janomePy2 をご利用ください. => janome 本体が Python2.7 にも対応しました.
 
 Q. 学習器ついてないの.
 
@@ -223,6 +222,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated (数日中に PyPI から削除します.)
 * 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
 * 2015.04.08 janome Version 0.1.3 公開
 
