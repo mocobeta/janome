@@ -14,6 +14,18 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
 version = '0.2.1'
 name = 'janome'
 short_description = '`janome` is a package for Japanese Morphological Analysis.'
+long_description = """\
+`janome` is a package for Japanese Morphological Analysis.
+
+Requirements
+------------
+* Python 2.7 and Python 3.4+
+
+Features and history
+--------------------
+See http://mocobeta.github.io/janome/ (for Japanese)
+
+"""
 
 classifiers = [
     "Development Status :: 3 - Alpha",
