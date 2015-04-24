@@ -142,8 +142,8 @@ userdic.csv ::
 辞書のコンパイル ::
 
   >>> from janome.dic import UserDictionary
-  >>> from sysdic import connections
-  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", connections)
+  >>> from sysdic import SYS_DIC
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", SYS_DIC.connectionsFST)
   >>> user_dict.save("/tmp/userdic")
 
 これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
@@ -222,6 +222,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2015.04.24 janome Version 0.2.1 リリース
 * 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated (数日中に PyPI から削除します.)
 * 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
 * 2015.04.08 janome Version 0.1.3 公開

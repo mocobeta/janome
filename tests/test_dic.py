@@ -43,7 +43,7 @@ class TestDictionary(unittest.TestCase):
     def test_user_dictionary(self):
         sys_dic = SystemDictionary(entries.DATA, chardef.DATA, unknowns.DATA)
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
-                                  enc='utf8', type='ipadic', connections=sys_dic.connectionsFST)
+                                  enc='utf8', type='ipadic', connectionsFST=sys_dic.connectionsFST)
         self.assertEqual(1, len(user_dic.lookup(u'東京スカイツリー')))
 
         # save compiled dictionary
@@ -53,7 +53,7 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
 
         # load compiled dictionary
-        compiled_user_dic = CompiledUserDictionary(dic_dir, connections=sys_dic.connectionsFST)
+        compiled_user_dic = CompiledUserDictionary(dic_dir, connectionsFST=sys_dic.connectionsFST)
         self.assertEqual(1, len(compiled_user_dic.lookup(u'とうきょうスカイツリー駅')))
 
 

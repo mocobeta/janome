@@ -65,7 +65,7 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(u'」', tokens[10].surface)
 
 
-def test_tokenize_with_user_dic(self):
+    def test_tokenize_with_user_dic(self):
         text = u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
         udic_file = os.path.join(parent_dir, 'tests/user_ipadic.csv')
         tokens = Tokenizer(udic_file).tokenize(text)

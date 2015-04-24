@@ -202,7 +202,7 @@ class UserDictionary(Dictionary):
             raise Exception('Not a directory : %s' % to_dir)
         elif not os.path.exists(to_dir):
             os.makedirs(to_dir, mode=int('0755', 8))
-        _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.dictFST, compressionlevel)
+        _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST, compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
 

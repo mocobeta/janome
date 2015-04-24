@@ -51,10 +51,10 @@ class Tokenizer:
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
-                self.user_dic = UserDictionary(udic, udic_enc, udic_type, SYS_DIC.connections)
+                self.user_dic = UserDictionary(udic, udic_enc, udic_type, SYS_DIC.connectionsFST)
             elif os.path.isdir(udic):
                 # load compiled user dictionary
-                self.user_dic = CompiledUserDictionary(udic, SYS_DIC.connections)
+                self.user_dic = CompiledUserDictionary(udic, SYS_DIC.connectionsFST)
             else:
                 self.user_dic = None
         else:
