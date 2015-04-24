@@ -35,7 +35,7 @@ Python 2.7 または Python 3.4+ インタプリタ
 
 janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
 
-* janome: 0.2.0
+* janome: 0.2.2
 * :strike:`janomePy2: 0.1.4`
 
 インストール
@@ -152,6 +152,7 @@ userdic.csv ::
 
   >>> t = Tokenizer("/tmp/userdic")
 
+.. note:: コンパイル済みユーザー辞書は, コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください. 辞書の前方/後方互換性は保証されないため, Python のメジャーバージョンが異なると読めない可能性があります.
 
 よくある（かもしれない）質問
 ---------------------------------
@@ -222,11 +223,12 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
-詳細: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
-
+* 2015.04.24 janome Version 0.2.2 リリース
 * 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated (数日中に PyPI から削除します.)
 * 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
 * 2015.04.08 janome Version 0.1.3 公開
+
+詳細: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
 .. Indices and tables
 .. ==================

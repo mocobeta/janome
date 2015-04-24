@@ -1,4 +1,4 @@
-* 0.2.1 (2015.04.24)
+* 0.2.2 (2015.04.24)
   - Fix bug in constructiong user dictionaries
 
 * 0.2.0 (2015.04.24)
