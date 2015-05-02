@@ -59,7 +59,7 @@ def build_dict(dicdir, enc, outdir=u'.'):
 
     # save connection costs as dict
     matrix_file = os.path.join(dicdir, FILE_MATRIX_DEF)
-    conn_costs = []
+    conn_costs = {}
     with open(matrix_file, encoding=enc) as f:
         size1, size2 = f.readline().split(' ')
         matrix_size = int(size1) * int(size2)
@@ -67,12 +67,10 @@ def build_dict(dicdir, enc, outdir=u'.'):
             line = line.strip()
             id1, id2, cost = line.split(' ')
             key = '%s,%s' % (id1, id2)
-            conn_costs.append((key.encode('utf8'), pack('i', int(cost))))
+            val = int(cost)
+            conn_costs[key] = val
         assert len(conn_costs) == matrix_size
-    inputs_conn = sorted(conn_costs)
-    fst_conn = create_minimum_transducer(inputs_conn)
-    compiledFST_conn = compileFST(fst_conn)
-    save_connections(compiledFST_conn, dir=outdir)
+    save_connections(conn_costs, dir=outdir)
 
 
 def build_unknown_dict(dicdir, enc, outdir=u'.'):
@@ -134,14 +132,6 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
     save_chardefs((categories, coderange), dir=outdir)
     save_unknowns(unknowns, dir=outdir)
 
-
-def pre_compile(outdir='.'):
-    import py_compile
-    _t1 = time.time()
-    py_compile.compile(os.path.join(outdir, MODULE_ENTRIES))
-    py_compile.compile(os.path.join(outdir, MODULE_CHARDEFS))
-    py_compile.compile(os.path.join(outdir, MODULE_UNKNOWNS))
-    logging.info('Pre-compile data done. ' + str(time.time() - _t1) + ' sec.')
 
 if __name__ == '__main__':
     import logging
