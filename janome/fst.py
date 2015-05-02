@@ -356,11 +356,12 @@ class Arc(object):
 
 
 class Matcher(object):
-    def __init__(self, dict_data, max_cached_word_len=20):
+    def __init__(self, dict_data, max_cache_size=5000, max_cached_word_len=20):
         if dict_data:
             self.data = dict_data
             self.data_len = len(dict_data)
-            self.word_cache = {}
+            self.word_cache = OrderedDict()
+            self.max_cache_size = max_cache_size
             self.max_cached_word_len = max_cached_word_len
 
     def run(self, word, common_prefix_match=True):
@@ -379,6 +380,9 @@ class Matcher(object):
                 outputs = self.word_cache[word[:j]][1]
                 i = j
                 accept = True
+                # move this entry to top
+                del[self.word_cache[word[:j]]]
+                self.word_cache[word[:j]] = (pos, outputs)
                 break
         while pos < self.data_len:
             arc, incr = self.next_arc(pos)
@@ -394,7 +398,9 @@ class Matcher(object):
                 if arc.flag & FLAG_LAST_ARC or i >= word_len:
                     break
                 pos += incr
-                if i < self.max_cached_word_len and word[:i+1] not in self.word_cache:
+                if i < self.max_cached_word_len:
+                    if len(self.word_cache) >= self.max_cache_size:
+                        self.word_cache.popitem(last=False)
                     self.word_cache[word[:i+1]] = (pos, outputs)
             elif arc.flag & FLAG_LAST_ARC:
                 if i >= word_len:
