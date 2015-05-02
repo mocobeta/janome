@@ -356,9 +356,12 @@ class Arc(object):
 
 
 class Matcher(object):
-    def __init__(self, dict_data):
+    def __init__(self, dict_data, max_cached_word_len=20):
         if dict_data:
             self.data = dict_data
+            self.data_len = len(dict_data)
+            self.word_cache = {}
+            self.max_cached_word_len = max_cached_word_len
 
     def run(self, word, common_prefix_match=True):
         # logging.debug('word=' + str([c for c in word]))
@@ -367,22 +370,34 @@ class Matcher(object):
         buf = bytearray()
         i = 0
         pos = 0
-        while pos < len(self.data):
+        word_len = len(word)
+        # any prefix is in cache?
+        for j in range(min(word_len, self.max_cached_word_len), 0, -1):
+            if word[:j] in self.word_cache:
+                # A cached entry found. We can skip to the position.
+                pos = self.word_cache[word[:j]][0]
+                outputs = self.word_cache[word[:j]][1]
+                i = j
+                accept = True
+                break
+        while pos < self.data_len:
             arc, incr = self.next_arc(pos)
             if arc.flag & FLAG_FINAL_ARC:
                 # accepted
                 accept = True
                 for out in arc.final_output:
-                    if common_prefix_match or i >= len(word):
+                    if common_prefix_match or i >= word_len:
                         if PY3:
                             outputs.add(bytes(buf + out))
                         else:
                             outputs.add(str(buf + out))
-                if arc.flag & FLAG_LAST_ARC or i >= len(word):
+                if arc.flag & FLAG_LAST_ARC or i >= word_len:
                     break
                 pos += incr
+                if i < self.max_cached_word_len and word[:i+1] not in self.word_cache:
+                    self.word_cache[word[:i+1]] = (pos, outputs)
             elif arc.flag & FLAG_LAST_ARC:
-                if i >= len(word):
+                if i >= word_len:
                     break
                 if word[i] == arc.label:
                     buf += arc.output
@@ -391,7 +406,7 @@ class Matcher(object):
                 else:
                     break
             else:
-                if i >= len(word):
+                if i >= word_len:
                     break
                 if word[i] == arc.label:
                     buf += arc.output
