@@ -373,18 +373,20 @@ class Matcher(object):
         pos = 0
         word_len = len(word)
 
+        # ! There are bugs in cache... 
         # any prefix is in cache?
-        for j in range(min(word_len, self.max_cached_word_len), 0, -1):
-            if word[:j] in self.word_cache:
-                # A cached entry found. We can skip to the position.
-                pos = self.word_cache[word[:j]][0]
-                outputs |= self.word_cache[word[:j]][1]
-                i = j
-                accept = True
-                # move this entry to top
-                del[self.word_cache[word[:j]]]
-                self.word_cache[word[:j]] = (pos, set(outputs))
-                break
+        # for j in range(min(word_len, self.max_cached_word_len), 0, -1):
+        #     if word[:j] in self.word_cache:
+                  # A cached entry found. We can skip to the position.
+        #         pos = self.word_cache[word[:j]][0]
+        #         outputs |= self.word_cache[word[:j]][1]
+        #         buf += self.word_cache[word[:j]][2]
+        #         i = j
+        #         accept = True
+                  # move this entry to top
+        #         del[self.word_cache[word[:j]]]
+        #         self.word_cache[word[:j]] = (pos, set(outputs), copy.copy(buf))
+        #         break
         while pos < self.data_len:
             arc, incr = self.next_arc(pos)
             if arc.flag & FLAG_FINAL_ARC:
@@ -397,12 +399,13 @@ class Matcher(object):
                         else:
                             outputs.add(str(buf + out))
                 pos += incr
+                # ! There are bugs in cache... 
+                # if i <= min(word_len, self.max_cached_word_len):
+                #     self.word_cache[word[:i]] = (pos, set(outputs), copy.copy(buf))
+                #     if len(self.word_cache) >= self.max_cache_size:
+                #         self.word_cache.popitem(last=False)
                 if arc.flag & FLAG_LAST_ARC or i >= word_len:
                     break
-                if i < self.max_cached_word_len:
-                    self.word_cache[word[:i]] = (pos, set(outputs))
-                    if len(self.word_cache) >= self.max_cache_size:
-                        self.word_cache.popitem(last=False)
             elif arc.flag & FLAG_LAST_ARC:
                 if i >= word_len:
                     break
@@ -421,7 +424,7 @@ class Matcher(object):
                     pos += arc.target
                 else:
                     pos += incr
-        return accept, outputs
+        return accept, set(o for o in outputs if o)
 
     def next_arc(self, addr=0):
         assert addr >= 0
