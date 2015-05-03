@@ -115,9 +115,9 @@ class Lattice:
         node.pos = self.p
         node.index = len(self.snodes[self.p])
         self.snodes[self.p].append(node)
-        if isinstance(node, Node):
+        try:
             self.enodes[self.p + len(node.surface)].append(node)
-        else:
+        except AttributeError:
             self.enodes[self.p + 1].append(node)
 
     def forward(self):
