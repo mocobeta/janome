@@ -356,11 +356,12 @@ class Arc(object):
 
 
 class Matcher(object):
-    def __init__(self, dict_data, max_cache_size=5000, max_cached_word_len=20):
+    def __init__(self, dict_data, max_cache_size=5000, max_cached_word_len=15):
         if dict_data:
             self.data = dict_data
             self.data_len = len(dict_data)
-            self.word_cache = OrderedDict()
+            # bytes -> (position, final_outputs, outputs)
+            self.cache = OrderedDict()
             self.max_cache_size = max_cache_size
             self.max_cached_word_len = max_cached_word_len
 
@@ -373,20 +374,21 @@ class Matcher(object):
         pos = 0
         word_len = len(word)
 
-        # ! There are bugs in cache... 
         # any prefix is in cache?
-        # for j in range(min(word_len, self.max_cached_word_len), 0, -1):
-        #     if word[:j] in self.word_cache:
-                  # A cached entry found. We can skip to the position.
-        #         pos = self.word_cache[word[:j]][0]
-        #         outputs |= self.word_cache[word[:j]][1]
-        #         buf += self.word_cache[word[:j]][2]
-        #         i = j
-        #         accept = True
-                  # move this entry to top
-        #         del[self.word_cache[word[:j]]]
-        #         self.word_cache[word[:j]] = (pos, set(outputs), copy.copy(buf))
-        #         break
+        for j in range(min(word_len, self.max_cached_word_len), 0, -1):
+            if word[:j] in self.cache:
+                # A cached entry found. We can skip to the position.
+                pos = self.cache[word[:j]][0]
+                outputs |= self.cache[word[:j]][1]
+                buf += self.cache[word[:j]][2]
+                accept = True
+                i = j
+                # move this entry to top
+                del[self.cache[word[:j]]]
+                self.cache[word[:j]] = (pos, set(outputs),
+                                        bytes(buf) if PY3 else str(buf))
+                break
+
         while pos < self.data_len:
             arc, incr = self.next_arc(pos)
             if arc.flag & FLAG_FINAL_ARC:
@@ -399,13 +401,16 @@ class Matcher(object):
                         else:
                             outputs.add(str(buf + out))
                 pos += incr
-                # ! There are bugs in cache... 
-                # if i <= min(word_len, self.max_cached_word_len):
-                #     self.word_cache[word[:i]] = (pos, set(outputs), copy.copy(buf))
-                #     if len(self.word_cache) >= self.max_cache_size:
-                #         self.word_cache.popitem(last=False)
-                if arc.flag & FLAG_LAST_ARC or i >= word_len:
+                if arc.flag & FLAG_LAST_ARC or i > word_len:
                     break
+                if i < self.max_cached_word_len:
+                    # add to cache
+                    self.cache[word[:i]] = (
+                        pos, set(o for o in outputs if o),
+                        bytes(buf) if PY3 else str(buf))
+                    # check cache size
+                    if len(self.cache) >= self.max_cache_size:
+                        self.cache.popitem(last=False)
             elif arc.flag & FLAG_LAST_ARC:
                 if i >= word_len:
                     break
