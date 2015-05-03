@@ -35,7 +35,7 @@ Python 2.7 または Python 3.4+ インタプリタ
 
 janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
 
-* janome: 0.2.2
+* janome: 0.2.3
 * :strike:`janomePy2: 0.1.4`
 
 インストール
@@ -143,7 +143,7 @@ userdic.csv ::
 
   >>> from janome.dic import UserDictionary
   >>> from sysdic import SYS_DIC
-  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", SYS_DIC.connectionsFST)
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", SYS_DIC.connections)
   >>> user_dict.save("/tmp/userdic")
 
 これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
@@ -213,7 +213,10 @@ A. `@moco_beta <https://twitter.com/moco_beta>`_ 宛につぶやくか, Github �
 License
 ------------
 
-Apache License 2.0
+Licensed under Apache License 2.0 and uses the MeCab-IPADIC dictionary/statistical model.
+
+See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ and `NOTICE.txt <https://github.com/mocobeta/janome/blob/master/NOTICE.txt>`_ for license details.
+
 
 Copyright
 -----------
@@ -223,6 +226,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2015.05.03 janome Version 0.2.3 リリース
 * 2015.04.24 janome Version 0.2.2 リリース
 * 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated (数日中に PyPI から削除します.)
 * 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
