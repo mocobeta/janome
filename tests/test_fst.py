@@ -72,6 +72,7 @@ class TestFST(unittest.TestCase):
         # accepted strings
         self.assertEqual((True, set([u'白'.encode('utf8')])), m.run(u'さくら'.encode('utf8')))
         self.assertEqual((True, set([u'白'.encode('utf8'), u'赤'.encode(u'utf8')])), m.run(u'さくらんぼ'.encode('utf8')))
+        self.assertEqual((True, set([u'白'.encode('utf8')])), m.run(u'さくらさく'.encode('utf8')))
         self.assertEqual((True, set([u'赤'.encode('utf8')])), m.run(u'すもも'.encode('utf8')))
         self.assertEqual((True, set([u'茶'.encode('utf8')])), m.run(u'なし'.encode('utf8')))
         self.assertEqual((True, set([u'桃'.encode('utf8')])), m.run(u'もも'.encode('utf8')))
