@@ -35,7 +35,7 @@ Python 2.7 または Python 3.4+ インタプリタ
 
 janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
 
-* janome: 0.2.3
+* janome: 0.2.4
 * :strike:`janomePy2: 0.1.4`
 
 インストール
@@ -226,6 +226,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2015.05.03 janome Version 0.2.4 リリース
 * 2015.05.03 janome Version 0.2.3 リリース
 * 2015.04.24 janome Version 0.2.2 リリース
 * 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated (数日中に PyPI から削除します.)
