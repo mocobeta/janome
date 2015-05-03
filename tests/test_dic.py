@@ -38,6 +38,18 @@ class TestDictionary(unittest.TestCase):
         self.assertFalse(sys_dic.unknown_grouping('KANJI'))
         self.assertEqual(2, sys_dic.unknown_length('HIRAGANA'))
 
+    def test_system_dictionary_cache(self):
+        sys_dic = SystemDictionary(entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
+        self.assertEqual(11, len(sys_dic.lookup(u'小書き')))
+        self.assertEqual(11, len(sys_dic.lookup(u'小書き')))
+        self.assertEqual(11, len(sys_dic.lookup(u'小書きにしました')))
+
+        self.assertEqual(10, len(sys_dic.lookup(u'みんなと')))
+        self.assertEqual(10, len(sys_dic.lookup(u'みんなと')))
+
+        self.assertEqual(2, len(sys_dic.lookup(u'叩く')))
+        self.assertEqual(2, len(sys_dic.lookup(u'叩く')))
+        
     def test_user_dictionary(self):
         # create user dictionary from csv
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),

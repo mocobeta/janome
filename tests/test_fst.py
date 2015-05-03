@@ -63,7 +63,7 @@ class TestFST(unittest.TestCase):
             (u'さくらんぼ'.encode('utf8'), u'赤'.encode('utf8')),
             (u'すもも'.encode('utf8'), u'赤'.encode('utf8')),
             (u'なし'.encode('utf8'), u'茶'.encode('utf8')),
-            (u'もも'.encode('utf8'), u'桃'.encode('utf8')),
+            (u'もも'.encode('utf8'), u'桃'.encode('utf8'))
         ]
         dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
@@ -92,7 +92,6 @@ class TestFST(unittest.TestCase):
         # matches 'す', 'すも', 'すもも'
         expected_outputs = set([pack('I', 1), pack('I', 2), pack('I', 3)])
         self.assertEqual((True, expected_outputs), m.run(u'すもも'.encode('utf8'), True))
-        self.assertEqual((True, expected_outputs), m.run(u'すもも'.encode('utf8')))
 
     def test_perfect_match(self):
         inputs = [
@@ -108,6 +107,33 @@ class TestFST(unittest.TestCase):
         expected_outputs = set([pack('I', 3)])
         self.assertEqual((True, expected_outputs), m.run(u'すもも'.encode('utf8'), False))
 
+    def test_matcher_cache(self):
+        inputs = [
+            (u'す'.encode('utf8'), pack('I', 1)),
+            (u'すも'.encode('utf8'), pack('I', 2)),
+            (u'すもも'.encode('utf8'), pack('I', 3))
+        ]
+        dictionary = fst.create_minimum_transducer(inputs)
+        data = fst.compileFST(dictionary)
+
+        m = Matcher(data)
+        # matches 'す', 'すも', 'すもも'
+        self.assertEqual(
+            (True, set([pack('I', 1), pack('I', 2), pack('I', 3)])),
+            m.run(u'すもも'.encode('utf8'), True))
+        self.assertEqual(
+            (True, set([pack('I', 1), pack('I', 2)])),
+            m.run(u'すもうとり'.encode('utf8'), True))
+        self.assertEqual(
+            (True, set([pack('I', 1), pack('I', 2), pack('I', 3)])),
+            m.run(u'すもも'.encode('utf8'), True))
+        self.assertEqual(
+            (True, set([pack('I', 1), pack('I', 2), pack('I', 3)])),
+            m.run(u'すもももももももものうち'.encode('utf8'), True))
+        self.assertEqual(
+            (True, set([pack('I', 1)])),
+            m.run(u'す'.encode('utf8'), True))
+
+        
 if __name__ == '__main__':
     unittest.main()
-
