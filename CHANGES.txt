@@ -1,3 +1,6 @@
+* 0.2.4 (2015.05.03)
+  - Revert cache introduced in 0.2.3 (because there are troublesome bugs...)
+
 * 0.2.3 (2015.05.03)
   - Add lru words cache to improve speed of analysing
 
