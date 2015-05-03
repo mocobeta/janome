@@ -1,3 +1,6 @@
+* 0.2.3 (2015.05.03)
+  - Add lru words cache to improve speed of analysing
+
 * 0.2.2 (2015.04.24)
   - Fix bug in constructiong user dictionaries
 
