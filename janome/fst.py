@@ -22,6 +22,7 @@ from struct import pack, unpack
 from collections import OrderedDict
 import logging
 import time
+import threading
 
 PY3 = sys.version_info[0] == 3
 
@@ -364,6 +365,7 @@ class Matcher(object):
             self.cache = OrderedDict()
             self.max_cache_size = max_cache_size
             self.max_cached_word_len = max_cached_word_len
+            self.lock = threading.Lock()
 
     def run(self, word, common_prefix_match=True):
         # logging.debug('word=' + str([c for c in word]))
@@ -384,9 +386,10 @@ class Matcher(object):
                 accept = True
                 i = j
                 # move this entry to top
-                del[self.cache[word[:j]]]
-                self.cache[word[:j]] = (pos, set(outputs),
-                                        bytes(buf) if PY3 else str(buf))
+                with self.lock:
+                    del[self.cache[word[:j]]]
+                    self.cache[word[:j]] = (pos, set(outputs),
+                                            bytes(buf) if PY3 else str(buf))
                 break
 
         while pos < self.data_len:
@@ -404,13 +407,14 @@ class Matcher(object):
                 if arc.flag & FLAG_LAST_ARC or i > word_len:
                     break
                 if i < self.max_cached_word_len:
-                    # add to cache
-                    self.cache[word[:i]] = (
-                        pos, set(o for o in outputs if o),
-                        bytes(buf) if PY3 else str(buf))
-                    # check cache size
-                    if len(self.cache) >= self.max_cache_size:
-                        self.cache.popitem(last=False)
+                    with self.lock:
+                        # add to cache
+                        self.cache[word[:i]] = (
+                            pos, set(o for o in outputs if o),
+                            bytes(buf) if PY3 else str(buf))
+                        # check cache size
+                        if len(self.cache) >= self.max_cache_size:
+                            self.cache.popitem(last=False)
             elif arc.flag & FLAG_LAST_ARC:
                 if i >= word_len:
                     break
