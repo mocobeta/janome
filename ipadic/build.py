@@ -47,7 +47,7 @@ def build_dict(dicdir, enc, outdir=u'.'):
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
+                entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
     inputs = sorted(surfaces)  # inputs must be sorted.
 
     assert len(surfaces) == len(entries)
@@ -59,17 +59,13 @@ def build_dict(dicdir, enc, outdir=u'.'):
 
     # save connection costs as dict
     matrix_file = os.path.join(dicdir, FILE_MATRIX_DEF)
-    conn_costs = {}
     with open(matrix_file, encoding=enc) as f:
         size1, size2 = f.readline().split(' ')
-        matrix_size = int(size1) * int(size2)
+        conn_costs = [[0 for _ in range(0, int(size2))] for _ in range(0, int(size1))]
         for line in f:
             line = line.strip()
             id1, id2, cost = line.split(' ')
-            key = '%s,%s' % (id1, id2)
-            val = int(cost)
-            conn_costs[key] = val
-        assert len(conn_costs) == matrix_size
+            conn_costs[int(id1)][int(id2)] = int(cost)
     save_connections(conn_costs, dir=outdir)
 
 
@@ -127,7 +123,7 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
             assert cate in categories
             if cate not in unknowns:
                 unknowns[cate] = []
-            unknowns[cate].append((left_id, right_id, int(cost), part_of_speech))
+            unknowns[cate].append((int(left_id), int(right_id), int(cost), part_of_speech))
 
     save_chardefs((categories, coderange), dir=outdir)
     save_unknowns(unknowns, dir=outdir)

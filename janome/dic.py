@@ -117,8 +117,7 @@ class Dictionary(object):
             sys.exit(1)
 
     def get_trans_cost(self, id1, id2):
-        key = '%s,%s' % (id1, id2)
-        return self.connections.get(key)
+        return self.connections[id1][id2]
 
 
 class SystemDictionary(Dictionary):
@@ -177,7 +176,7 @@ class UserDictionary(Dictionary):
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, left_id, right_id, int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
+                entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
         fst = create_minimum_transducer(inputs)

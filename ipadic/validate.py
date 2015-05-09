@@ -38,6 +38,7 @@ if __name__ == '__main__':
     enc = sys.argv[2]
 
     # validate dictionary entries
+    print('Validate dictionary entries...')
     csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
     invalid_count = 0
     for path in csv_files:
@@ -55,10 +56,31 @@ if __name__ == '__main__':
                         word_id = struct.unpack('I', o)[0]
                         try:
                             entry = SYS_DIC.entries[word_id]
-                        except:
-                            print('Cannot find entry for %s, %d' % (surface, word_id))
+                            if not surface.startswith(entry[0]):
+                                raise Exception('Must not match!')
+                        except KeyError:
+                            print('Cannot find entry for %s, %d' % (surface.encode('utf8'), word_id))
                             invalid_count += 1
-                    except:
-                        print('Invalid output for %s, %s' % (surface, str(o)))
+                    except Exception:
+                        print('Invalid output for %s, %s' % (surface.encode('utf8'), str(o)))
                         invalid_count += 1
     print('invalid outputs = %d' % invalid_count)
+
+    # validate connection costs
+    print('Validate connection costs...')
+    matrix_file = os.path.join(dicdir, 'matrix.def')
+    invalid_count = 0
+    with io.open(matrix_file, encoding=enc) as f:
+        f.readline()
+        for line in f:
+            line.strip()
+            id1, id2, cost = line.split(' ')
+            try:
+                if SYS_DIC.connections[int(id1)][int(id2)] != int(cost):
+                    inv_cost = SYS_DIC.connections[int(id1)][int(id2)]
+                    print('Invalid connection cost %d for (%s, %s)' % (inv_cost, id1, id2))
+                    invalid_count += 1
+            except:
+                print('Cannot find connection cost for (%s, %s' % (id1, id2))
+                invalid_count += 1
+    print('invalid counts = %d' % invalid_count)
