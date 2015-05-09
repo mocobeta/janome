@@ -49,6 +49,15 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(u'16', tokens[4].surface)
         self.assertEqual(u'日', tokens[5].surface)
 
+        text = u'壱万五千円'
+        tokens = Tokenizer().tokenize(text)
+        self.assertEqual(5, len(tokens))
+        self.assertEqual(u'壱', tokens[0].surface)
+        self.assertEqual(u'万', tokens[1].surface)
+        self.assertEqual(u'五', tokens[2].surface)
+        self.assertEqual(u'千', tokens[3].surface)
+        self.assertEqual(u'円', tokens[4].surface)
+
         text = u'マルチメディア放送（VHF-HIGH帯）「モバキャス」'
         tokens = Tokenizer().tokenize(text)
         self.assertEqual(11, len(tokens))

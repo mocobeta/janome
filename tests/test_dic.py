@@ -27,11 +27,23 @@ import unittest
 
 
 class TestDictionary(unittest.TestCase):
-    def test_system_dictionary(self):
+    def test_system_dictionary_ipadic(self):
         sys_dic = SystemDictionary(entries.DATA, connections.DATA, chardef.DATA, unknowns.DATA)
         self.assertEqual(7, len(sys_dic.lookup(u'形態素')))
-        self.assertEqual(1, sys_dic.get_trans_cost('0', '1'))
-        self.assertEqual(('HIRAGANA', []), sys_dic.char_category(u'あ'))
+        self.assertEqual(1, sys_dic.get_trans_cost(0, 1))
+        self.assertEqual({'HIRAGANA': []}, sys_dic.get_char_categories(u'は'))
+        self.assertEqual({'KATAKANA': []}, sys_dic.get_char_categories(u'ハ'))
+        self.assertEqual({'KATAKANA': []}, sys_dic.get_char_categories(u'ﾊ'))
+        self.assertEqual({'KANJI': []}, sys_dic.get_char_categories(u'葉'))
+        self.assertEqual({'ALPHA': []}, sys_dic.get_char_categories(u'C'))
+        self.assertEqual({'ALPHA': []}, sys_dic.get_char_categories(u'Ｃ'))
+        self.assertEqual({'SYMBOL': []}, sys_dic.get_char_categories(u'#'))
+        self.assertEqual({'SYMBOL': []}, sys_dic.get_char_categories(u'＃'))
+        self.assertEqual({'NUMERIC': []}, sys_dic.get_char_categories(u'5'))
+        self.assertEqual({'NUMERIC': []}, sys_dic.get_char_categories(u'５'))
+        self.assertEqual({'KANJI': [], 'KANJINUMERIC': ['KANJI']}, sys_dic.get_char_categories(u'五'))
+        self.assertEqual({'GREEK': []}, sys_dic.get_char_categories(u'Γ'))
+        self.assertEqual({'CYRILLIC': []}, sys_dic.get_char_categories(u'Б'))
         self.assertTrue(sys_dic.unkown_invoked_always('ALPHA'))
         self.assertFalse(sys_dic.unkown_invoked_always('KANJI'))
         self.assertTrue(sys_dic.unknown_grouping('NUMERIC'))

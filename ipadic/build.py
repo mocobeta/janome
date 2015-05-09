@@ -84,8 +84,8 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
                 if len(cols) < 2:
                     continue
                 codepoints_range = cols[0].split('..')
-                codepoints_from = int(codepoints_range[0], 16)
-                codepoints_to = int(codepoints_range[1], 16) if len(codepoints_range) == 2 else codepoints_from
+                codepoints_from = unichr(int(codepoints_range[0], 16))
+                codepoints_to = unichr(int(codepoints_range[1], 16)) if len(codepoints_range) == 2 else codepoints_from
                 cate = cols[1].strip()
                 assert cate in categories
                 _range = {'from': codepoints_from, 'to': codepoints_to, 'cate': cate}

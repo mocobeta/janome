@@ -130,13 +130,14 @@ class SystemDictionary(Dictionary):
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns
 
-    def char_category(self, c):
+    def get_char_categories(self, c):
+        res = {}
         for chr_range in self.char_ranges:
-            if ord(c) in range(chr_range['from'], chr_range['to'] + 1):
+            if chr_range['from'] <= c <= chr_range['to']:
                 cate = chr_range['cate']
                 compate_cates = chr_range['compat_cates'] if 'compat_cates' in chr_range else []
-                return cate, compate_cates
-        return None, None
+                res[cate] = compate_cates
+        return res
 
     def unkown_invoked_always(self, cate):
         if cate in self.char_categories:

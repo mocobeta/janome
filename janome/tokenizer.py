@@ -80,26 +80,29 @@ class Tokenizer:
             matched = len(entries) > 0
 
             # unknown
-            cate, _ = self.sys_dic.char_category(text[pos])
-            if cate and (not matched or self.sys_dic.unkown_invoked_always(cate)):
-                # unknown word length
-                length = self.sys_dic.unknown_length(cate) \
-                    if not self.sys_dic.unknown_grouping(cate) else self.max_unknown_length
-                assert length >= 0
-                # buffer for unknown word
-                buf = text[pos]
-                for p in range(pos + 1, min(len(text), pos + length + 1)):
-                    _cate, _compat_cates = self.sys_dic.char_category(text[p])
-                    if cate == _cate or cate in _compat_cates:
-                        buf += text[p]
-                    else:
-                        break
-                unknown_entries = self.sys_dic.unknowns.get(cate)
-                assert unknown_entries
-                for entry in unknown_entries:
-                    left_id, right_id, cost, part_of_speech = entry
-                    dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', '*', '*', '*')
-                    lattice.add(Node(dummy_dict_entry, NodeType.UNKNOWN))
+            cates = self.sys_dic.get_char_categories(text[pos])
+            if cates:
+                for cate in cates:
+                    if matched and not self.sys_dic.unkown_invoked_always(cate):
+                        continue
+                    # unknown word length
+                    length = self.sys_dic.unknown_length(cate) \
+                        if not self.sys_dic.unknown_grouping(cate) else self.max_unknown_length
+                    assert length >= 0
+                    # buffer for unknown word
+                    buf = text[pos]
+                    for p in range(pos + 1, min(len(text), pos + length + 1)):
+                        _cates =  self.sys_dic.get_char_categories(text[p])
+                        if cate in _cates or any(cate in _compat_cates for _compat_cates in _cates.values()):
+                            buf += text[p]
+                        else:
+                            break
+                    unknown_entries = self.sys_dic.unknowns.get(cate)
+                    assert unknown_entries
+                    for entry in unknown_entries:
+                        left_id, right_id, cost, part_of_speech = entry
+                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', '*', '*', '*')
+                        lattice.add(Node(dummy_dict_entry, NodeType.UNKNOWN))
 
             pos += lattice.forward()
         lattice.end()
