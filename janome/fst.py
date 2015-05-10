@@ -336,26 +336,6 @@ def compileFST(fst):
     return b''.join(arcs)
 
 
-class Arc(object):
-    u"""
-    Arc class
-    """
-    def __init__(self):
-        self.flag = 0
-        self.label = 0
-        self.output = bytes()
-        self.final_output = [b'']
-        self.target = 0
-
-    def __str__(self):
-        if PY3:
-            return "flag=%d, label=%s, target=%d, output=%s, final_output=%s" \
-               % (self.flag, self.label, self.target, str(self.output), str(self.final_output))
-        else:
-            return "flag=%d, label=%s, target=%d, output=%s, final_output=%s" \
-               % (self.flag, self.label, self.target, unicode(self.output, encoding='utf8'), unicode(self.final_output, encoding='utf8'))
-
-
 class Matcher(object):
     def __init__(self, dict_data, max_cache_size=5000, max_cached_word_len=15):
         if dict_data:
@@ -394,17 +374,18 @@ class Matcher(object):
 
         while pos < self.data_len:
             arc, incr = self.next_arc(pos)
-            if arc.flag & FLAG_FINAL_ARC:
+            flag, label, output, final_output, target = arc
+            if flag & FLAG_FINAL_ARC:
                 # accepted
                 accept = True
-                for out in arc.final_output:
+                for out in final_output:
                     if common_prefix_match or i >= word_len:
                         if PY3:
                             outputs.add(bytes(buf + out))
                         else:
                             outputs.add(str(buf + out))
                 pos += incr
-                if arc.flag & FLAG_LAST_ARC or i > word_len:
+                if flag & FLAG_LAST_ARC or i > word_len:
                     break
                 if i < self.max_cached_word_len:
                     with self.lock:
@@ -415,22 +396,22 @@ class Matcher(object):
                         # check cache size
                         if len(self.cache) >= self.max_cache_size:
                             self.cache.popitem(last=False)
-            elif arc.flag & FLAG_LAST_ARC:
+            elif flag & FLAG_LAST_ARC:
                 if i >= word_len:
                     break
-                if word[i] == arc.label:
-                    buf += arc.output
+                if word[i] == label:
+                    buf += output
                     i += 1
-                    pos += arc.target
+                    pos += target
                 else:
                     break
             else:
                 if i >= word_len:
                     break
-                if word[i] == arc.label:
-                    buf += arc.output
+                if word[i] == label:
+                    buf += output
                     i += 1
-                    pos += arc.target
+                    pos += target
                 else:
                     pos += incr
         return accept, set(o for o in outputs if o)
@@ -439,11 +420,13 @@ class Matcher(object):
         assert addr >= 0
         # arc address
         pos = addr
-        # create the arc
-        arc = Arc()
+        # the arc
+        label = 0
+        output = bytes()
+        final_output = [b'']
+        target = 0
         # read flag
         flag = unpack('b', self.data[pos:pos+1])[0]
-        arc.flag = flag
         pos += 1
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
@@ -457,30 +440,26 @@ class Matcher(object):
                     if output_size:
                         buf.append(self.data[pos:pos+output_size])
                         pos += output_size
-                arc.final_output = buf
+                final_output = buf
         else:
             # read label
             if PY3:
                 label = unpack('B', self.data[pos:pos+1])[0]
             else:
                 label = unpack('c', self.data[pos:pos+1])[0]
-            arc.label = label
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
                 # read output
                 output_size = unpack('I', self.data[pos:pos+4])[0]
                 pos += 4
                 output = self.data[pos:pos+output_size]
-                arc.output = output
                 pos += output_size
             # read target's (relative) address
             target = unpack('I', self.data[pos:pos+4])[0]
-            arc.target = target
             pos += 4
         incr = pos - addr
-        # logging.debug(arc)
+        arc = (flag, label, output, final_output, target)
         return arc, incr
-
 
 
 if __name__ == '__main__':
