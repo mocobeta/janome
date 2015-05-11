@@ -1,3 +1,9 @@
+* 0.2.5 (2015.05.11)
+  - Re-implement lru cache for Matcher.run()
+  - Optimize unknown words processing.
+  - Memory reduction for Lattice.
+  - Reduce dectionary data size.
+
 * 0.2.4 (2015.05.03)
   - Revert cache introduced in 0.2.3 (because there are troublesome bugs...)
 
