@@ -18,7 +18,7 @@ from __future__ import division
 from __future__ import print_function
 import sys
 import copy
-from struct import pack, unpack
+from struct import pack
 from collections import OrderedDict
 import logging
 import time
@@ -38,6 +38,12 @@ FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
 # all characters
 CHARS = set()
 
+def unpack_uint32(b):
+    if PY3:
+        return b[0] + (b[1] << 8) + (b[2] << 16) + (b[3] << 24)
+    else:
+        return ord(b[0]) + (ord(b[1]) << 8) + \
+            (ord(b[2]) << 16) + (ord(b[3]) << 24)
 
 class State(object):
     u"""
@@ -426,16 +432,16 @@ class Matcher(object):
         final_output = [b'']
         target = 0
         # read flag
-        flag = unpack('b', self.data[pos:pos+1])[0]
+        flag = ord(self.data[pos])
         pos += 1
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
                 # read final outputs
-                final_output_count = unpack('I', self.data[pos:pos+4])[0]
+                final_output_count = unpack_uint32(self.data[pos:])
                 pos += 4
                 buf = []
                 for c in range(0, final_output_count):
-                    output_size = unpack('I', self.data[pos:pos+4])[0]
+                    output_size = unpack_uint32(self.data[pos:])
                     pos += 4
                     if output_size:
                         buf.append(self.data[pos:pos+output_size])
@@ -443,19 +449,16 @@ class Matcher(object):
                 final_output = buf
         else:
             # read label
-            if PY3:
-                label = unpack('B', self.data[pos:pos+1])[0]
-            else:
-                label = unpack('c', self.data[pos:pos+1])[0]
+            label = ord(self.data[pos])
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
                 # read output
-                output_size = unpack('I', self.data[pos:pos+4])[0]
+                output_size = unpack_uint32(self.data[pos:])
                 pos += 4
                 output = self.data[pos:pos+output_size]
                 pos += output_size
             # read target's (relative) address
-            target = unpack('I', self.data[pos:pos+4])[0]
+            target = unpack_uint32(self.data[pos:])
             pos += 4
         incr = pos - addr
         arc = (flag, label, output, final_output, target)

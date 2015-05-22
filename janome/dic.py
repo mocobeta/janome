@@ -19,8 +19,8 @@ import os
 import io
 import pickle
 import gzip
-from struct import pack, unpack
-from .fst import Matcher, create_minimum_transducer, compileFST
+from struct import pack
+from .fst import Matcher, create_minimum_transducer, compileFST, unpack_uint32
 import traceback
 import logging
 import sys
@@ -108,7 +108,7 @@ class Dictionary(object):
         if not matched:
             return []
         try:
-            return [self.entries[unpack('I', e)[0]] for e in outputs]
+            return [self.entries[unpack_uint32(e)] for e in outputs]
         except Exception as e:
             logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logging.error('input=%s' % s)
