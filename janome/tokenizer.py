@@ -39,9 +39,9 @@ class Token:
                (self.surface, self.part_of_speech, self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic)
         else:
             return '%s\t%s,%s,%s,%s,%s,%s' % \
-               (self.surface.encode('utf8'), self.part_of_speech.encode('utf8'),
-                self.infl_form.encode('utf8'), self.infl_type.encode('utf8'),
-                self.base_form.encode('utf8'), self.reading.encode('utf8'), self.phonetic.encode('utf8'))
+               (self.surface.encode('utf-8'), self.part_of_speech,
+                self.infl_form, self.infl_type,
+                self.base_form, self.reading, self.phonetic)
 
 
 class Tokenizer:

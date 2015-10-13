@@ -49,7 +49,16 @@ def save_fstdata(data, dir='.'):
 
 def save_entries(entries, dir=u'.'):
     #_save(os.path.join(dir, FILE_ENTRIES), pickle.dumps(entries), compresslevel)
-    _save_as_module(os.path.join(dir, MODULE_ENTRIES), entries)
+    #_save_as_module(os.path.join(dir, MODULE_ENTRIES), entries)
+    with open(os.path.join(dir, MODULE_ENTRIES), 'w') as f:
+        f.write("# -*- coding: utf-8 -*-\n")
+        f.write("DATA={")
+        for k, v in entries.items():
+            s = u"%d:(u'%s',%s,%s,%d,'%s','%s','%s','%s','%s','%s')," % (
+                k, v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9])
+            f.write(s if PY3 else s.encode('utf-8'))
+        f.write("}\n")
+        f.flush()
 
 
 def save_connections(connections, dir=u'.'):
