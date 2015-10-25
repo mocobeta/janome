@@ -26,6 +26,7 @@ import glob
 from janome.fst import *
 from janome.dic import *
 from struct import pack
+from collections import OrderedDict
 
 FILE_CHAR_DEF = 'char.def'
 FILE_UNK_DEF = 'unk.def'
@@ -34,7 +35,7 @@ FILE_MATRIX_DEF = 'matrix.def'
 
 def build_dict(dicdir, enc, outdir=u'.'):
     surfaces = []  # inputs/outputs for FST. the FST maps string(surface form) to int(word id)
-    entries = {}  # dictionary entries
+    entries = OrderedDict()  # dictionary entries
     csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
     for path in csv_files:
         with open(path, encoding=enc) as f:

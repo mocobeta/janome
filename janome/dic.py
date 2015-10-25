@@ -34,8 +34,8 @@ FILE_FST_DATA = 'fst.data'
 # FILE_CONNECTIONS = 'connections.data'
 
 MODULE_FST_DATA = 'fstdata.py'
-MODULE_ENTRIES = 'entries.py'
-MODULE_CONNECTIONS = 'connections.py'
+MODULE_ENTRIES = 'entries%d.py'
+MODULE_CONNECTIONS = 'connections%d.py'
 MODULE_CHARDEFS = 'chardef.py'
 MODULE_UNKNOWNS = 'unknowns.py'
 
@@ -49,12 +49,27 @@ def save_fstdata(data, dir='.'):
 
 def save_entries(entries, dir=u'.'):
     #_save(os.path.join(dir, FILE_ENTRIES), pickle.dumps(entries), compresslevel)
-    _save_entries_as_module(os.path.join(dir, MODULE_ENTRIES), entries)
+    # split whole entries to 10 buckets to reduce memory usage while installing.
+    # TODO: find better ways...
+    bucket_size = (len(entries) // 10) + 1
+    offset = 0
+    for i in range(1, 11):
+        _save_entries_as_module(
+            os.path.join(dir, MODULE_ENTRIES % i),
+            {k:v for (k,v) in entries.items()[offset:offset+bucket_size]})
+        offset += bucket_size
 
 
 def save_connections(connections, dir=u'.'):
     #_save(os.path.join(dir, FILE_CONNECTIONS), pickle.dumps(connections), compresslevel)
-    _save_as_module(os.path.join(dir, MODULE_CONNECTIONS), connections)
+    # split whole connections to 2 buckets to reduce memory usage while installing.
+    # TODO: find better ways...
+    bucket_size = (len(connections) // 2) + 1
+    offset = 0
+    for i in range(1, 3):
+        _save_as_module(os.path.join(dir, MODULE_CONNECTIONS % i),
+                        connections[offset:offset+bucket_size])
+        offset += bucket_size
 
 
 def save_chardefs(chardefs, dir=u'.'):
@@ -93,12 +108,12 @@ def _save_as_module(file, data):
 def _save_entries_as_module(file, entries):
     with open(file, 'w') as f:
         f.write("# -*- coding: utf-8 -*-\n")
-        f.write('DATA=[')
+        f.write('DATA={')
         for k, v in entries.items():
-            s = u"(u'%s',%s,%s,%d,'%s','%s','%s','%s','%s','%s')," % (
-                v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9])
+            s = u"%d:(u'%s',%s,%s,%d,'%s','%s','%s','%s','%s','%s')," % (
+                k, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9])
             f.write(s if PY3 else s.encode('utf-8'))
-        f.write(']\n')
+        f.write('}\n')
         f.flush()
 
 
