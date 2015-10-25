@@ -93,15 +93,15 @@ def _save_as_module(file, data):
 def _save_entries_as_module(file, entries):
     with open(file, 'w') as f:
         f.write("# -*- coding: utf-8 -*-\n")
-        f.write("DATA={")
+        f.write('DATA=[')
         for k, v in entries.items():
-            s = u"%d:(u'%s',%s,%s,%d,'%s','%s','%s','%s','%s','%s')," % (
-                k, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9])
+            s = u"(u'%s',%s,%s,%d,'%s','%s','%s','%s','%s','%s')," % (
+                v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9])
             f.write(s if PY3 else s.encode('utf-8'))
-        f.write("}\n")
+        f.write(']\n')
         f.flush()
 
-    
+
 class Dictionary(object):
     u"""
     Base dictionary class
