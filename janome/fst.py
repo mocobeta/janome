@@ -43,6 +43,8 @@ class State(object):
     u"""
     State Class
     """
+    __slots__ = ['id', 'final', 'trans_map', 'final_output']
+
     def __init__(self, id=None):
         self.id = id
         self.final = False

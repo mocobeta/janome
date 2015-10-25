@@ -49,6 +49,12 @@ class Node(BaseNode):
     """
     Node class
     """
+    __slots__ = [
+        'surface', 'left_id', 'right_id', 'cost',
+        'part_of_speech', 'infl_form', 'infl_type',
+        'base_form', 'reading', 'phonetic', 'node_type'
+    ]
+
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         super(Node, self).__init__()
         surface, left_id, right_id, cost, part_of_speech, infl_form, infl_type, base_form, reading, phonetic = dict_entry
