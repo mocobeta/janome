@@ -43,6 +43,7 @@ setup(
     url='http://mocobeta.github.io/janome/',
     packages=['janome','sysdic'],
     package_data={'sysdic': ['fst.data']},
-    py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer']
+    py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer'],
+    scripts=['bin/janome']
 )
 
