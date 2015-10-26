@@ -1,3 +1,8 @@
+* 0.2.6 (2015.10.26)
+  - Reduce memory usage for pre-compiling dictionary. #10
+  - Add executable script 'janome'. (experimental)
+  - Minor refactoring.
+ 
 * 0.2.5 (2015.05.11)
   - Re-implement lru cache for Matcher.run()
   - Optimize unknown words processing.
