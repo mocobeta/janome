@@ -48,7 +48,7 @@ PyPI
 
 :strike:`上記の理由により, 現行バージョンでは 32 bit 版 Python だとビルド時に Meomory Error でこけます. 64 bit 版を使ってください.`
 
-.. note:: pip でのビルド時に 500 MB 程度のメモリを必要とします. 利用可能なメモリ容量にご注意ください. (バージョン 0.2.6 より, RAM 1 ~ 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました.)
+.. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします. 利用可能なメモリ容量にご注意ください. (バージョン 0.2.6 より, RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました.)
 
 `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
