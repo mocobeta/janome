@@ -1,6 +1,9 @@
 * 0.2.6 (2015.10.26)
-  - Reduce memory usage for pre-compiling dictionary. #10
+  - Reduce memory usage for compiling system dictionary. #10
+    (thanks @hajime_nakagami)
   - Add executable script 'janome'. (experimental)
+  - Reduce memory usage for creating Node and State objects by __slots__.
+    (thanks @atsuoishimoto)
   - Minor refactoring.
  
 * 0.2.5 (2015.05.11)
@@ -20,6 +23,7 @@
 
 * 0.2.0 (2015.04.24)
   - Support Python 3x and 2.7 by the same codes. #9
+    (thanks @hajime_nakagami)
   - Fix bug in transition costs calculation. #12
   - reduce dictionary data size
 
