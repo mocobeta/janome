@@ -46,6 +46,10 @@ Licensed under Apache License 2.0 and uses the MeCab-IPADIC dictionary/statistic
 
 See LICENSE.txt and NOTICE.txt for license details.
 
+Acknowledgement
+================
+
+Special thanks to @ikawaha and @takuya_a.
 
 Copyright
 ==========
