@@ -26,7 +26,7 @@ janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 動作に必要なソフトウェア
 --------------------------
 
-Python 2.7 または Python 3.4+ インタプリタ
+Python 2.7.x または Python 3.4+ インタプリタ
 
 バージョン
 -----------------
@@ -35,7 +35,7 @@ Python 2.7 または Python 3.4+ インタプリタ
 
 janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
 
-* janome: 0.2.6
+* janome: 0.2.7
 * :strike:`janomePy2: 0.1.4`
 
 インストール
@@ -68,7 +68,6 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
 
 ::
 
-  (venv) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
   >>> for token in t.tokenize(u'すもももももももものうち'):
@@ -89,7 +88,6 @@ for Windows users
 
 ::
 
-  > python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
   >>> for token in t.tokenize(u'すもももももももものうち'):
@@ -99,7 +97,10 @@ for Windows users
 ユーザー定義辞書を使う
 -------------------------
 
-ユーザー定義辞書のフォーマットは, MeCab 辞書と同じです. たとえば以下のような CSV ファイルを作成し, Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します.
+MeCab IPADIC フォーマット
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+デフォルトユーザー定義辞書のフォーマットは, MeCab 辞書と同じです. たとえば以下のような CSV ファイルを作成し, Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します.
 
 辞書フォーマットは MeCab の `ドキュメント <http://mecab.googlecode.com/svn/trunk/mecab/doc/dic.html>`_ をご参照ください.
 
@@ -111,9 +112,8 @@ userdic.csv ::
 
 ::
 
-  (venv) $ python
   >>> from janome.tokenizer import Tokenizer
-  >>> t = Tokenizer(udic="userdic.csv", udic_enc="utf8")
+  >>> t = Tokenizer("userdic.csv", udic_enc="utf8")
   >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   ...   print(token)
   ...
@@ -133,6 +133,41 @@ userdic.csv ::
   です      助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
   。        記号,句点,*,*,*,*,。,。,。
 
+簡略辞書フォーマット (v0.2.7 以上)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Kuromoji のユーザー辞書に似た, 簡略化された辞書フォーマットです(ただし janome には search mode がないため, search mode 用の項目はありません). 表層形, 品詞, 読みのみを記述し, 詳細品詞やスコアは指定できません.
+
+簡略辞書フォーマットを使うには,以下のような「<表層形>,<品詞>,<読み>」を並べた CSV ファイルを用意し, Tokenizer 初期化時にファイルパスと辞書タイプ(udic_type='simpledic')を指定してください.
+
+user_simpledic.csv ::
+
+   東京スカイツリー,カスタム名詞,トウキョウスカイツリー
+   東武スカイツリーライン,カスタム名詞,トウブスカイツリーライン
+   とうきょうスカイツリー駅,カスタム名詞,トウキョウスカイツリーエキ
+
+::
+
+   >>> from janome.tokenizer import Tokenizer
+   >>> t = Tokenizer("user_simpledic.csv", udic_type="simpledic", udic_enc="utf8")
+   >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便 利です。'):
+   ...   print(token)
+   ...
+   東京スカイツリー	カスタム名詞,*,*,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
+   へ    助詞,格助詞,一般,*,*,*,へ,ヘ,エ
+   の    助詞,連体化,*,*,*,*,の,ノ,ノ
+   お越し    名詞,一般,*,*,*,*,お越し,オコシ,オコシ
+   は    助詞,係助詞,*,*,*,*,は,ハ,ワ
+   、    記号,読点,*,*,*,*,、,、,、
+   東武スカイツリーライン   カスタム名詞,*,*,*,*,*,東武スカイツリーライン,トウブスカイツリーライン,トウブスカイツリーライン
+   「    記号,括弧開,*,*,*,*,「,「,「
+   とうきょうスカイツリー駅    カスタム名詞,*,*,*,*,*,とうきょうスカイツリー駅,トウキョウスカイツリーエキ,トウキョウスカイツリーエキ
+    」   記号,括弧閉,*,*,*,*,」,」,」
+   が    助詞,格助詞,一般,*,*,*,が,ガ,ガ
+   便利    名詞,形容動詞語幹,*,*,*,*,便利,ベンリ,ベンリ
+   です    助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
+   。    記号,句点,*,*,*,*,。,。,。
+
 
 コンパイル済みのユーザー辞書を使う
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -141,11 +176,18 @@ userdic.csv ::
 
 現在のところ, コンパイルのためのツールはありませんが, API を使ってコンパイルが行えます.
 
-辞書のコンパイル ::
+辞書のコンパイル(MeCab IPADIC) ::
 
   >>> from janome.dic import UserDictionary
   >>> from sysdic import SYS_DIC
   >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", SYS_DIC.connections)
+  >>> user_dict.save("/tmp/userdic")
+
+辞書のコンパイル(simplified format) ::
+
+  >>> from janome.dic import UserDictionary
+  >>> from sysdic import SYS_DIC
+  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", SYS_DIC.connections)
   >>> user_dict.save("/tmp/userdic")
 
 これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
@@ -156,10 +198,10 @@ userdic.csv ::
 
 .. note:: コンパイル済みユーザー辞書は, コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください. 辞書の前方/後方互換性は保証されないため, Python のメジャーバージョンが異なると読めない可能性があります.
 
-コマンドラインから使う (experimental)
-------------------------------------------
+コマンドラインから使う (v0.2.6 以上, Lunux/Mac only)
+--------------------------------------------------------
 
-v0.2.6 より, コマンドラインから実行可能なスクリプト janome がついています. (Linux/Mac のみ. Windows 版(bat)は少々お待ちください.)
+コマンドラインから実行可能なスクリプト janome がついています. (Linux/Mac のみ. Windows 版(bat)は少々お待ちください.)
 
 簡単に動作を確認したいときにお使いください.
 
@@ -254,6 +296,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2016.03.05 janome Version 0.2.7 リリース
 * 2015.10.26 janome Version 0.2.6 リリース
 * 2015.05.11 janome Version 0.2.5 リリース
 * 2015.05.03 janome Version 0.2.4 リリース
