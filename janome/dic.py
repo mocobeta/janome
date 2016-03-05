@@ -210,6 +210,24 @@ class UserDictionary(Dictionary):
         compiledFST = compileFST(fst)
         return compiledFST, entries
 
+    def buildsimpledic(self, user_dict, enc):
+        import sys
+        surfaces = []
+        entries = {}
+        with io.open(user_dict, encoding=enc) as f:
+            for line in f:
+                line = line.rstrip()
+                surface, pos_major, reading = line.split(',')
+                part_of_speech = ','.join([pos_major, u'*', u'*', u'*'])
+                morph_id = len(surfaces)
+                surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
+                entries[morph_id] = (surface, 0, 0, -100000, part_of_speech, u'*', u'*', surface, reading, reading)
+        inputs = sorted(surfaces)  # inputs must be sorted.
+        assert len(surfaces) == len(entries)
+        fst = create_minimum_transducer(inputs)
+        compiledFST = compileFST(fst)
+        return compiledFST, entries
+
     def save(self, to_dir, compressionlevel=9):
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
             raise Exception('Not a directory : %s' % to_dir)
