@@ -7,5 +7,7 @@ docs/_build
 dist
 build/
 .idea/
-venv
+venv*/
 sysdic
+ipadic/mecab-ipadic*
+tests/userdic
