@@ -102,7 +102,7 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenize_with_simplified_userdic(self):
         text = u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
-        udic_file = os.path.join(parent_dir, 'tests/user_simplifieddic.csv')
+        udic_file = os.path.join(parent_dir, 'tests/user_simpledic.csv')
         tokens = Tokenizer(udic_file, udic_type='simpledic').tokenize(text)
         self.assertEqual(14, len(tokens))
         self._check_token(tokens[0], u'東京スカイツリー', u'カスタム名詞,*,*,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー', NodeType.USER_DICT)

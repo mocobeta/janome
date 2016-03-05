@@ -142,13 +142,13 @@ class TestDictionary(unittest.TestCase):
 
     def test_simplified_user_dictionary(self):
         # create user dictionary from csv
-        user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_simplifieddic.csv'),
+        user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_simpledic.csv'),
                                   enc='utf8', type='simpledic', connections=connections())
         self.assertEqual(1, len(user_dic.lookup(u'東京スカイツリー')))
 
         # save compiled dictionary
-        dic_dir = os.path.join(parent_dir, 'tests/userdic_simplified')
-        user_dic.save(to_dir=os.path.join(parent_dir, 'tests/userdic_simplified'))
+        dic_dir = os.path.join(parent_dir, 'tests/userdic_simple')
+        user_dic.save(to_dir=os.path.join(parent_dir, 'tests/userdic_simple'))
         self.assertTrue(os.path.exists(os.path.join(dic_dir, FILE_USER_FST_DATA)))
         self.assertTrue(os.path.exists(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
 
