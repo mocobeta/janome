@@ -1,3 +1,8 @@
+* 0.2.7 (2016.03.05)
+  - Add kuromoji-like simplified user dictionary.
+  - (Python 2.7 only) Return unicode instead of str for properties such as part_of_speech, reading. #21
+  - Fix error with unknown characters. #22
+
 * 0.2.6 (2015.10.26)
   - Reduce memory usage for compiling system dictionary. #10
     (thanks @hajime_nakagami)

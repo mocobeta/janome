@@ -9,7 +9,7 @@ General documentation: http://mocobeta.github.io/janome/ (for Japanese)
 Requirements
 =============
 
-Python 2.7 or 3.4+ is required.
+Python 2.7.x or 3.4+ is required.
 
 Install
 ========
