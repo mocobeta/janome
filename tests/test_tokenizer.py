@@ -41,6 +41,19 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[5], u'の', u'助詞,連体化,*,*,*,*,の,ノ,ノ', NodeType.SYS_DICT)
         self._check_token(tokens[6], u'うち', u'名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
 
+    def test_tokenize2(self):
+        text = u'𠮷野屋'
+        tokens = Tokenizer().tokenize(text)
+        self.assertEqual(3, len(tokens))
+        self._check_token(tokens[0], u'𠮷', u'記号,一般,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[1], u'野', u'名詞,一般,*,*,*,*,野,ノ,ノ', NodeType.SYS_DICT)
+        self._check_token(tokens[2], u'屋', u'名詞,接尾,一般,*,*,*,屋,ヤ,ヤ', NodeType.SYS_DICT)
+
+        text = u'한국어'
+        tokens = Tokenizer().tokenize(text)
+        self.assertEqual(1, len(tokens))
+        self._check_token(tokens[0], u'한국어', u'記号,一般,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+
     def test_tokenize_unknown(self):
         text = u'2009年10月16日'
         tokens = Tokenizer().tokenize(text)

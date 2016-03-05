@@ -161,6 +161,8 @@ class SystemDictionary(Dictionary):
                 cate = chr_range['cate']
                 compate_cates = chr_range['compat_cates'] if 'compat_cates' in chr_range else []
                 res[cate] = compate_cates
+        if not res:
+            res = {u'DEFAULT': []}
         return res
 
     def unkown_invoked_always(self, cate):
