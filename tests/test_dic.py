@@ -16,6 +16,8 @@
 
 import os, sys
 
+PY3 = sys.version_info[0] == 3
+
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
@@ -49,6 +51,64 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(sys_dic.unknown_grouping('NUMERIC'))
         self.assertFalse(sys_dic.unknown_grouping('KANJI'))
         self.assertEqual(2, sys_dic.unknown_length('HIRAGANA'))
+
+    def test_property_types(self):
+        sys_dic = SystemDictionary(entries(), connections(), chardef.DATA, unknowns.DATA)
+        # entry in the system dictionary
+        entry = sys_dic.lookup(u'すもも')[0]
+        if PY3:
+            self.assertTrue(type(entry[0]) is str)
+            self.assertTrue(type(entry[4]) is str)
+            self.assertTrue(type(entry[5]) is str)
+            self.assertTrue(type(entry[6]) is str)
+            self.assertTrue(type(entry[7]) is str)
+            self.assertTrue(type(entry[8]) is str)
+            self.assertTrue(type(entry[9]) is str)
+        else:
+            self.assertTrue(type(entry[0]) is unicode)
+            self.assertTrue(type(entry[4]) is unicode)
+            self.assertTrue(type(entry[5]) is unicode)
+            self.assertTrue(type(entry[6]) is unicode)
+            self.assertTrue(type(entry[7]) is unicode)
+            self.assertTrue(type(entry[8]) is unicode)
+            self.assertTrue(type(entry[9]) is unicode)
+        self.assertTrue(type(entry[1]) is int)
+        self.assertTrue(type(entry[2]) is int)
+        self.assertTrue(type(entry[3]) is int)
+
+        # unknown entry
+        entry = sys_dic.unknowns.get(u'HIRAGANA')[0]
+        if PY3:
+            self.assertTrue(type(entry[3]) is str)
+        else:
+            self.assertTrue(type(entry[3]) is unicode)
+        self.assertTrue(type(entry[0]) is int)
+        self.assertTrue(type(entry[1]) is int)
+        self.assertTrue(type(entry[2]) is int)
+
+        # entry in the user defined dictionary
+        user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
+                                  enc='utf8', type='ipadic', connections=connections())
+        entry = user_dic.lookup(u'東京スカイツリー')[0]
+        if PY3:
+            self.assertTrue(type(entry[0]) is str)
+            self.assertTrue(type(entry[4]) is str)
+            self.assertTrue(type(entry[5]) is str)
+            self.assertTrue(type(entry[6]) is str)
+            self.assertTrue(type(entry[7]) is str)
+            self.assertTrue(type(entry[8]) is str)
+            self.assertTrue(type(entry[9]) is str)
+        else:
+            self.assertTrue(type(entry[0]) is unicode)
+            self.assertTrue(type(entry[4]) is unicode)
+            self.assertTrue(type(entry[5]) is unicode)
+            self.assertTrue(type(entry[6]) is unicode)
+            self.assertTrue(type(entry[7]) is unicode)
+            self.assertTrue(type(entry[8]) is unicode)
+            self.assertTrue(type(entry[9]) is unicode)
+        self.assertTrue(type(entry[1]) is int)
+        self.assertTrue(type(entry[2]) is int)
+        self.assertTrue(type(entry[3]) is int)
 
     def test_system_dictionary_cache(self):
         sys_dic = SystemDictionary(entries(), connections(), chardef.DATA, unknowns.DATA)

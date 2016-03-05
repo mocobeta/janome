@@ -110,7 +110,7 @@ def _save_entries_as_module(file, entries):
         f.write("# -*- coding: utf-8 -*-\n")
         f.write('DATA={')
         for k, v in entries.items():
-            s = u"%d:(u'%s',%s,%s,%d,'%s','%s','%s','%s','%s','%s')," % (
+            s = u"%d:(u'%s',%s,%s,%d,u'%s',u'%s',u'%s',u'%s',u'%s',u'%s')," % (
                 k, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9])
             f.write(s if PY3 else s.encode('utf-8'))
         f.write('}\n')

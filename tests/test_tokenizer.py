@@ -89,9 +89,11 @@ class TestTokenizer(unittest.TestCase):
 
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
-        self.assertEqual(detail,
-                         str(token).split('\t')[1] if PY3
-                         else str(token).split('\t')[1].decode('utf8'))
+        self.assertEqual(detail, ','.join([token.part_of_speech,token.infl_form,token.infl_type,token.base_form,token.reading,token.phonetic]))
+        if PY3:
+            self.assertEqual(surface + '\t' + detail, str(token))
+        else:
+            self.assertEqual((surface + '\t' + detail).encode('utf-8'), str(token))
         self.assertEqual(node_type, token.node_type)
 
 if __name__ == '__main__':
