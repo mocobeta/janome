@@ -191,8 +191,8 @@ Once compiling has been successfully completed, the data is saved in '/tmp/userd
 
 .. note:: Use same major python version at both compile time and runtime.  Forward/backward dictionary data compatibility is not guaranteed.
 
-Use janome from the comman-line (v0.2.6+, Lunux/Mac only)
----------------------------------------------------------
+Use janome from the command-line (v0.2.6+, Lunux/Mac only)
+----------------------------------------------------------
 
 Janome has executable built-in script 'janome' for command-line usage. (currently for Lunux/Mac only... patches are welcome!)
 
@@ -213,7 +213,7 @@ It reads a sentence at a time from standard input and outputs the analysis resul
 Note for analyzing large document set
 -------------------------------------
 
-At current version (0.2.x), Janome can consume large memory when a very large document is passed all at onece. Please split large documents into small chunks or sentences.
+At current version (0.2.x), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
 
 It is a known issue, we'll make efforts to control memory consumption for large documents at future releases.
 
