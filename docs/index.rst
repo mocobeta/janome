@@ -8,6 +8,8 @@
 Welcome to janome's documentation!
 ==================================
 
+`English <http://mocobeta.github.io/janome/en/>`_
+
 janome とは
 -----------
 
@@ -176,7 +178,7 @@ user_simpledic.csv ::
 
 現在のところ, コンパイルのためのツールはありませんが, API を使ってコンパイルが行えます.
 
-辞書のコンパイル(MeCab IPADIC) ::
+辞書のコンパイル(MeCab IPADIC format) ::
 
   >>> from janome.dic import UserDictionary
   >>> from sysdic import SYS_DIC
@@ -291,7 +293,7 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015, moco_beta. All rights reserved.
+Copyright(C) 2015-2016, moco_beta. All rights reserved.
 
 History
 ----------

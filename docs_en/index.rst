@@ -167,7 +167,7 @@ Pre-compiled user dictionary
 
 With large user dictionary, it can take much time to convert CSV file to the binary data structure. You can compile the user dictionary in advance and use that at runtime.
 
-So there is no tools for compiling user dictionary at current version, use APIs as below.
+Fow now, there is no tools for compiling user dictionary. Use APIs as below.
 
 How to compile user dictionary (MeCab IPADIC format): ::
 
@@ -189,7 +189,7 @@ Once compiling has been successfully completed, the data is saved in '/tmp/userd
 
   >>> t = Tokenizer("/tmp/userdic")
 
-.. note:: Use same major python version both at compile time and runtime.  Forward/backward dictionary data compatibility is not guaranteed.
+.. note:: Use same major python version at both compile time and runtime.  Forward/backward dictionary data compatibility is not guaranteed.
 
 Use janome from the comman-line (v0.2.6+, Lunux/Mac only)
 ---------------------------------------------------------
@@ -252,15 +252,15 @@ Copyright(C) 2015-2016, moco_beta. All rights reserved.
 History
 ----------
 
-* 2016.03.05 janome Version 0.2.7 release
-* 2015.10.26 janome Version 0.2.6 release
-* 2015.05.11 janome Version 0.2.5 release
-* 2015.05.03 janome Version 0.2.4 release
-* 2015.05.03 janome Version 0.2.3 release
-* 2015.04.24 janome Version 0.2.2 release
-* 2015.04.24 janome Version 0.2.0 release
-* 2015.04.11 janome Version 0.1.4 release
-* 2015.04.08 janome Version 0.1.3 公開
+* 2016.03.05 janome Version 0.2.7 was released
+* 2015.10.26 janome Version 0.2.6 was released
+* 2015.05.11 janome Version 0.2.5 was released
+* 2015.05.03 janome Version 0.2.4 was released
+* 2015.05.03 janome Version 0.2.3 was released
+* 2015.04.24 janome Version 0.2.2 was released
+* 2015.04.24 janome Version 0.2.0 was released
+* 2015.04.11 janome Version 0.1.4 was released
+* 2015.04.08 janome Version 0.1.3 was released
 
 Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
