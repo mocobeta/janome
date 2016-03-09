@@ -1,8 +1,11 @@
+.. image:: https://travis-ci.org/mocobeta/janome.svg?branch=master
+    :target: https://travis-ci.org/mocobeta/janome
+	     
 =======
-janome
+Janome
 =======
 
-janome is a Japanese morphological analysis engine written in pure Python.
+Janome is a Japanese morphological analysis engine written in pure Python.
 
 General documentation:
 
@@ -13,7 +16,7 @@ http://mocobeta.github.io/janome/ (Japanese)
 Requirements
 =============
 
-Python 2.7.x or 3.4+ is required.
+Python 2.7.x or 3.3+ is required.
 
 Install
 ========
