@@ -85,8 +85,8 @@ Use decode('utf8') if output is garbled.
   ...     print(str(token).decode('utf8'))
 
 
-Use user defined dictionary
----------------------------
+Use with user defined dictionary
+---------------------------------
 
 MeCab IPADIC format
 ^^^^^^^^^^^^^^^^^^^
@@ -234,7 +234,7 @@ A. Janome uses FST (`Minimal Acyclic Subsequential Transducer <http://citeseerx.
 
 Q. I found bugs. Or have requests for enhancement.
 
-A. Bug reports and requests (and of course, patches) are welcome. Create issues at `Github repository <https://github.com/mocobeta/janome/issues>`_ or contact to `@moco_beta <https://twitter.com/moco_beta>`_.
+A. Bug reports and requests (and of course, patches) are welcome. Create issues in `Github repository <https://github.com/mocobeta/janome/issues>`_ or contact to `@moco_beta <https://twitter.com/moco_beta>`_.
 
 License
 ------------
