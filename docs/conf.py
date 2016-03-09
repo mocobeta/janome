@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Janome'
-copyright = '2015, Tomoko Uchida'
+copyright = '2015-2016, Tomoko Uchida'
 author = 'Tomoko Uchida'
 
 # The version info for the project you're documenting, acts as replacement for
