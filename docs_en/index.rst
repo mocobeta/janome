@@ -167,7 +167,7 @@ Pre-compiled user dictionary
 
 With large user dictionary, it can take much time to convert CSV file to the binary data structure. You can compile the user dictionary in advance and use that at runtime.
 
-Fow now, there is no tools for compiling user dictionary. Use APIs as below.
+For now, there is no tools for compiling user dictionary. Use APIs as below.
 
 How to compile user dictionary (MeCab IPADIC format): ::
 
@@ -234,7 +234,7 @@ A. Janome uses FST (`Minimal Acyclic Subsequential Transducer <http://citeseerx.
 
 Q. I found bugs. Or have requests for enhancement.
 
-A. Bug reports and requests (and of course, patches) are welcome. Raise issues at `Github repository <https://github.com/mocobeta/janome/issues>`_ or contact to `@moco_beta <https://twitter.com/moco_beta>`_.
+A. Bug reports and requests (and of course, patches) are welcome. Create issues at `Github repository <https://github.com/mocobeta/janome/issues>`_ or contact to `@moco_beta <https://twitter.com/moco_beta>`_.
 
 License
 ------------
