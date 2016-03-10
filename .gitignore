@@ -12,3 +12,4 @@ venv*/
 sysdic
 ipadic/mecab-ipadic*
 tests/userdic
+tests/userdic_simple
