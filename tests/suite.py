@@ -23,4 +23,11 @@ from test_tokenizer import TestTokenizer
 def suite():
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(TestFST))
+    suite.addTests(unittest.makeSuite(TestDictionary))
+    suite.addTests(unittest.makeSuite(TestLattice))
+    suite.addTests(unittest.makeSuite(TestTokenizer))
     return suite
+
+mySuite = suite()
+runner = unittest.TextTestRunner()
+runner.run(mySuite)
