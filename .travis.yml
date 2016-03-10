@@ -9,6 +9,6 @@ install:
 before_script:
   - unzip ipadic/sysdic.zip
 script:
-  - coverage run --source=janome tests/suite.py
+  - coverage run --source=janome --omit=*/__init__* tests/suite.py
 after_success:
   - coveralls
