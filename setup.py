@@ -1,4 +1,8 @@
 from setuptools import setup
+import sys
+
+sys.path.append('./janome')
+sys.path.append('./tests')
 
 import os
 from zipfile import ZipFile
@@ -44,6 +48,7 @@ setup(
     packages=['janome','sysdic'],
     package_data={'sysdic': ['fst.data']},
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer'],
-    scripts=['bin/janome']
+    scripts=['bin/janome'],
+    test_suite = 'tests.suite'
 )
 
