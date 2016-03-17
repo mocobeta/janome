@@ -249,6 +249,7 @@ Janome は Lucene の単語辞書やクエリパーサで使われている FST 
 
 * `Lucene FST のアルゴリズム (1) ～図解編～ <http://mocobeta-backup.tumblr.com/post/111076688132/lucene-fst-1>`_
 * `Lucene FST のアルゴリズム (2) 〜実装編〜 <http://mocobeta-backup.tumblr.com/post/113693778372/lucene-fst-2>`_
+* `Pyconjp2015 - Python で作って学ぶ形態素解析 <http://www.slideshare.net/tomokouchida505/pyconjp2015-python>`_
 
 Q. Python 2 系への対応は.
 
