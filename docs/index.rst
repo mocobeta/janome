@@ -271,6 +271,10 @@ Q. バグ見つけた or なんか変 or 改善要望
 
 A. `@moco_beta <https://twitter.com/moco_beta>`_ 宛につぶやくか, Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください.
 
+For Contributors
+----------------
+
+See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
 
 やりたいことリスト
 ---------------------

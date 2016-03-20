@@ -236,6 +236,11 @@ Q. I found bugs. Or have requests for enhancement.
 
 A. Bug reports and requests (and of course, patches) are welcome. Create issues in `Github repository <https://github.com/mocobeta/janome/issues>`_ or contact to `@moco_beta <https://twitter.com/moco_beta>`_.
 
+For Contributors
+----------------
+
+See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
+
 License
 ------------
 
