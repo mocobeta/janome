@@ -87,7 +87,7 @@ class Tokenizer:
             cates = self.sys_dic.get_char_categories(text[pos])
             if cates:
                 for cate in cates:
-                    if matched and not self.sys_dic.unkown_invoked_always(cate):
+                    if matched and not self.sys_dic.unknown_invoked_always(cate):
                         continue
                     # unknown word length
                     length = self.sys_dic.unknown_length(cate) \
