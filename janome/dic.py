@@ -165,7 +165,7 @@ class SystemDictionary(Dictionary):
             res = {u'DEFAULT': []}
         return res
 
-    def unkown_invoked_always(self, cate):
+    def unknown_invoked_always(self, cate):
         if cate in self.char_categories:
             return self.char_categories[cate]['INVOKE']
         return False
