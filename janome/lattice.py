@@ -51,20 +51,20 @@ class Node(BaseNode):
     """
     __slots__ = [
         'surface', 'left_id', 'right_id', 'cost',
-        'part_of_speech', 'infl_form', 'infl_type',
+        'part_of_speech', 'infl_type', 'infl_form',
         'base_form', 'reading', 'phonetic', 'node_type'
     ]
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         super(Node, self).__init__()
-        surface, left_id, right_id, cost, part_of_speech, infl_form, infl_type, base_form, reading, phonetic = dict_entry
+        surface, left_id, right_id, cost, part_of_speech, infl_type, infl_form, base_form, reading, phonetic = dict_entry
         self.surface = surface
         self.left_id = left_id
         self.right_id = right_id
         self.cost = cost
         self.part_of_speech = part_of_speech
-        self.infl_form = infl_form
         self.infl_type = infl_type
+        self.infl_form = infl_form
         self.base_form = base_form
         self.reading = reading
         self.phonetic = phonetic
@@ -73,7 +73,7 @@ class Node(BaseNode):
     def __str__(self):
         return "(%s,%s,%s,%d,%s,%s,%s,%s,%s,%s) [back_pos=%d,back_index=%d]" % \
                (self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech,
-                self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic,
+                self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic,
                 self.back_pos, self.back_index)
 
 

@@ -26,8 +26,8 @@ class Token:
     def __init__(self, node):
         self.surface = node.surface
         self.part_of_speech = node.part_of_speech
-        self.infl_form = node.infl_form
         self.infl_type = node.infl_type
+        self.infl_form = node.infl_form
         self.base_form = node.base_form
         self.reading = node.reading
         self.phonetic = node.phonetic
@@ -36,13 +36,13 @@ class Token:
     def __str__(self):
         if PY3:
             return '%s\t%s,%s,%s,%s,%s,%s' % \
-               (self.surface, self.part_of_speech, self.infl_form, self.infl_type, self.base_form, self.reading, self.phonetic)
+               (self.surface, self.part_of_speech, self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic)
         else:
             return '%s\t%s,%s,%s,%s,%s,%s' % \
                (self.surface.encode('utf-8'),
                 self.part_of_speech.encode('utf-8'),
-                self.infl_form.encode('utf-8'),
                 self.infl_type.encode('utf-8'),
+                self.infl_form.encode('utf-8'),
                 self.base_form.encode('utf-8'),
                 self.reading.encode('utf-8'),
                 self.phonetic.encode('utf-8'))

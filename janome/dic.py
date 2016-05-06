@@ -198,12 +198,12 @@ class UserDictionary(Dictionary):
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \
                 pos_major, pos_minor1, pos_minor2, pos_minor3, \
-                infl_form, infl_type, base_form, reading, phonetic = \
+                infl_type, infl_form, base_form, reading, phonetic = \
                     line.split(',')
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_form, infl_type, base_form, reading, phonetic)
+                entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
         fst = create_minimum_transducer(inputs)
