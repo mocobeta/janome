@@ -29,12 +29,12 @@ Source Codes
 Requirements
 ------------
 
-Python 2.7.x or Python 3.4+ interpreter
+Python 2.7.x or Python 3.3+ interpreter
 
 Current version
 ---------------
 
-* janome: 0.2.7
+* janome: 0.2.8
 
 Install
 -------
@@ -257,6 +257,7 @@ Copyright(C) 2015-2016, moco_beta. All rights reserved.
 History
 ----------
 
+* 2016.05.07 janome Version 0.2.8 was released
 * 2016.03.05 janome Version 0.2.7 was released
 * 2015.10.26 janome Version 0.2.6 was released
 * 2015.05.11 janome Version 0.2.5 was released

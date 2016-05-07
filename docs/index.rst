@@ -28,27 +28,20 @@ Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 動作に必要なソフトウェア
 --------------------------
 
-Python 2.7.x または Python 3.4+ インタプリタ
+Python 2.7.x または Python 3.3+ インタプリタ
 
 バージョン
 -----------------
 
-:strike:`janome (for Python 3) と janomePy2 (for Python 2.7) があります. minor version が同じなら同等の動作をします.`
-
 janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
 
-* janome: 0.2.7
-* :strike:`janomePy2: 0.1.4`
+* janome: 0.2.8
 
 インストール
 ---------------
 
 PyPI
 ^^^^
-
-:strike:`pip でのビルド時に 3~4 GB程度のメモリを必要とします. 貧弱なマシンや, 他の重い処理が走っているときに同時にビルドするとマシンが凍る可能性がありますのでご注意ください. (改善検討中...)`
-
-:strike:`上記の理由により, 現行バージョンでは 32 bit 版 Python だとビルド時に Meomory Error でこけます. 64 bit 版を使ってください.`
 
 .. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします. 利用可能なメモリ容量にご注意ください. (バージョン 0.2.6 より, RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました.)
 
@@ -57,8 +50,6 @@ PyPI
 .. code-block:: bash
 
   $ pip install janome
-
-:strike:`for Python 2.7 users: https://pypi.python.org/pypi/JanomePy2`
 
 
 使い方
@@ -303,6 +294,7 @@ Copyright(C) 2015-2016, moco_beta. All rights reserved.
 History
 ----------
 
+* 2016.05.07 janome Vesrion 0.2.8 リリース
 * 2016.03.05 janome Version 0.2.7 リリース
 * 2015.10.26 janome Version 0.2.6 リリース
 * 2015.05.11 janome Version 0.2.5 リリース
