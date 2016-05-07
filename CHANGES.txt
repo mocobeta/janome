@@ -1,3 +1,9 @@
+* 0.2.8 (2016.05.07)
+  - Fix nappropriate property names: infl_form, infl_type. #24
+    (thanks @ikawaha)
+  - Fix typo. #23
+    (thanks @kamatari)
+    
 * 0.2.7 (2016.03.05)
   - Add kuromoji-like simplified user dictionary.
   - (Python 2.7 only) Return unicode instead of str for properties such as part_of_speech, reading. #21

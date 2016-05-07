@@ -15,7 +15,7 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
 
-version = '0.2.8-dev'
+version = '0.2.8'
 name = 'janome'
 short_description = '`janome` is a package for Japanese Morphological Analysis.'
 long_description = """\
@@ -23,11 +23,11 @@ long_description = """\
 
 Requirements
 ------------
-* Python 2.7.x and Python 3.4+
+* Python 2.7.x and Python 3.3+
 
 Features and history
 --------------------
-See http://mocobeta.github.io/janome/ (for Japanese)
+See http://mocobeta.github.io/janome/en
 
 """
 
