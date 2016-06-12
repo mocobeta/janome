@@ -33,8 +33,6 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-janome が Python 2.7, Python 3.4 両方に対応したので, janomePy2 は不要になりました. Python 2.7 系, 3 系のどちらでも janome をご利用ください.
-
 * janome: 0.2.8
 
 インストール
@@ -73,6 +71,10 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
   もも  名詞,一般,*,*,*,*,もも,モモ,モモ
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
+
+まだAPIドキュメントなどは手付かずですが, Tokenクラスのプロパティ(形態素情報)について詳しく書いてくださっているブログを紹介します(ありがとうございます!). 追記されていますが, v0.2.8 から infl_form と infl_type で取得できる情報が逆になっているので注意してください. (issue `#24 <https://github.com/mocobeta/janome/issues/24>`_)
+
+`Pythonの形態素解析ライブラリ「Janome」の使い方を少し詳しく。 <http://fizzyroom.org/2016/04/30/day25/>`_
 
 for Windows users
 ^^^^^^^^^^^^^^^^^

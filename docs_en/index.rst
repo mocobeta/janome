@@ -9,7 +9,7 @@
 Welcome to janome's documentation!
 ==================================
 
-`Japanese <http://mocobeta.github.io/janome/>`_
+`日本語 <http://mocobeta.github.io/janome/>`_
 
 What's Janome?
 --------------
