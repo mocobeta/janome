@@ -270,6 +270,10 @@ History
 
 Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
+.. image:: bronze-25C9.png
+   :alt: Badge(FISHEYE)
+   :target: http://www.unicode.org/consortium/adopt-a-character.html	 
+
 .. Indices and tables
 .. ==================
 
