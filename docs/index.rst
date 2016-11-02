@@ -97,7 +97,7 @@ MeCab IPADIC フォーマット
 
 デフォルトユーザー定義辞書のフォーマットは, MeCab 辞書と同じです. たとえば以下のような CSV ファイルを作成し, Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します.
 
-辞書フォーマットは MeCab の `ドキュメント <http://mecab.googlecode.com/svn/trunk/mecab/doc/dic.html>`_ をご参照ください.
+辞書フォーマットは MeCab の `ドキュメント <http://taku910.github.io/mecab/dic.html>`_ をご参照ください.
 
 userdic.csv ::
 

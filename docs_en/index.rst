@@ -95,7 +95,7 @@ You can add custom entries to the built-in dictionary at runtime by using user d
 
 Default dictionary format is equal to MeCab IPADIC format. Create a CSV file as below and pass the file path and the character encoding to Tokenizer's constructor.
 
-See the `MeCab document <http://mecab.googlecode.com/svn/trunk/mecab/doc/dic.html>`_ for more details.
+See the `MeCab document <http://taku910.github.io/mecab/dic.html>`_ for more details.
 
 userdic.csv ::
 
