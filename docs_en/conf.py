@@ -30,7 +30,7 @@ import shlex
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = ['sphinxcontrib.github_ribbon']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -202,6 +202,12 @@ html_static_path = ['_static']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Janomedoc'
+
+# for Github Ribbon
+github_ribbon_repo = 'mocobeta/janome'
+github_ribbon_position = 'right'
+github_ribbon_color = 'red'
+
 
 # -- Options for LaTeX output ---------------------------------------------
 

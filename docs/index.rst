@@ -311,7 +311,9 @@ History
 
 .. image:: bronze-25C9.png
    :alt: Badge(FISHEYE)
-   :target: http://www.unicode.org/consortium/adopt-a-character.html	 
+   :target: http://www.unicode.org/consortium/adopt-a-character.html
+
+`このバッジについて <http://mocobeta-backup.tumblr.com/post/145913418922/u-25c9-sponsorship>`_
 
 .. Indices and tables
 .. ==================

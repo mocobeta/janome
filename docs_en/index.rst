@@ -274,6 +274,8 @@ Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES
    :alt: Badge(FISHEYE)
    :target: http://www.unicode.org/consortium/adopt-a-character.html	 
 
+`About this badge <http://mocobeta-backup.tumblr.com/post/153598031477/u-25c9-sponsorship-en>`_
+
 .. Indices and tables
 .. ==================
 
