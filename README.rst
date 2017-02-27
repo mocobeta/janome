@@ -64,4 +64,4 @@ Special thanks to @ikawaha and @takuya_a.
 Copyright
 ==========
 
-Copyright(C) 2015-2016, moco_beta. All rights reserved.
+Copyright(C) 2015-2017, moco_beta. All rights reserved.
