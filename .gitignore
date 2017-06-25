@@ -8,6 +8,7 @@ docs_en/_build
 dist
 build/
 .idea/
+.vscode/
 venv*/
 sysdic
 ipadic/mecab-ipadic*
