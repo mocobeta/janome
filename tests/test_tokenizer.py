@@ -120,6 +120,12 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[12], u'です', u'助動詞,*,*,*,特殊・デス,基本形,です,デス,デス', NodeType.SYS_DICT)
         self._check_token(tokens[13], u'。', u'記号,句点,*,*,*,*,。,。,。', NodeType.SYS_DICT)
 
+    def test_tokenize_large_text(self):
+        with open('tests/text_lemon.txt') as f:
+            text = f.read()
+            tokens = Tokenizer().tokenize(text)
+            self.assertEqual(len(tokens), 3598)
+
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
         self.assertEqual(detail, ','.join([token.part_of_speech,token.infl_type,token.infl_form,token.base_form,token.reading,token.phonetic]))

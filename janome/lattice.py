@@ -134,6 +134,8 @@ class Lattice:
     def end(self):
         eos = EOS(self.p)
         self.add(eos)
+        # truncate snodes
+        self.snodes = self.snodes[:self.p+1]
 
     def backward(self):
         assert isinstance(self.snodes[len(self.snodes)-1][0], EOS)
