@@ -140,7 +140,7 @@ class Tokenizer:
         return self.__is_punct(text[-1]) or self.__is_newline(text)
 
     def __is_punct(self, c):
-        return c == '、' or c == '。' or c == ',' or c == '.' or c == '？' or c == '?' or c == '！' or c == '!'
+        return c == u'、' or c == u'。' or c == u',' or c == u'.' or c == u'？' or c == u'?' or c == u'！' or c == u'!'
 
     def __is_newline(self, text):
         return text.endswith('\n\n') or text.endswith('\r\n\r\n')
