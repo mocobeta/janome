@@ -49,6 +49,9 @@ class Token:
 
 
 class Tokenizer:
+    MAX_CHUNK_SIZE = 1000
+    CHUNK_SIZE = 500
+
     def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024):
         from sysdic import SYS_DIC
         self.sys_dic = SYS_DIC
@@ -67,9 +70,20 @@ class Tokenizer:
 
     def tokenize(self, text):
         text = text.strip()
-        lattice = Lattice(len(text), self.sys_dic)
+        text_length = len(text)
+        all_tokens = []
+        processed = 0
+        while processed < text_length:
+            tokens, pos = self.__tokenize_partial(text[processed:])
+            all_tokens.extend(tokens)
+            processed += pos
+        return all_tokens
+
+    def __tokenize_partial(self, text):
+        chunk_size = min(len(text), Tokenizer.MAX_CHUNK_SIZE)
+        lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
-        while pos < len(text):
+        while not self.__should_split(text, pos):
             # user dictionary
             if self.user_dic:
                 entries = self.user_dic.lookup(text[pos:])
@@ -114,4 +128,19 @@ class Tokenizer:
         assert isinstance(min_cost_path[0], BOS)
         assert isinstance(min_cost_path[-1], EOS)
         tokens = [Token(node) for node in min_cost_path[1:-1]]
-        return tokens
+        return (tokens, pos)
+
+    def __should_split(self, text, pos):
+        return \
+            pos >= len(text) or \
+            pos >= Tokenizer.MAX_CHUNK_SIZE or \
+            (pos >= Tokenizer.CHUNK_SIZE and self.__splittable(text[:pos]))
+
+    def __splittable(self, text):
+        return self.__is_punct(text[-1]) or self.__is_newline(text)
+
+    def __is_punct(self, c):
+        return c == u'、' or c == u'。' or c == u',' or c == u'.' or c == u'？' or c == u'?' or c == u'！' or c == u'!'
+
+    def __is_newline(self, text):
+        return text.endswith('\n\n') or text.endswith('\r\n\r\n')
