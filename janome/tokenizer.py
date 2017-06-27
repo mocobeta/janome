@@ -23,14 +23,25 @@ from .dic import UserDictionary, CompiledUserDictionary
 PY3 = sys.version_info[0] == 3
 
 class Token:
+    u"""
+    A Token object contains all information for a token.
+    """
+
     def __init__(self, node):
         self.surface = node.surface
+        """surface form (表層形)"""
         self.part_of_speech = node.part_of_speech
+        """part of speech (品詞)"""
         self.infl_type = node.infl_type
+        """terminal form (活用型)"""
         self.infl_form = node.infl_form
+        """stem form (活用形)"""
         self.base_form = node.base_form
+        """base form (基本形)"""
         self.reading = node.reading
+        """"reading (読み)"""
         self.phonetic = node.phonetic
+        """pronounce (発音)"""
         self.node_type = node.node_type
 
     def __str__(self):
@@ -49,10 +60,25 @@ class Token:
 
 
 class Tokenizer:
+    u"""
+    A Tokenizer tokenize Japanese texts with system and user defined dictionary.
+    It is strongly recommended to re-use a Tokenizer object because object initialization cost is high. 
+    """
     MAX_CHUNK_SIZE = 1000
     CHUNK_SIZE = 500
 
     def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024):
+        """
+        Initialize Tokenizer object with (optional) arguments.
+
+        :param udic: (Optional) user dictionary file (CSV format) or directory path to compiled dictionary data
+        :param udic_enc: (Optional) character encoding for user dictionary. default is 'utf-8'
+        :param udic_type: (Optional) user dictionray type. supported types are 'ipadic' and 'simpledic'. default is 'ipadic'
+        :param max_unknows_length: (Optional) max unknown word length. default is 1024.
+
+        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
+        """
+        
         from sysdic import SYS_DIC
         self.sys_dic = SYS_DIC
         if udic:
@@ -69,6 +95,13 @@ class Tokenizer:
         self.max_unknown_length = max_unknown_length
 
     def tokenize(self, text):
+        """
+        Tokenize the text string. Support unicode string only.
+
+        :param text: text string to be tokenized
+
+        :return: list of tokens
+        """
         text = text.strip()
         text_length = len(text)
         all_tokens = []

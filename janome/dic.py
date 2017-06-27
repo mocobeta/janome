@@ -186,6 +186,16 @@ class UserDictionary(Dictionary):
     User dictionary class (uncompiled)
     """
     def __init__(self, user_dict, enc, type, connections):
+        """
+        Initialize user defined dictionary object.
+
+        :param user_dict: user dictionary file (CSV format)
+        :param enc: character encoding
+        :param type: user dictionary type. supported types are 'ipadic' and 'simpledic'
+        :param connections: connection cost matrix. expected value is SYS_DIC.connections
+
+        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
+        """
         build_method = getattr(self, 'build' + type)
         compiledFST, entries = build_method(user_dict, enc)
         Dictionary.__init__(self, compiledFST, entries, connections)
@@ -229,6 +239,12 @@ class UserDictionary(Dictionary):
         return compiledFST, entries
 
     def save(self, to_dir, compressionlevel=9):
+        u"""
+        Save compressed compiled dictionary data.
+
+        :param to_dir: directory to save dictionary data
+        :compressionlevel: (Optional) gzip compression level. default is 9
+        """
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
             raise Exception('Not a directory : %s' % to_dir)
         elif not os.path.exists(to_dir):
