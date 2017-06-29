@@ -24,6 +24,11 @@ Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
+API リファレンス
+--------------------------
+
+`http://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
+
 
 動作に必要なソフトウェア
 --------------------------
@@ -33,7 +38,7 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-* janome: 0.2.8
+* janome: 0.3.0
 
 インストール
 ---------------
@@ -55,7 +60,7 @@ PyPI
 
 janome.tokenizer パッケージの Tokenizer オブジェクトを作り, tokenize() メソッドに解析したい文字列を渡します.
 
-戻り値は Token オブジェクトのリストです. Token は表層形や品詞といった形態素情報を含みます. 詳しくは dir() や `ソースコード <https://github.com/mocobeta/janome/blob/master/janome/tokenizer.py>`_ をご参照ください.
+戻り値は Token オブジェクトのリストです. Token は表層形や品詞といった形態素情報を含みます. 詳しくは `リファレンス <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ を参照してください。
 
 ::
 
@@ -71,10 +76,6 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
   もも  名詞,一般,*,*,*,*,もも,モモ,モモ
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
-
-まだAPIドキュメントなどは手付かずですが, Tokenクラスのプロパティ(形態素情報)について詳しく書いてくださっているブログを紹介します(ありがとうございます!). 追記されていますが, v0.2.8 から infl_form と infl_type で取得できる情報が逆になっているので注意してください. (issue `#24 <https://github.com/mocobeta/janome/issues/24>`_)
-
-`Pythonの形態素解析ライブラリ「Janome」の使い方を少し詳しく。 <http://fizzyroom.org/2016/04/30/day25/>`_
 
 for Windows users
 ^^^^^^^^^^^^^^^^^
@@ -169,7 +170,7 @@ user_simpledic.csv ::
 
 ユーザー定義辞書は, 巨大になるとバイナリコンパイルに時間がかかるため, あらかじめコンパイルしておき, コンパイル済みの辞書を使うことも可能です.
 
-現在のところ, コンパイルのためのツールはありませんが, API を使ってコンパイルが行えます.
+現在のところ, コンパイルのためのツールはありませんが, `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます.
 
 辞書のコンパイル(MeCab IPADIC format) ::
 
@@ -217,7 +218,9 @@ user_simpledic.csv ::
 大きな文書を解析する際の注意
 --------------------------------
 
-現行バージョン(0.2系)では, 入力全体を読んでラティスを構築するため, 入力文字列が大きくなると多くのリソースを消費します. 数十キロバイト以上の文書を解析する場合は, なるべく適度に分割して与えてください. 次のバージョン(0.3系)で, 大きな入力が与えられた場合は, 部分的な解析を行う(最適解を求めることを諦め, 近似解を求める)ことでメモリ消費を一定以下に抑える回避策をとる予定です.
+.. note:: 0.3 以上では大きな文書を解析してもメモリを大量に消費（リーク）することはなくなりました. この修正の影響で, 0.2 系と 0.3 系以上 では, 大きなドキュメントを解析したときの解析結果が若干異なる可能性があります.
+
+古いバージョン(< 0.3)では, 入力全体を読んでラティスを構築するため, 入力文字列が大きくなると多くのリソースを消費します. 数十キロバイト以上の文書を解析する場合は, なるべく適度に分割して与えてください. 
 
 よくある（かもしれない）質問
 ---------------------------------
@@ -291,11 +294,12 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015-2016, moco_beta. All rights reserved.
+Copyright(C) 2015, moco_beta. All rights reserved.
 
 History
 ----------
 
+* 2017.06.30 janome Version 0.3.0 リリース
 * 2016.05.07 janome Vesrion 0.2.8 リリース
 * 2016.03.05 janome Version 0.2.7 リリース
 * 2015.10.26 janome Version 0.2.6 リリース

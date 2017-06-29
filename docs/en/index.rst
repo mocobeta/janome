@@ -25,6 +25,10 @@ Source Codes
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
+API reference
+-------------
+
+`http://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
 
 Requirements
 ------------
@@ -34,7 +38,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.2.8
+* janome: 0.3.0
 
 Install
 -------
@@ -55,7 +59,7 @@ Usage
 
 Create janome.tokenizer.Tokenizer object and call tokenize() method with the sentences you want to analyze.
 
-The return value is a list of Token objects. Token includes morphological information such as surface form, part-of-speech. See dir() or `source codes <https://github.com/mocobeta/janome/blob/master/janome/tokenizer.py>`_ for more details.
+The return value is a list of Token objects. Token includes morphological information such as surface form, part-of-speech. See `reference <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ for more details.
 
 ::
 
@@ -167,7 +171,7 @@ Pre-compiled user dictionary
 
 With large user dictionary, it can take much time to convert CSV file to the binary data structure. You can compile the user dictionary in advance and use that at runtime.
 
-For now, there is no tools for compiling user dictionary. Use APIs as below.
+For now, there is no tools for compiling user dictionary. Use `APIs <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ as below.
 
 How to compile user dictionary (MeCab IPADIC format): ::
 
@@ -213,9 +217,9 @@ It reads a sentence at a time from standard input and outputs the analysis resul
 Note for analyzing large document set
 -------------------------------------
 
-At current version (0.2.x), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
+.. note:: This memory leak problem is solved at v0.3. The analysed results with janome version 0.3 or over can be a bit different from ones with version 0.2.
 
-It is a known issue, we'll make efforts to control memory consumption for large documents at future releases.
+In older version (< 0.3), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
 
 FAQ
 ---
@@ -252,11 +256,12 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015-2016, moco_beta. All rights reserved.
+Copyright(C) 2015, moco_beta. All rights reserved.
 
 History
 ----------
 
+* 2016.06.30 janome Version 0.3.0 was released
 * 2016.05.07 janome Version 0.2.8 was released
 * 2016.03.05 janome Version 0.2.7 was released
 * 2015.10.26 janome Version 0.2.6 was released
