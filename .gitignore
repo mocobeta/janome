@@ -3,8 +3,7 @@
 *.egg
 *.DS_store
 Janome.egg-info
-docs/_build
-docs_en/_build
+docs/*/_build
 dist
 build/
 .idea/

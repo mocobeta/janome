@@ -15,6 +15,67 @@
 # limitations under the License.
 
 
+"""
+The tokenizer module supplies Token and Tokenizer classes.
+
+Usage:
+
+>>> from janome.tokenizer import Tokenizer
+>>> t = Tokenizer()
+>>> for token in t.tokenize(u'すもももももももものうち'):
+...   print(token)
+... 
+すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
+も	助詞,係助詞,*,*,*,*,も,モ,モ
+もも	名詞,一般,*,*,*,*,もも,モモ,モモ
+も	助詞,係助詞,*,*,*,*,も,モ,モ
+もも	名詞,一般,*,*,*,*,もも,モモ,モモ
+の	助詞,連体化,*,*,*,*,の,ノ,ノ
+うち	名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
+
+with user dictionary (IPAdic format):
+
+.. code-block:: shell
+
+  $ cat examples/user_ipadic.csv 
+  東京スカイツリー,1288,1288,4569,名詞,固有名詞,一般,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
+  東武スカイツリーライン,1288,1288,4700,名詞,固有名詞,一般,*,*,*,東武スカイツリーライン,トウブスカイツリーライン,トウブスカイツリーライン
+  とうきょうスカイツリー駅,1288,1288,4143,名詞,固有名詞,一般,*,*,*,とうきょうスカイツリー駅,トウキョウスカイツリーエキ,トウキョウスカイツリーエキ
+
+>>> t = Tokenizer("user_ipadic.csv", udic_enc="utf8")
+>>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+...  print(token)... 
+... 
+東京スカイツリー	名詞,固有名詞,一般,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
+へ	助詞,格助詞,一般,*,*,*,へ,ヘ,エ
+の	助詞,連体化,*,*,*,*,の,ノ,ノ
+お越し	名詞,一般,*,*,*,*,お越し,オコシ,オコシ
+は	助詞,係助詞,*,*,*,*,は,ハ,ワ
+、	記号,読点,*,*,*,*,、,、,、
+東武スカイツリーライン	名詞,固有名詞,一般,*,*,*,東武スカイツリーライン,トウブスカイツリーライン,トウブスカイツリーライン
+「	記号,括弧開,*,*,*,*,「,「,「
+とうきょうスカイツリー駅	名詞,固有名詞,一般,*,*,*,とうきょうスカイツリー駅,トウキョウスカイツリーエキ,トウキョウスカイツリーエキ
+」	記号,括弧閉,*,*,*,*,」,」,」
+が	助詞,格助詞,一般,*,*,*,が,ガ,ガ
+便利	名詞,形容動詞語幹,*,*,*,*,便利,ベンリ,ベンリ
+です	助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
+。	記号,句点,*,*,*,*,。,。,。
+
+with user dictionary (simplified format):
+
+.. code-block:: shell
+
+  $ cat examples/user_simpledic.csv 
+  東京スカイツリー,カスタム名詞,トウキョウスカイツリー
+  東武スカイツリーライン,カスタム名詞,トウブスカイツリーライン
+  とうきょうスカイツリー駅,カスタム名詞,トウキョウスカイツリーエキ
+
+>>> t = Tokenizer("user_simpledic.csv", udic_type="simpledic", udic_enc="utf8")
+>>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+...   print(token)
+
+"""
+
 import sys
 import os
 from .lattice import Lattice, Node, BOS, EOS, NodeType
@@ -23,14 +84,25 @@ from .dic import UserDictionary, CompiledUserDictionary
 PY3 = sys.version_info[0] == 3
 
 class Token:
+    u"""
+    A Token object contains all information for a token.
+    """
+
     def __init__(self, node):
         self.surface = node.surface
+        """surface form (表層形)"""
         self.part_of_speech = node.part_of_speech
+        """part of speech (品詞)"""
         self.infl_type = node.infl_type
+        """terminal form (活用型)"""
         self.infl_form = node.infl_form
+        """stem form (活用形)"""
         self.base_form = node.base_form
+        """base form (基本形)"""
         self.reading = node.reading
+        """"reading (読み)"""
         self.phonetic = node.phonetic
+        """pronounce (発音)"""
         self.node_type = node.node_type
 
     def __str__(self):
@@ -49,10 +121,25 @@ class Token:
 
 
 class Tokenizer:
+    u"""
+    A Tokenizer tokenize Japanese texts with system and user defined dictionary.
+    It is strongly recommended to re-use a Tokenizer object because object initialization cost is high. 
+    """
     MAX_CHUNK_SIZE = 1000
     CHUNK_SIZE = 500
 
     def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024):
+        """
+        Initialize Tokenizer object with (optional) arguments.
+
+        :param udic: (Optional) user dictionary file (CSV format) or directory path to compiled dictionary data
+        :param udic_enc: (Optional) character encoding for user dictionary. default is 'utf-8'
+        :param udic_type: (Optional) user dictionray type. supported types are 'ipadic' and 'simpledic'. default is 'ipadic'
+        :param max_unknows_length: (Optional) max unknown word length. default is 1024.
+
+        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
+        """
+        
         from sysdic import SYS_DIC
         self.sys_dic = SYS_DIC
         if udic:
@@ -69,6 +156,13 @@ class Tokenizer:
         self.max_unknown_length = max_unknown_length
 
     def tokenize(self, text):
+        """
+        Tokenize the text string. Support unicode string only.
+
+        :param text: text string to be tokenized
+
+        :return: list of tokens
+        """
         text = text.strip()
         text_length = len(text)
         all_tokens = []
