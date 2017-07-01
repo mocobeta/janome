@@ -23,16 +23,14 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')
 
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: Apache License 2.0",
-    "Programming Language :: Python",
-    "Topic :: Natural Language Processing :: Japanese",
-    "License :: Apache License 2.0",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: Japanese",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3.3",
     "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6"
-    ]
+]
 
 setup(
     name='Janome',
