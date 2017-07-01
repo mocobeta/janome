@@ -181,10 +181,13 @@ class Tokenizer:
 
         :return: list of tokens (stream = False) or token generator (stream = True)
         """
+        if self.wakati:
+            wakati = True
         if stream:
             return self.__tokenize_stream(text, wakati)
         else:
             return list(self.__tokenize_stream(text, wakati))
+
 
     def __tokenize_stream(self, text, wakati = False):
         text = text.strip()

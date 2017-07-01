@@ -174,10 +174,19 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(tokens[12], u'です')
         self.assertEqual(tokens[13], u'。')
 
-    def test_tokenize_wakati_mode_only_exception(self):
+    def test_tokenize_wakati_mode_only(self):
         text = u'すもももももももものうち'
-        with self.assertRaises(WakatiModeOnlyException):
-            Tokenizer(wakati = True).tokenize(text, wakati = False)
+        tokens = Tokenizer(wakati = True).tokenize(text, wakati = False)
+        # 'wakati = True' parameter is ignored.
+        self.assertEqual(7, len(tokens))
+        self.assertEqual(tokens[0], u'すもも')
+        self.assertEqual(tokens[1], u'も')
+        self.assertEqual(tokens[2], u'もも')
+        self.assertEqual(tokens[3], u'も')
+        self.assertEqual(tokens[4], u'もも')
+        self.assertEqual(tokens[5], u'の')
+        self.assertEqual(tokens[6], u'うち')
+
 
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
