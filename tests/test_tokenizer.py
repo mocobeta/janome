@@ -131,6 +131,17 @@ class TestTokenizer(unittest.TestCase):
             else:
                 self.assertEqual(len(tokens), 3627)
 
+    def test_tokenize_large_text_stream(self):
+        with (open('tests/text_lemon.txt')) as f:
+            text = f.read()
+            if not PY3:
+                text = unicode(text, 'utf-8')
+            tokens = list(Tokenizer().tokenize(text, stream = True))
+            if PY3:
+                self.assertEqual(len(tokens), 3598)
+            else:
+                self.assertEqual(len(tokens), 3627)
+
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
         self.assertEqual(detail, ','.join([token.part_of_speech,token.infl_type,token.infl_form,token.base_form,token.reading,token.phonetic]))

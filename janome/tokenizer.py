@@ -155,23 +155,30 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text):
-        """
+    def tokenize(self, text, stream = False):
+        u"""
         Tokenize the text string.
 
         :param text: unicode string to be tokenized
+        :param stream: (Optional) if given True use stream mode. default is False.
 
-        :return: list of tokens
+        :return: list of tokens (stream = False) or token generator (stream = True)
         """
+        if stream:
+            return self.__tokenize_stream(text)
+        else:
+            return list(self.__tokenize_stream(text))
+
+    def __tokenize_stream(self, text):
         text = text.strip()
         text_length = len(text)
-        all_tokens = []
         processed = 0
         while processed < text_length:
             tokens, pos = self.__tokenize_partial(text[processed:])
-            all_tokens.extend(tokens)
+            for token in tokens:
+                yield token
             processed += pos
-        return all_tokens
+
 
     def __tokenize_partial(self, text):
         chunk_size = min(len(text), Tokenizer.MAX_CHUNK_SIZE)
