@@ -28,6 +28,8 @@ from janome.dic import *
 from struct import pack
 from collections import OrderedDict
 
+PY3 = sys.version_info[0] == 3
+
 FILE_CHAR_DEF = 'char.def'
 FILE_UNK_DEF = 'unk.def'
 FILE_MATRIX_DEF = 'matrix.def'
@@ -85,8 +87,12 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
                 if len(cols) < 2:
                     continue
                 codepoints_range = cols[0].split('..')
-                codepoints_from = unichr(int(codepoints_range[0], 16))
-                codepoints_to = unichr(int(codepoints_range[1], 16)) if len(codepoints_range) == 2 else codepoints_from
+                if PY3:
+                    codepoints_from = chr(int(codepoints_range[0], 16)).encode('unicode_escape').decode('ascii')
+                    codepoints_to = chr(int(codepoints_range[1], 16)).encode('unicode_escape').decode('ascii') if len(codepoints_range) == 2 else codepoints_from
+                else:
+                    codepoints_from = unichr(int(codepoints_range[0], 16))
+                    codepoints_to = unichr(int(codepoints_range[1], 16)) if len(codepoints_range) == 2 else codepoints_from
                 cate = cols[1].strip()
                 assert cate in categories
                 _range = {'from': codepoints_from, 'to': codepoints_to, 'cate': cate}
@@ -120,7 +126,10 @@ def build_unknown_dict(dicdir, enc, outdir=u'.'):
             cate, left_id, right_id, cost, \
             pos_major, pos_minor1, pos_minor2, pos_minor3, _1, _2, _3 = \
                 line.split(',')
-            part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
+            if PY3:
+                part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3]).encode('unicode_escape').decode('ascii')
+            else:
+                part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
             assert cate in categories
             if cate not in unknowns:
                 unknowns[cate] = []

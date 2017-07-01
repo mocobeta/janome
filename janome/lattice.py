@@ -77,6 +77,20 @@ class Node(BaseNode):
                 self.back_pos, self.back_index)
 
 
+class SurfaceNode(BaseNode):
+    """
+    Node class with surface form only.
+    """
+    __slots__ = ['surface']
+
+    def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
+        super(SurfaceNode, self).__init__()
+        self.surface = dict_entry[0]
+        self.left_id = dict_entry[1]
+        self.right_id = dict_entry[2]
+        self.cost = dict_entry[3]
+
+
 class BOS(BaseNode):
     """
     BOS node
@@ -152,22 +166,3 @@ class Lattice:
 
     def __str__(self):
         return '\n'.join(','.join(str(node) for node in nodes) for nodes in self.snodes)
-
-
-if __name__ == '__main__':
-    from sysdic import SYS_DIC
-    s = u'４日夜、満月が地球の影に完全に入る「皆既月食」が起きた。'
-    lattice = Lattice(len(s), SYS_DIC)
-    pos = 0
-    while pos < len(s):
-        entries = SYS_DIC.lookup(s[pos:])
-        for e in entries:
-            lattice.add(Node(e))
-        pos += lattice.forward()
-    lattice.end()
-    #print(str(lattice))
-
-    min_cost_path = lattice.backward()
-    for node in min_cost_path:
-        if isinstance(node, Node):
-            print(node.surface + '\t' + node.part_of_speech)

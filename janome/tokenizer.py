@@ -78,8 +78,9 @@ with user dictionary (simplified format):
 
 import sys
 import os
-from .lattice import Lattice, Node, BOS, EOS, NodeType
-from .dic import UserDictionary, CompiledUserDictionary
+from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType
+from .dic import SystemDictionary, UserDictionary, CompiledUserDictionary
+from sysdic import entries, connections, chardef, unknowns
 
 PY3 = sys.version_info[0] == 3
 
@@ -128,7 +129,7 @@ class Tokenizer:
     MAX_CHUNK_SIZE = 1000
     CHUNK_SIZE = 500
 
-    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024):
+    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, split_only = False):
         """
         Initialize Tokenizer object with optional arguments.
 
@@ -139,16 +140,15 @@ class Tokenizer:
 
         .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
         """
-        
-        from sysdic import SYS_DIC
-        self.sys_dic = SYS_DIC
+        self.split_only = split_only
+        self.sys_dic = SystemDictionary(entries(split_only), connections, chardef.DATA, unknowns.DATA)
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
-                self.user_dic = UserDictionary(udic, udic_enc, udic_type, SYS_DIC.connections)
+                self.user_dic = UserDictionary(udic, udic_enc, udic_type, connections)
             elif os.path.isdir(udic):
                 # load compiled user dictionary
-                self.user_dic = CompiledUserDictionary(udic, SYS_DIC.connections)
+                self.user_dic = CompiledUserDictionary(udic, connections)
             else:
                 self.user_dic = None
         else:
@@ -182,6 +182,9 @@ class Tokenizer:
 
 
     def __tokenize_partial(self, text, split_only = False):
+        if self.split_only and not split_only:
+            raise SplitOnlyModeException
+
         chunk_size = min(len(text), Tokenizer.MAX_CHUNK_SIZE)
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
@@ -190,13 +193,15 @@ class Tokenizer:
             if self.user_dic:
                 entries = self.user_dic.lookup(text[pos:])
                 for e in entries:
-                    lattice.add(Node(e, NodeType.USER_DICT))
+                    node = SurfaceNode(e, NodeType.USER_DICT) if split_only else Node(e, NodeType.USER_DICT)
+                    lattice.add(node)
                 matched = len(entries) > 0
 
             # system dictionary
             entries = self.sys_dic.lookup(text[pos:])
             for e in entries:
-                lattice.add(Node(e, NodeType.SYS_DICT))
+                node = SurfaceNode(e, NodeType.SYS_DICT) if split_only else Node(e, NodeType.SYS_DICT)
+                lattice.add(node)
             matched = len(entries) > 0
 
             # unknown
@@ -249,3 +254,7 @@ class Tokenizer:
 
     def __is_newline(self, text):
         return text.endswith('\n\n') or text.endswith('\r\n\r\n')
+
+
+class SplitOnlyModeException(Exception):
+    pass

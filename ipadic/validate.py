@@ -22,7 +22,7 @@ sys.path.insert(0, parent_dir)
 from janome.dic import SystemDictionary
 from sysdic import entries, connections, chardef, unknowns
 
-SYS_DIC = SystemDictionary(entries(), connections(), chardef.DATA, unknowns.DATA)
+SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
 
 import struct
 import logging

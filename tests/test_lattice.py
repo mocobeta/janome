@@ -21,9 +21,11 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from janome.lattice import *
-from sysdic import SYS_DIC
+from janome.dic import SystemDictionary
+from sysdic import entries, connections, chardef, unknowns
 import unittest
 
+SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
 
 class TestLattice(unittest.TestCase):
     def test_initialize_lattice(self):
