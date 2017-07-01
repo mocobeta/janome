@@ -33,6 +33,21 @@ Usage:
 の	助詞,連体化,*,*,*,*,の,ノ,ノ
 うち	名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
+with splitting only ('分かち書き') mode:
+
+>>> from janome.tokenizer import Tokenizer
+>>> t = Tokenizer()
+>>> for token in t.tokenize(u'すもももももももものうち', wakati=True):
+...   print(token)
+...
+すもも
+も
+もも
+も
+もも
+の
+うち
+
 with user dictionary (IPAdic format):
 
 .. code-block:: shell
@@ -129,7 +144,7 @@ class Tokenizer:
     MAX_CHUNK_SIZE = 1000
     CHUNK_SIZE = 500
 
-    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, split_only = False):
+    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati = False):
         """
         Initialize Tokenizer object with optional arguments.
 
@@ -137,11 +152,12 @@ class Tokenizer:
         :param udic_enc: (Optional) character encoding for user dictionary. default is 'utf-8'
         :param udic_type: (Optional) user dictionray type. supported types are 'ipadic' and 'simpledic'. default is 'ipadic'
         :param max_unknows_length: (Optional) max unknown word length. default is 1024.
+        :param wakati: (Optional) if given True load minimum sysdic data for 'wakati' mode.
 
         .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
         """
-        self.split_only = split_only
-        self.sys_dic = SystemDictionary(entries(split_only), connections, chardef.DATA, unknowns.DATA)
+        self.wakati = wakati
+        self.sys_dic = SystemDictionary(entries(wakati), connections, chardef.DATA, unknowns.DATA)
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
@@ -155,35 +171,35 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, stream = False, split_only = False):
+    def tokenize(self, text, stream = False, wakati = False):
         u"""
         Tokenize the text string.
 
         :param text: unicode string to be tokenized
         :param stream: (Optional) if given True use stream mode. default is False.
-        :param split_only: (Optinal) if given True returns surface forms only. default is False.
+        :param wakati: (Optinal) if given True returns surface forms only. default is False.
 
         :return: list of tokens (stream = False) or token generator (stream = True)
         """
         if stream:
-            return self.__tokenize_stream(text, split_only)
+            return self.__tokenize_stream(text, wakati)
         else:
-            return list(self.__tokenize_stream(text, split_only))
+            return list(self.__tokenize_stream(text, wakati))
 
-    def __tokenize_stream(self, text, split_only = False):
+    def __tokenize_stream(self, text, wakati = False):
         text = text.strip()
         text_length = len(text)
         processed = 0
         while processed < text_length:
-            tokens, pos = self.__tokenize_partial(text[processed:], split_only)
+            tokens, pos = self.__tokenize_partial(text[processed:], wakati)
             for token in tokens:
                 yield token
             processed += pos
 
 
-    def __tokenize_partial(self, text, split_only = False):
-        if self.split_only and not split_only:
-            raise SplitOnlyModeException
+    def __tokenize_partial(self, text, wakati = False):
+        if self.wakati and not wakati:
+            raise WakatiModeOnlyException
 
         chunk_size = min(len(text), Tokenizer.MAX_CHUNK_SIZE)
         lattice = Lattice(chunk_size, self.sys_dic)
@@ -193,14 +209,14 @@ class Tokenizer:
             if self.user_dic:
                 entries = self.user_dic.lookup(text[pos:])
                 for e in entries:
-                    node = SurfaceNode(e, NodeType.USER_DICT) if split_only else Node(e, NodeType.USER_DICT)
+                    node = SurfaceNode(e, NodeType.USER_DICT) if wakati else Node(e, NodeType.USER_DICT)
                     lattice.add(node)
                 matched = len(entries) > 0
 
             # system dictionary
             entries = self.sys_dic.lookup(text[pos:])
             for e in entries:
-                node = SurfaceNode(e, NodeType.SYS_DICT) if split_only else Node(e, NodeType.SYS_DICT)
+                node = SurfaceNode(e, NodeType.SYS_DICT) if wakati else Node(e, NodeType.SYS_DICT)
                 lattice.add(node)
             matched = len(entries) > 0
 
@@ -234,7 +250,7 @@ class Tokenizer:
         min_cost_path = lattice.backward()
         assert isinstance(min_cost_path[0], BOS)
         assert isinstance(min_cost_path[-1], EOS)
-        if split_only:
+        if wakati:
             tokens = [node.surface for node in min_cost_path[1:-1]]
         else:
             tokens = [Token(node) for node in min_cost_path[1:-1]]
@@ -256,5 +272,5 @@ class Tokenizer:
         return text.endswith('\n\n') or text.endswith('\r\n\r\n')
 
 
-class SplitOnlyModeException(Exception):
+class WakatiModeOnlyException(Exception):
     pass

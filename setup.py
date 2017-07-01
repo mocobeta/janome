@@ -15,7 +15,7 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
 
-version = '0.3.1-dev'
+version = '0.3.1-dev2'
 name = 'janome'
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')) as f:

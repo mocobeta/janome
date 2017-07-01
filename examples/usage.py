@@ -7,8 +7,8 @@ for token in t.tokenize(u'すもももももももものうち'):
   print(token)
 
 print('')
-print(u'Tokenize (splitting only mode)')
-for token in t.tokenize(u'すもももももももものうち', split_only = True):
+print(u'Tokenize (wakati mode)')
+for token in t.tokenize(u'すもももももももものうち', wakati = True):
   print(token)
 
 print('')
@@ -18,9 +18,9 @@ for token in t.tokenize(u'東京スカイツリーへのお越しは、東武ス
   print(token)
 
 print('')
-print(u'Tokenize with user dictionary (splitting only mode)')
+print(u'Tokenize with user dictionary (wakati mode)')
 t = Tokenizer("user_ipadic.csv", udic_enc="utf8")
-for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。', split_only = True):
+for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。', wakati = True):
   print(token)
 
 print('')

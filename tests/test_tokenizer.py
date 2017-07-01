@@ -20,7 +20,7 @@ import os, sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from janome.tokenizer import Tokenizer, SplitOnlyModeException
+from janome.tokenizer import Tokenizer, WakatiModeOnlyException
 from janome.lattice import NodeType
 
 import unittest
@@ -142,9 +142,9 @@ class TestTokenizer(unittest.TestCase):
             else:
                 self.assertEqual(len(tokens), 3627)
 
-    def test_tokenize_split_only(self):
+    def test_tokenize_wakati(self):
         text = u'すもももももももものうち'
-        tokens = Tokenizer(split_only = True).tokenize(text, split_only = True)
+        tokens = Tokenizer(wakati = True).tokenize(text, wakati = True)
         self.assertEqual(7, len(tokens))
         self.assertEqual(tokens[0], u'すもも')
         self.assertEqual(tokens[1], u'も')
@@ -154,10 +154,10 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(tokens[5], u'の')
         self.assertEqual(tokens[6], u'うち')
 
-    def test_tokenize_with_userdic_split_only(self):
+    def test_tokenize_with_userdic_wakati(self):
         text = u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
         udic_file = os.path.join(parent_dir, 'tests/user_ipadic.csv')
-        tokens = Tokenizer(udic_file, split_only = True).tokenize(text, split_only = True)
+        tokens = Tokenizer(udic_file, wakati = True).tokenize(text, wakati = True)
         self.assertEqual(14, len(tokens))
         self.assertEqual(tokens[0], u'東京スカイツリー')
         self.assertEqual(tokens[1], u'へ')
@@ -174,10 +174,10 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(tokens[12], u'です')
         self.assertEqual(tokens[13], u'。')
 
-    def test_tokenize_split_only_mode_exception(self):
+    def test_tokenize_wakati_mode_only_exception(self):
         text = u'すもももももももものうち'
-        with self.assertRaises(SplitOnlyModeException):
-            Tokenizer(split_only = True).tokenize(text, split_only = False)
+        with self.assertRaises(WakatiModeOnlyException):
+            Tokenizer(wakati = True).tokenize(text, wakati = False)
 
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
