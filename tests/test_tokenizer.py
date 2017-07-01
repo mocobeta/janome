@@ -142,6 +142,18 @@ class TestTokenizer(unittest.TestCase):
             else:
                 self.assertEqual(len(tokens), 3627)
 
+    def test_tokenize_split_only(self):
+        text = u'すもももももももものうち'
+        tokens = Tokenizer().tokenize(text, split_only = True)
+        self.assertEqual(7, len(tokens))
+        self.assertEqual(tokens[0], u'すもも')
+        self.assertEqual(tokens[1], u'も')
+        self.assertEqual(tokens[2], u'もも')
+        self.assertEqual(tokens[3], u'も')
+        self.assertEqual(tokens[4], u'もも')
+        self.assertEqual(tokens[5], u'の')
+        self.assertEqual(tokens[6], u'うち')
+
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
         self.assertEqual(detail, ','.join([token.part_of_speech,token.infl_type,token.infl_form,token.base_form,token.reading,token.phonetic]))

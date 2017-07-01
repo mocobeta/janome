@@ -155,32 +155,33 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, stream = False):
+    def tokenize(self, text, stream = False, split_only = False):
         u"""
         Tokenize the text string.
 
         :param text: unicode string to be tokenized
         :param stream: (Optional) if given True use stream mode. default is False.
+        :param split_only: (Optinal) if given True returns surface forms only. default is False.
 
         :return: list of tokens (stream = False) or token generator (stream = True)
         """
         if stream:
-            return self.__tokenize_stream(text)
+            return self.__tokenize_stream(text, split_only)
         else:
-            return list(self.__tokenize_stream(text))
+            return list(self.__tokenize_stream(text, split_only))
 
-    def __tokenize_stream(self, text):
+    def __tokenize_stream(self, text, split_only = False):
         text = text.strip()
         text_length = len(text)
         processed = 0
         while processed < text_length:
-            tokens, pos = self.__tokenize_partial(text[processed:])
+            tokens, pos = self.__tokenize_partial(text[processed:], split_only)
             for token in tokens:
                 yield token
             processed += pos
 
 
-    def __tokenize_partial(self, text):
+    def __tokenize_partial(self, text, split_only = False):
         chunk_size = min(len(text), Tokenizer.MAX_CHUNK_SIZE)
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
@@ -228,7 +229,10 @@ class Tokenizer:
         min_cost_path = lattice.backward()
         assert isinstance(min_cost_path[0], BOS)
         assert isinstance(min_cost_path[-1], EOS)
-        tokens = [Token(node) for node in min_cost_path[1:-1]]
+        if split_only:
+            tokens = [node.surface for node in min_cost_path[1:-1]]
+        else:
+            tokens = [Token(node) for node in min_cost_path[1:-1]]
         return (tokens, pos)
 
     def __should_split(self, text, pos):
