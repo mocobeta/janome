@@ -6,8 +6,8 @@
 .. role:: strike
 
 
-Welcome to janome's documentation!
-==================================
+Welcome to janome's documentation! (English)
+=============================================
 
 `日本語 <http://mocobeta.github.io/janome/>`_
 
@@ -38,7 +38,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.0
+* janome: 0.3.1
 
 Install
 -------
@@ -176,15 +176,15 @@ For now, there is no tools for compiling user dictionary. Use `APIs <http://moco
 How to compile user dictionary (MeCab IPADIC format): ::
 
   >>> from janome.dic import UserDictionary
-  >>> from sysdic import SYS_DIC
-  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", SYS_DIC.connections)
+  >>> import sysdic
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
 How to compile user dictionary (simplified format): ::  
 
   >>> from janome.dic import UserDictionary
-  >>> from sysdic import SYS_DIC
-  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", SYS_DIC.connections)
+  >>> import sysdic
+  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
 Once compiling has been successfully completed, the data is saved in '/tmp/userdic' directory. Pass the directory path to Tokenizer's constructor to use it.
@@ -194,6 +194,51 @@ Once compiling has been successfully completed, the data is saved in '/tmp/userd
   >>> t = Tokenizer("/tmp/userdic")
 
 .. note:: Use same major python version at both compile time and runtime.  Forward/backward dictionary data compatibility is not guaranteed.
+
+Streaming mode (v0.3.1+)
+-------------------------
+
+When 'stream = True' option is given to tokenize() method, it runs in streaming mode. In streaming mode, partial analyzed results are returned through `generator <https://wiki.python.org/moin/Generators>`_ interface.
+
+Use this option when you analyze very large text data.
+
+.. code-block:: python
+
+  t = Tokenizer()
+  with open('very_large_text.txt') as f:
+      txt = f.read()
+      for token in t.tokenize(txt, stream=True):
+          print(token)
+
+
+'wakati-gaki' mode (v0.3.1+)
+-------------------------------
+
+When 'wakati = True' option is given to tokenize() method, it runs in 'wakati-gaki' ('分かち書き') mode. In wakati-gaki mode, tokenize() method returns sufrace forms only. Return type is list of string, not list of Token.
+
+::
+
+  >>> t = Tokenizer()
+  >>> tokens = t.tokenize(u'分かち書きモードがつきました！', wakati=True)
+  >>> tokens
+  ['分かち書き', 'モード', 'が', 'つき', 'まし', 'た', '！']
+
+If you use 'wakati-gaki' mode only, it is recommended to give 'wakati = True' option to Tokenizer.__init__(). When Tokenizer object is initialized as below, extra information (detailed part of speech, reading, etc.) for tokens are not loaded from dictionary so the memory usage is reduced.
+
+::
+
+  >>> t = Tokenizer(wakati=True)
+
+When this option is set to Tokenizer object, tokenize() method always runs in wakati-gaki mode ('wakati = False' option to tokenize() method is ignored.) 
+
+wakati-gaki mode can be used with streaming mode.
+
+.. code-block:: python
+
+  t = Tokenizer()
+  for token in t.tokenize(txt, stream=True, wakati=True):
+      print(token)
+
 
 Use janome from the command-line (v0.2.6+, Lunux/Mac only)
 ----------------------------------------------------------
@@ -217,7 +262,7 @@ It reads a sentence at a time from standard input and outputs the analysis resul
 Note for analyzing large document set
 -------------------------------------
 
-.. note:: This memory leak problem is solved at v0.3. The analysed results with janome version 0.3 or over can be a bit different from ones with version 0.2.
+.. note:: This memory leak problem is solved at v0.3. The analysed results with janome version 0.3 or over can be a bit different from ones with version 0.2. You may want to examine streaming and/or wakati-gaki mode to reduce memory usage more.
 
 In older version (< 0.3), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
 
@@ -261,7 +306,8 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
-* 2016.06.30 janome Version 0.3.0 was released
+* 2017.07.02 janove Version 0.3.1 was released
+* 2017.06.30 janome Version 0.3.0 was released
 * 2016.05.07 janome Version 0.2.8 was released
 * 2016.03.05 janome Version 0.2.7 was released
 * 2015.10.26 janome Version 0.2.6 was released

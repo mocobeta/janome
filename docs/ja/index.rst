@@ -5,8 +5,8 @@
 
 .. role:: strike
 
-Welcome to janome's documentation!
-==================================
+Welcome to janome's documentation! (Japanese)
+==============================================
 
 `English <http://mocobeta.github.io/janome/en/>`_
 
@@ -206,7 +206,7 @@ tokenize() メソッドに 'stream = True' オプションを与えると, ス�
 .. code-block:: python
 
   t = Tokenizer()
-  with open('very_large_text_data') as f:
+  with open('very_large_text.txt') as f:
       txt = f.read()
       for token in t.tokenize(txt, stream=True):
           print(token)

@@ -121,7 +121,7 @@ html_theme = 'haiku'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "%s v%s documentation" % (project, version)
+html_title = "%s v%s documentation (ja)" % (project, version)
 
 html_favicon = 'bronze-25C9.png'
 
