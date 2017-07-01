@@ -122,7 +122,7 @@ class Token:
 
 class Tokenizer:
     u"""
-    A Tokenizer tokenize Japanese texts with system and user defined dictionary.
+    A Tokenizer tokenizes Japanese texts with system and optional user defined dictionary.
     It is strongly recommended to re-use a Tokenizer object because object initialization cost is high. 
     """
     MAX_CHUNK_SIZE = 1000
@@ -130,7 +130,7 @@ class Tokenizer:
 
     def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024):
         """
-        Initialize Tokenizer object with (optional) arguments.
+        Initialize Tokenizer object with optional arguments.
 
         :param udic: (Optional) user dictionary file (CSV format) or directory path to compiled dictionary data
         :param udic_enc: (Optional) character encoding for user dictionary. default is 'utf-8'
@@ -157,9 +157,9 @@ class Tokenizer:
 
     def tokenize(self, text):
         """
-        Tokenize the text string. Support unicode string only.
+        Tokenize the text string.
 
-        :param text: text string to be tokenized
+        :param text: unicode string to be tokenized
 
         :return: list of tokens
         """

@@ -15,7 +15,7 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
 
-version = '0.3.0'
+version = '0.3.1-dev'
 name = 'janome'
 short_description = '`janome` is a package for Japanese Morphological Analysis.'
 long_description = """\
