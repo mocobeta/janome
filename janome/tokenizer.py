@@ -33,7 +33,7 @@ Usage:
 の	助詞,連体化,*,*,*,*,の,ノ,ノ
 うち	名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
-with splitting only ('分かち書き') mode:
+with wakati ('分かち書き') mode:
 
 >>> from janome.tokenizer import Tokenizer
 >>> t = Tokenizer()
