@@ -38,7 +38,7 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-* janome: 0.3.0
+* janome: 0.3.1
 
 インストール
 ---------------
@@ -172,18 +172,20 @@ user_simpledic.csv ::
 
 現在のところ, コンパイルのためのツールはありませんが, `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます.
 
+.. note:: v0.3.1 から, ユーザー辞書コンパイル時の API が少し変わっているため注意してください.
+
 辞書のコンパイル(MeCab IPADIC format) ::
 
   >>> from janome.dic import UserDictionary
-  >>> from sysdic import SYS_DIC
-  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", SYS_DIC.connections)
+  >>> import sysdic
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
 辞書のコンパイル(simplified format) ::
 
   >>> from janome.dic import UserDictionary
-  >>> from sysdic import SYS_DIC
-  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", SYS_DIC.connections)
+  >>> import sysdic
+  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
 これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
@@ -193,6 +195,51 @@ user_simpledic.csv ::
   >>> t = Tokenizer("/tmp/userdic")
 
 .. note:: コンパイル済みユーザー辞書は, コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください. 辞書の前方/後方互換性は保証されないため, Python のメジャーバージョンが異なると読めない可能性があります.
+
+ストリームモード (v0.3.1 以上)
+-------------------------------------------------------
+
+tokenize() メソッドに 'stream = True' オプションを与えると, ストリームモードで動作します．ストリームモードでは, 部分的な解析が完了する都度, 解析結果を返します. 戻り値はリストではなく `generator <https://wiki.python.org/moin/Generators>`_ になります．
+
+内部的にすべての Token のリストを保持しなくなるため, 巨大な文書を解析する場合に使うと, メモリ消費量が一定以下に抑制されます.
+
+.. code-block:: python
+
+  t = Tokenizer()
+  with open('very_large_text_data') as f:
+      txt = f.read()
+      for token in t.tokenize(txt, stream=True):
+          print(token)
+
+
+分かち書きモード (v0.3.1 以上)
+--------------------------------------------------------
+
+tokenize() メソッドに 'wakati = True' オプションを与えると, 分かち書きモード（表層形のみを返すモード）で動作します. 分かち書きモードで解析した場合の戻り値は, Token オブジェクトのリストではなく文字列のリストになります.
+
+::
+
+  >>> t = Tokenizer()
+  >>> tokens = t.tokenize(u'分かち書きモードがつきました！', wakati=True)
+  >>> tokens
+  ['分かち書き', 'モード', 'が', 'つき', 'まし', 'た', '！']
+
+分かち書きモードしか使わない場合, Tokenizer オブジェクト初期化時に 'wakati = True' オプションを与えると, 詳細品詞・読みなど, 不要なデータを辞書からロードしなくなります. 普通にすべての辞書データをロードして初期化した場合より, 少し（50MB程度）メモリ使用量が抑制されます.
+
+::
+
+  >>> t = Tokenizer(wakati=True)
+
+なお, このオプションを与えて Tokenizer を初期化した場合, tokenize() メソッドは常に分かち書きモードで動作します（tokenize 時に 'wakati = False' と指定しても無視されます）.
+
+分かち書きモードはストリームモードと併用することができます.
+
+.. code-block:: python
+
+  t = Tokenizer()
+  for token in t.tokenize(txt, stream=True, wakati=True):
+      print(token)
+
 
 コマンドラインから使う (v0.2.6 以上, Lunux/Mac only)
 --------------------------------------------------------
@@ -215,10 +262,10 @@ user_simpledic.csv ::
     (Ctrl-C で終了)
 
 
-大きな文書を解析する際の注意
---------------------------------
+大きな文書を解析する際の注意 (v0.2.8 以下)
+---------------------------------------------------------
 
-.. note:: 0.3 以上では大きな文書を解析してもメモリを大量に消費（リーク）することはなくなりました. この修正の影響で, 0.2 系と 0.3 系以上 では, 大きなドキュメントを解析したときの解析結果が若干異なる可能性があります.
+.. note:: バージョン 0.3 では，大きな文書を解析したときにメモリを大量に消費（リーク）してしまう問題が解決されました. 内部バッファに収まらないサイズの文書が与えられた場合, 部分的に解析することでメモリ使用量を抑制しています. この修正の影響で, 0.2 系と 0.3 系以上 では, 大きなドキュメントを解析したときの解析結果が若干異なる可能性があります. よりメモリ使用量を抑制したい場合は「ストリームモード」を使ってください.
 
 古いバージョン(< 0.3)では, 入力全体を読んでラティスを構築するため, 入力文字列が大きくなると多くのリソースを消費します. 数十キロバイト以上の文書を解析する場合は, なるべく適度に分割して与えてください. 
 
@@ -299,6 +346,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.07.02 janome Version 0.3.1 リリース
 * 2017.06.30 janome Version 0.3.0 リリース
 * 2016.05.07 janome Vesrion 0.2.8 リリース
 * 2016.03.05 janome Version 0.2.7 リリース
