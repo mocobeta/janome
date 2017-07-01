@@ -30,7 +30,7 @@ import unittest
 
 class TestDictionary(unittest.TestCase):
     def test_system_dictionary_ipadic(self):
-        sys_dic = SystemDictionary(entries(), connections(), chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
         self.assertEqual(7, len(sys_dic.lookup(u'形態素')))
         self.assertEqual(1, sys_dic.get_trans_cost(0, 1))
         self.assertEqual({'HIRAGANA': []}, sys_dic.get_char_categories(u'は'))
@@ -55,7 +55,7 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(2, sys_dic.unknown_length('HIRAGANA'))
 
     def test_property_types(self):
-        sys_dic = SystemDictionary(entries(), connections(), chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
         # entry in the system dictionary
         entry = sys_dic.lookup(u'すもも')[0]
         if PY3:
@@ -90,7 +90,7 @@ class TestDictionary(unittest.TestCase):
 
         # entry in the user defined dictionary
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
-                                  enc='utf8', type='ipadic', connections=connections())
+                                  enc='utf8', type='ipadic', connections=connections)
         entry = user_dic.lookup(u'東京スカイツリー')[0]
         if PY3:
             self.assertTrue(type(entry[0]) is str)
@@ -113,7 +113,7 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(type(entry[3]) is int)
 
     def test_system_dictionary_cache(self):
-        sys_dic = SystemDictionary(entries(), connections(), chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
         self.assertEqual(11, len(sys_dic.lookup(u'小書き')))
         self.assertEqual(11, len(sys_dic.lookup(u'小書き')))
         self.assertEqual(11, len(sys_dic.lookup(u'小書きにしました')))
@@ -127,7 +127,7 @@ class TestDictionary(unittest.TestCase):
     def test_user_dictionary(self):
         # create user dictionary from csv
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
-                                  enc='utf8', type='ipadic', connections=connections())
+                                  enc='utf8', type='ipadic', connections=connections)
         self.assertEqual(1, len(user_dic.lookup(u'東京スカイツリー')))
 
         # save compiled dictionary
@@ -137,13 +137,13 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
 
         # load compiled dictionary
-        compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections())
+        compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections)
         self.assertEqual(1, len(compiled_user_dic.lookup(u'とうきょうスカイツリー駅')))
 
     def test_simplified_user_dictionary(self):
         # create user dictionary from csv
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_simpledic.csv'),
-                                  enc='utf8', type='simpledic', connections=connections())
+                                  enc='utf8', type='simpledic', connections=connections)
         self.assertEqual(1, len(user_dic.lookup(u'東京スカイツリー')))
 
         # save compiled dictionary
@@ -153,7 +153,7 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
 
         # load compiled dictionary
-        compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections())
+        compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections)
         self.assertEqual(1, len(compiled_user_dic.lookup(u'とうきょうスカイツリー駅')))
 
 if __name__ == u'__main__':
