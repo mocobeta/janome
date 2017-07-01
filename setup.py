@@ -17,33 +17,32 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
 
 version = '0.3.1-dev'
 name = 'janome'
-short_description = '`janome` is a package for Japanese Morphological Analysis.'
-long_description = """\
-`janome` is a package for Japanese Morphological Analysis.
 
-Requirements
-------------
-* Python 2.7.x and Python 3.3+
-
-Features and history
---------------------
-See http://mocobeta.github.io/janome/en
-
-"""
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')) as f:
+    long_description = f.read()
 
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache License 2.0",
     "Programming Language :: Python",
-    "Topic :: Natural Language :: Japanese",
+    "Topic :: Natural Language Processing :: Japanese",
+    "License :: Apache License 2.0",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6"
     ]
 
 setup(
     name='Janome',
     version=version,
     description='Japanese morphological analysis engine.',
+    long_description=long_description,
     author='Tomoko Uchida',
     author_email='tomoko.uchida.1111@gmail.com',
+    license='AL2',
+    classifiers=classifiers,
     url='http://mocobeta.github.io/janome/',
     packages=['janome','sysdic'],
     package_data={'sysdic': ['fst.data']},
