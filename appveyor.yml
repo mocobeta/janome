@@ -1,2 +1,2 @@
 before_build:
-  - ps: Compress-Archive ipadic/sysdic.zip
+  - ps: compress-archive -path '.\ipadic\sysdic.zip' -destinationpath '.'
