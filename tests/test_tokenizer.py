@@ -133,7 +133,7 @@ class TestTokenizer(unittest.TestCase):
                 self.assertEqual(len(tokens), 3627)
 
     def test_tokenize_large_text_stream(self):
-        with (open('tests/text_lemon.txt'), encoding='utf-8') as f:
+        with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
                 text = unicode(text, 'utf-8')
