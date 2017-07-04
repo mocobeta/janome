@@ -24,6 +24,7 @@ from janome.tokenizer import Tokenizer, WakatiModeOnlyException
 from janome.lattice import NodeType
 
 import unittest
+from io import open
 
 PY3 = sys.version_info[0] == 3
 
@@ -121,7 +122,7 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[13], u'。', u'記号,句点,*,*,*,*,。,。,。', NodeType.SYS_DICT)
 
     def test_tokenize_large_text(self):
-        with open('tests/text_lemon.txt') as f:
+        with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
                 text = unicode(text, 'utf-8')
@@ -132,7 +133,7 @@ class TestTokenizer(unittest.TestCase):
                 self.assertEqual(len(tokens), 3627)
 
     def test_tokenize_large_text_stream(self):
-        with (open('tests/text_lemon.txt')) as f:
+        with (open('tests/text_lemon.txt'), encoding='utf-8') as f:
             text = f.read()
             if not PY3:
                 text = unicode(text, 'utf-8')
