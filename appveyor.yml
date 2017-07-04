@@ -18,7 +18,7 @@ environment:
     #  DISTUTILS_USE_SDK: "1"
     #- PYTHON: "C:\\Python35-x64"
 
-#before_test:
-#  - ps: compress-archive -path '.\ipadic\sysdic.zip' -destinationpath '.'
-build:
+install:
   - "%PYTHON%\\python.exe setup.py install"
+
+build: off
