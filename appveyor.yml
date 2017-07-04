@@ -21,6 +21,6 @@ environment:
 build: off
 
 before_test:
-  - ps: "compress-archive -path '.\ipadic\sysdic.zip' -destinationpath '.'"
+  - ps: compress-archive -path '.\ipadic\sysdic.zip' -destinationpath '.'
 test_script:
   - "%PYTHON%\\python.exe setup.py test"
