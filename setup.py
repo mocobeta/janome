@@ -1,5 +1,6 @@
 from setuptools import setup
 import sys
+from io import open
 
 sys.path.append('./janome')
 sys.path.append('./tests')
