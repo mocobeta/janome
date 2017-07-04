@@ -1,0 +1,2 @@
+before_build:
+  - ps: Compress-Archive ipadic/sysdic.zip
