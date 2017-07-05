@@ -38,7 +38,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.1
+* janome: 0.3.2
 
 Install
 -------
@@ -306,7 +306,8 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
-* 2017.07.02 janove Version 0.3.1 was released
+* 2017.07.05 janome Version 0.3.2 was released 
+* 2017.07.02 janome Version 0.3.1 was released
 * 2017.06.30 janome Version 0.3.0 was released
 * 2016.05.07 janome Version 0.2.8 was released
 * 2016.03.05 janome Version 0.2.7 was released

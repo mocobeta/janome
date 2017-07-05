@@ -38,7 +38,7 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-* janome: 0.3.1
+* janome: 0.3.2
 
 インストール
 ---------------
@@ -346,6 +346,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.07.05 janome Version 0.3.2 リリース
 * 2017.07.02 janome Version 0.3.1 リリース
 * 2017.06.30 janome Version 0.3.0 リリース
 * 2016.05.07 janome Vesrion 0.2.8 リリース
