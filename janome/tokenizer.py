@@ -179,7 +179,7 @@ class Tokenizer:
         :param stream: (Optional) if given True use stream mode. default is False.
         :param wakati: (Optinal) if given True returns surface forms only. default is False.
 
-        :return: list of tokens (stream = False) or token generator (stream = True)
+        :return: list of tokens (stream=False, wakati=False) or token generator (stream=True, wakati=False) or list of string (stream=False, wakati=True) or string generator (stream=True, wakati=True)
         """
         if self.wakati:
             wakati = True
