@@ -31,10 +31,10 @@ signal.signal(signal.SIGINT, signal_handler)
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("-e", "--enc", dest="enc", default="utf8", help=" input encoding")
+    parser.add_argument("-e", "--enc", dest="enc", default="utf8", help="input encoding. default is utf8")
     parser.add_argument("--udic", dest="udic", default="", help="path to user dictionary file")
-    parser.add_argument("--udic-enc", dest="udic_enc", default="utf8", help="user dictionary encoding (default utf8)")
-    parser.add_argument("--udic-type", dest="udic_type", default="ipadic", help="user dictionary type (default ipadic)")
+    parser.add_argument("--udic-enc", dest="udic_enc", default="utf8", help="user dictionary encoding. default is utf8")
+    parser.add_argument("--udic-type", dest="udic_type", default="ipadic", help="user dictionary type, 'ipadic' or 'simpledic.' default is 'ipadic'")
     args = parser.parse_args()
 
     t = Tokenizer(udic=args.udic,
