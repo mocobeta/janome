@@ -5,6 +5,9 @@ Janome
 .. image:: https://travis-ci.org/mocobeta/janome.svg?branch=master
     :target: https://travis-ci.org/mocobeta/janome
 
+.. image:: https://ci.appveyor.com/api/projects/status/47d4avyw07voo331/branch/master?svg=true
+    :target: https://ci.appveyor.com/project/mocobeta/janome/branch/master
+
 .. image:: https://coveralls.io/repos/github/mocobeta/janome/badge.svg?branch=master
     :target: https://coveralls.io/github/mocobeta/janome?branch=master
 
