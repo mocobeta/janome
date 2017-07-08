@@ -231,7 +231,7 @@ If you use 'wakati-gaki' mode only, it is recommended to give 'wakati = True' op
 
 When this option is set to Tokenizer object, tokenize() method always runs in wakati-gaki mode ('wakati = False' option to tokenize() method is ignored.) 
 
-wakati-gaki mode can be used with streaming mode.
+'wakati-gaki' mode works well with streaming mode. tokenize() method returns generator of string when it is given 'stream=True' and 'wakati=True' options.
 
 .. code-block:: python
 
