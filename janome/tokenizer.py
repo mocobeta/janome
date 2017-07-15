@@ -94,8 +94,8 @@ with user dictionary (simplified format):
 import sys
 import os
 from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType
-from .dic import SystemDictionary, UserDictionary, CompiledUserDictionary
-from sysdic import entries, connections, chardef, unknowns
+from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary
+from sysdic import entries, mmap_entries, connections, chardef, unknowns
 
 PY3 = sys.version_info[0] == 3
 
@@ -104,20 +104,20 @@ class Token:
     A Token object contains all information for a token.
     """
 
-    def __init__(self, node):
+    def __init__(self, node, extra=None):
         self.surface = node.surface
         """surface form (表層形)"""
-        self.part_of_speech = node.part_of_speech
+        self.part_of_speech = extra[0] if extra else node.part_of_speech
         """part of speech (品詞)"""
-        self.infl_type = node.infl_type
+        self.infl_type = extra[1] if extra else node.infl_type
         """terminal form (活用型)"""
-        self.infl_form = node.infl_form
+        self.infl_form = extra[2] if extra else node.infl_form
         """stem form (活用形)"""
-        self.base_form = node.base_form
+        self.base_form = extra[3] if extra else node.base_form
         """base form (基本形)"""
-        self.reading = node.reading
+        self.reading = extra[4] if extra else node.reading
         """"reading (読み)"""
-        self.phonetic = node.phonetic
+        self.phonetic = extra[5] if extra else node.phonetic
         """pronounce (発音)"""
         self.node_type = node.node_type
 
@@ -144,7 +144,7 @@ class Tokenizer:
     MAX_CHUNK_SIZE = 1000
     CHUNK_SIZE = 500
 
-    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati = False):
+    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False, mmap=False):
         """
         Initialize Tokenizer object with optional arguments.
 
@@ -153,11 +153,15 @@ class Tokenizer:
         :param udic_type: (Optional) user dictionray type. supported types are 'ipadic' and 'simpledic'. default is 'ipadic'
         :param max_unknows_length: (Optional) max unknown word length. default is 1024.
         :param wakati: (Optional) if given True load minimum sysdic data for 'wakati' mode.
+        :param mmap: (Optional) if given True use memory-mapped file for dictionary data.
 
         .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
         """
         self.wakati = wakati
-        self.sys_dic = SystemDictionary(entries(wakati), connections, chardef.DATA, unknowns.DATA)
+        if mmap:
+            self.sys_dic = MMapSystemDictionary(mmap_entries(wakati), connections, chardef.DATA, unknowns.DATA)
+        else:
+            self.sys_dic = SystemDictionary(entries(wakati), connections, chardef.DATA, unknowns.DATA)
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
@@ -188,7 +192,6 @@ class Tokenizer:
         else:
             return list(self.__tokenize_stream(text, wakati))
 
-
     def __tokenize_stream(self, text, wakati = False):
         text = text.strip()
         text_length = len(text)
@@ -212,15 +215,13 @@ class Tokenizer:
             if self.user_dic:
                 entries = self.user_dic.lookup(text[pos:])
                 for e in entries:
-                    node = SurfaceNode(e, NodeType.USER_DICT) if wakati else Node(e, NodeType.USER_DICT)
-                    lattice.add(node)
+                    lattice.add(SurfaceNode(e, NodeType.USER_DICT))
                 matched = len(entries) > 0
 
             # system dictionary
             entries = self.sys_dic.lookup(text[pos:])
             for e in entries:
-                node = SurfaceNode(e, NodeType.SYS_DICT) if wakati else Node(e, NodeType.SYS_DICT)
-                lattice.add(node)
+                lattice.add(SurfaceNode(e, NodeType.SYS_DICT))
             matched = len(entries) > 0
 
             # unknown
@@ -256,7 +257,14 @@ class Tokenizer:
         if wakati:
             tokens = [node.surface for node in min_cost_path[1:-1]]
         else:
-            tokens = [Token(node) for node in min_cost_path[1:-1]]
+            tokens = []
+            for node in min_cost_path[1:-1]:
+                if type(node) == SurfaceNode and node.node_type == NodeType.SYS_DICT:
+                    tokens.append(Token(node, self.sys_dic.lookup_extra(node.num)))
+                elif type(node) == SurfaceNode and node.node_type == NodeType.USER_DICT:
+                    tokens.append(Token(node, self.user_dic.lookup_extra(node.num)))
+                else:
+                    tokens.append(Token(node))
         return (tokens, pos)
 
     def __should_split(self, text, pos):

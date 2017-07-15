@@ -41,6 +41,18 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[5], u'の', u'助詞,連体化,*,*,*,*,の,ノ,ノ', NodeType.SYS_DICT)
         self._check_token(tokens[6], u'うち', u'名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
 
+    def test_tokenize_mmap(self):
+        text = u'すもももももももものうち'
+        tokens = Tokenizer(mmap=True).tokenize(text)
+        self.assertEqual(7, len(tokens))
+        self._check_token(tokens[0], u'すもも', u'名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
+        self._check_token(tokens[1], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens[2], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens[3], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens[4], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens[5], u'の', u'助詞,連体化,*,*,*,*,の,ノ,ノ', NodeType.SYS_DICT)
+        self._check_token(tokens[6], u'うち', u'名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
+
     def test_tokenize2(self):
         text = u'𠮷野屋'
         tokens = Tokenizer().tokenize(text)

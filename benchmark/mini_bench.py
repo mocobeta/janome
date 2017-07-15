@@ -25,7 +25,11 @@ s = u'janome (\u86c7\u306e\u76ee) \u306f, Pure Python \u3067\u66f8\u304b\u308c\u
 if __name__ == '__main__':
     import timeit, sys
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 100
-    print("** execute timeit() with number=%d **" % n)
+
+    print("** initialize Tokenizer object **")
+    print(timeit.timeit(stmt='Tokenizer()', setup='from janome.tokenizer import Tokenizer', number=1))
+
+    print("** execute tokenize() %d times **" % n)
     res = timeit.repeat(stmt='t.tokenize(s)', setup=setup, repeat=5, number=n)
     for i, x in enumerate(res):
         print("repeat %d: %f" % (i, x))

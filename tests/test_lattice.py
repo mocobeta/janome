@@ -21,11 +21,12 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from janome.lattice import *
-from janome.dic import SystemDictionary
-from sysdic import entries, connections, chardef, unknowns
+from janome.dic import SystemDictionary, MMapSystemDictionary
+from sysdic import entries, mmap_entries, connections, chardef, unknowns
 import unittest
 
 SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+MMAP_SYS_DIC = MMapSystemDictionary(mmap_entries(), connections, chardef.DATA, unknowns.DATA)
 
 class TestLattice(unittest.TestCase):
     def test_initialize_lattice(self):
@@ -40,7 +41,7 @@ class TestLattice(unittest.TestCase):
         lattice = Lattice(len(s), SYS_DIC)
         entries = SYS_DIC.lookup(s)
         for entry in entries:
-            lattice.add(Node(entry))
+            lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
         self.assertEqual(7, len(lattice.enodes[2]))
         self.assertEqual(1, len(lattice.enodes[3]))
@@ -50,7 +51,7 @@ class TestLattice(unittest.TestCase):
 
         entries = SYS_DIC.lookup(s[1:])
         for entry in entries:
-            lattice.add(Node(entry))
+            lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
         self.assertEqual(3, len(lattice.enodes[3]))
         self.assertEqual(3, len(lattice.enodes[4]))
@@ -59,7 +60,7 @@ class TestLattice(unittest.TestCase):
 
         entries = SYS_DIC.lookup(s[2:])
         for entry in entries:
-            lattice.add(Node(entry))
+            lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
         self.assertEqual(5, len(lattice.enodes[4]))
 
@@ -76,7 +77,63 @@ class TestLattice(unittest.TestCase):
         while pos < len(s):
             entries = SYS_DIC.lookup(s[pos:])
             for e in entries:
-                lattice.add(Node(e))
+                lattice.add(SurfaceNode(e))
+            pos += lattice.forward()
+        lattice.end()
+        min_cost_path = lattice.backward()
+        self.assertEqual(9, len(min_cost_path))
+        self.assertTrue(isinstance(min_cost_path[0], BOS))
+        self.assertEqual(u'すもも', min_cost_path[1].surface)
+        self.assertEqual(u'も', min_cost_path[2].surface)
+        self.assertEqual(u'もも', min_cost_path[3].surface)
+        self.assertEqual(u'も', min_cost_path[4].surface)
+        self.assertEqual(u'もも', min_cost_path[5].surface)
+        self.assertEqual(u'の', min_cost_path[6].surface)
+        self.assertEqual(u'うち', min_cost_path[7].surface)
+        self.assertTrue(isinstance(min_cost_path[8], EOS))
+
+    def test_add_forward_end_mmap(self):
+        s = u'すもも'
+        lattice = Lattice(len(s), SYS_DIC)
+        entries = MMAP_SYS_DIC.lookup(s)
+        for entry in entries:
+            lattice.add(SurfaceNode(entry))
+        self.assertEqual(9, len(lattice.snodes[1]))
+        self.assertEqual(7, len(lattice.enodes[2]))
+        self.assertEqual(1, len(lattice.enodes[3]))
+        self.assertEqual(1, len(lattice.enodes[4]))
+
+        self.assertEqual(1, lattice.forward())
+
+        entries = MMAP_SYS_DIC.lookup(s[1:])
+        for entry in entries:
+            lattice.add(SurfaceNode(entry))
+        self.assertEqual(4, len(lattice.snodes[2]))
+        self.assertEqual(3, len(lattice.enodes[3]))
+        self.assertEqual(3, len(lattice.enodes[4]))
+
+        self.assertEqual(1, lattice.forward())
+
+        entries = MMAP_SYS_DIC.lookup(s[2:])
+        for entry in entries:
+            lattice.add(SurfaceNode(entry))
+        self.assertEqual(2, len(lattice.snodes[3]))
+        self.assertEqual(5, len(lattice.enodes[4]))
+
+        self.assertEqual(1, lattice.forward())
+
+        lattice.end()
+        self.assertTrue(isinstance(lattice.snodes[4][0], EOS))
+        self.assertTrue(isinstance(lattice.enodes[5][0], EOS))
+
+    def test_backward_mmap(self):
+        s = u'すもももももももものうち'
+        lattice = Lattice(len(s), SYS_DIC)
+        pos = 0
+        while pos < len(s):
+            entries = MMAP_SYS_DIC.lookup(s[pos:])
+            for e in entries:
+                lattice.add(SurfaceNode(e))
             pos += lattice.forward()
         lattice.end()
         min_cost_path = lattice.backward()

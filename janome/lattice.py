@@ -50,7 +50,7 @@ class Node(BaseNode):
     Node class
     """
     __slots__ = [
-        'surface', 'left_id', 'right_id', 'cost',
+        'surface', 'left_id', 'right_id', 'cost'
         'part_of_speech', 'infl_type', 'infl_form',
         'base_form', 'reading', 'phonetic', 'node_type'
     ]
@@ -85,10 +85,12 @@ class SurfaceNode(BaseNode):
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         super(SurfaceNode, self).__init__()
-        self.surface = dict_entry[0]
-        self.left_id = dict_entry[1]
-        self.right_id = dict_entry[2]
-        self.cost = dict_entry[3]
+        self.num = dict_entry[0]
+        self.surface = dict_entry[1]
+        self.left_id = dict_entry[2]
+        self.right_id = dict_entry[3]
+        self.cost = dict_entry[4]
+        self.node_type = node_type
 
 
 class BOS(BaseNode):
