@@ -7,6 +7,12 @@ for token in t.tokenize(u'すもももももももものうち'):
   print(token)
 
 print('')
+print(u'Tokenize (mmap system dictionary)')
+t = Tokenizer(mmap=True)
+for token in t.tokenize(u'すもももももももものうち'):
+  print(token)
+
+print('')
 print(u'Tokenize (wakati mode)')
 for token in t.tokenize(u'すもももももももものうち', wakati = True):
   print(token)

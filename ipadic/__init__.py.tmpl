@@ -1,10 +1,14 @@
 import os, sys
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+base_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(base_dir)
 sys.path.insert(0, parent_dir)
 
 from janome.dic import SystemDictionary
 from . import connections1, connections2
 from . import chardef, unknowns
+
+connections = list(connections1.DATA)
+connections.extend(connections2.DATA)
 
 __entries = None
 
@@ -47,32 +51,30 @@ def entries(compact = False):
         del entries_extra10.DATA
     return __entries
 
-def entries_extra():
-    global __entries
-    if not __entries_extra:
-        from . import entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9, entries_extra10
-        __entries_extra = entries_extra1.DATA
-        __entries_extra.update(entries_extra2.DATA)
-        __entries_extra.update(entries_extra3.DATA)
-        __entries_extra.update(entries_extra4.DATA)
-        __entries_extra.update(entries_extra5.DATA)
-        __entries_extra.update(entries_extra6.DATA)
-        __entries_extra.update(entries_extra7.DATA)
-        __entries_extra.update(entries_extra8.DATA)
-        __entries_extra.update(entries_extra9.DATA)
-        __entries_extra.update(entries_extra10.DATA)
-        del entries_extra1.DATA
-        del entries_extra2.DATA
-        del entries_extra3.DATA
-        del entries_extra4.DATA
-        del entries_extra5.DATA
-        del entries_extra6.DATA
-        del entries_extra7.DATA
-        del entries_extra8.DATA
-        del entries_extra9.DATA
-        del entries_extra10.DATA
-    return __entries_extra
 
-connections = list(connections1.DATA)
-connections.extend(connections2.DATA)
 
+def mmap_entries(compact = False):
+    import mmap
+    from importlib import import_module
+    from . import entries_compact_buckets, entries_extra_buckets
+
+    __mmap_entries_compact = {}
+    __mmap_entries_extra = None
+    __open_files = []
+    for i in range(1, 4):
+        bucket = entries_compact_buckets.DATA[i]
+        fp = open(os.path.join(base_dir, 'entries_compact%d.py' % i), 'r+b')
+        mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
+        mm_idx = import_module('.entries_compact%d_idx' % i, 'sysdic')
+        __open_files.append(fp)
+        __mmap_entries_compact[bucket] = (mm, mm_idx.DATA)
+    if not compact:
+        __mmap_entries_extra = {}
+        for i in range(1, 11):
+            bucket = entries_extra_buckets.DATA[i]
+            fp = open(os.path.join(base_dir, 'entries_extra%d.py' % i), 'r+b')
+            mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
+            mm_idx = import_module('.entries_extra%d_idx' % i, 'sysdic')
+            __open_files.append(fp)
+            __mmap_entries_extra[bucket] = (mm, mm_idx.DATA)
+    return (__mmap_entries_compact, __mmap_entries_extra, __open_files)

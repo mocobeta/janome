@@ -23,7 +23,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from janome.dic import *
-from sysdic import entries, connections, chardef, unknowns
+from sysdic import entries, mmap_entries, connections, chardef, unknowns
 
 import unittest
 
@@ -59,24 +59,29 @@ class TestDictionary(unittest.TestCase):
         # entry in the system dictionary
         entry = sys_dic.lookup(u'すもも')[0]
         if PY3:
-            self.assertTrue(type(entry[0]) is str)
-            self.assertTrue(type(entry[4]) is str)
-            self.assertTrue(type(entry[5]) is str)
-            self.assertTrue(type(entry[6]) is str)
-            self.assertTrue(type(entry[7]) is str)
-            self.assertTrue(type(entry[8]) is str)
-            self.assertTrue(type(entry[9]) is str)
+            self.assertTrue(type(entry[1]) is str)
         else:
-            self.assertTrue(type(entry[0]) is unicode)
-            self.assertTrue(type(entry[4]) is unicode)
-            self.assertTrue(type(entry[5]) is unicode)
-            self.assertTrue(type(entry[6]) is unicode)
-            self.assertTrue(type(entry[7]) is unicode)
-            self.assertTrue(type(entry[8]) is unicode)
-            self.assertTrue(type(entry[9]) is unicode)
-        self.assertTrue(type(entry[1]) is int)
+            self.assertTrue(type(entry[1]) is unicode)
+        self.assertTrue(type(entry[0]) is int)
         self.assertTrue(type(entry[2]) is int)
         self.assertTrue(type(entry[3]) is int)
+        self.assertTrue(type(entry[4]) is int)
+
+        entry_extra = sys_dic.lookup_extra(entry[0])
+        if PY3:
+            self.assertTrue(type(entry_extra[0]) is str)
+            self.assertTrue(type(entry_extra[1]) is str)
+            self.assertTrue(type(entry_extra[2]) is str)
+            self.assertTrue(type(entry_extra[3]) is str)
+            self.assertTrue(type(entry_extra[4]) is str)
+            self.assertTrue(type(entry_extra[5]) is str)
+        else:
+            self.assertTrue(type(entry_extra[0]) is unicode)
+            self.assertTrue(type(entry_extra[1]) is unicode)
+            self.assertTrue(type(entry_extra[2]) is unicode)
+            self.assertTrue(type(entry_extra[3]) is unicode)
+            self.assertTrue(type(entry_extra[4]) is unicode)
+            self.assertTrue(type(entry_extra[5]) is unicode)
 
         # unknown entry
         entry = sys_dic.unknowns.get(u'HIRAGANA')[0]
@@ -88,29 +93,46 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(type(entry[1]) is int)
         self.assertTrue(type(entry[2]) is int)
 
+        # mmap dict etnry
+        mmap_dic = MMapSystemDictionary(mmap_entries(), connections, chardef.DATA, unknowns.DATA)
+        entry = mmap_dic.lookup(u'すもも')[0]
+        if PY3:
+            self.assertTrue(type(entry[1]) is str)
+        else:
+            self.assertTrue(type(entry[1]) is unicode)
+        self.assertTrue(type(entry[0]) is int)
+        self.assertTrue(type(entry[2]) is int)
+        self.assertTrue(type(entry[3]) is int)
+        self.assertTrue(type(entry[4]) is int)
+
+        entry_extra = mmap_dic.lookup_extra(entry[0])
+        if PY3:
+            self.assertTrue(type(entry_extra[0]) is str)
+            self.assertTrue(type(entry_extra[1]) is str)
+            self.assertTrue(type(entry_extra[2]) is str)
+            self.assertTrue(type(entry_extra[3]) is str)
+            self.assertTrue(type(entry_extra[4]) is str)
+            self.assertTrue(type(entry_extra[5]) is str)
+        else:
+            self.assertTrue(type(entry_extra[0]) is unicode)
+            self.assertTrue(type(entry_extra[1]) is unicode)
+            self.assertTrue(type(entry_extra[2]) is unicode)
+            self.assertTrue(type(entry_extra[3]) is unicode)
+            self.assertTrue(type(entry_extra[4]) is unicode)
+            self.assertTrue(type(entry_extra[5]) is unicode)
+
         # entry in the user defined dictionary
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
                                   enc='utf8', type='ipadic', connections=connections)
         entry = user_dic.lookup(u'東京スカイツリー')[0]
         if PY3:
-            self.assertTrue(type(entry[0]) is str)
-            self.assertTrue(type(entry[4]) is str)
-            self.assertTrue(type(entry[5]) is str)
-            self.assertTrue(type(entry[6]) is str)
-            self.assertTrue(type(entry[7]) is str)
-            self.assertTrue(type(entry[8]) is str)
-            self.assertTrue(type(entry[9]) is str)
+            self.assertTrue(type(entry[1]) is str)
         else:
-            self.assertTrue(type(entry[0]) is unicode)
-            self.assertTrue(type(entry[4]) is unicode)
-            self.assertTrue(type(entry[5]) is unicode)
-            self.assertTrue(type(entry[6]) is unicode)
-            self.assertTrue(type(entry[7]) is unicode)
-            self.assertTrue(type(entry[8]) is unicode)
-            self.assertTrue(type(entry[9]) is unicode)
-        self.assertTrue(type(entry[1]) is int)
+            self.assertTrue(type(entry[1]) is unicode)
+        self.assertTrue(type(entry[0]) is int)
         self.assertTrue(type(entry[2]) is int)
         self.assertTrue(type(entry[3]) is int)
+        self.assertTrue(type(entry[4]) is int)
 
     def test_system_dictionary_cache(self):
         sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)

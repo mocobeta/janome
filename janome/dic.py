@@ -24,18 +24,18 @@ from .fst import Matcher, create_minimum_transducer, compileFST
 import traceback
 import logging
 import sys
+import re
 
 PY3 = sys.version_info[0] == 3
 
 SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sysdic")
 
 FILE_FST_DATA = 'fst.data'
-# FILE_ENTRIES = 'entries.data'
-# FILE_CONNECTIONS = 'connections.data'
 
-MODULE_FST_DATA = 'fstdata.py'
 MODULE_ENTRIES_EXTRA = 'entries_extra%d.py'
+MODULE_ENTRIES_EXTRA_BUCKETS = 'entries_extra_buckets.py'  # for mmap mode
 MODULE_ENTRIES_COMPACT = 'entries_compact%d.py'
+MODULE_ENTRIES_COMPACT_BUCKETS = 'entries_compact_buckets.py'  # for mmap mode
 MODULE_CONNECTIONS = 'connections%d.py'
 MODULE_CHARDEFS = 'chardef.py'
 MODULE_UNKNOWNS = 'unknowns.py'
@@ -45,32 +45,37 @@ FILE_USER_ENTRIES_DATA = 'user_entries.data'
 
 def save_fstdata(data, dir='.'):
     _save(os.path.join(dir, FILE_FST_DATA), data, 9)
-    # _save_as_module(os.path.join(dir, MODULE_FST_DATA), data)
 
 
 def save_entries(entries, dir=u'.'):
-    #_save(os.path.join(dir, FILE_ENTRIES), pickle.dumps(entries), compresslevel)
     # split whole entries to 10 buckets to reduce memory usage while installing.
     # TODO: find better ways...
-    bucket_size = (len(entries) // 10) + 1
-    offset = 0
-    for i in range(1, 11):
-        _save_entries_as_module_extra(
-            os.path.join(dir, MODULE_ENTRIES_EXTRA % i),
-            {k:v for (k,v) in list(entries.items())[offset:offset+bucket_size]})
-        offset += bucket_size
-
+    
+    # save surface forms, costs
     bucket_size = (len(entries) // 3) + 1
     offset = 0
+    buckets = {}
     for i in range(1, 4):
         _save_entries_as_module_compact(
             os.path.join(dir, MODULE_ENTRIES_COMPACT % i),
             {k:v for (k,v) in list(entries.items())[offset:offset+bucket_size]})
+        buckets[i] = (offset, min(len(entries), offset+bucket_size))
         offset += bucket_size
+    _save_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT_BUCKETS), buckets)
 
+    # save extra data
+    bucket_size = (len(entries) // 10) + 1
+    offset = 0
+    buckets = {}
+    for i in range(1, 11):
+        _save_entries_as_module_extra(
+            os.path.join(dir, MODULE_ENTRIES_EXTRA % i),
+            {k:v for (k,v) in list(entries.items())[offset:offset+bucket_size]})
+        buckets[i] = (offset, min(len(entries), offset+bucket_size))
+        offset += bucket_size
+    _save_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA_BUCKETS), buckets)
 
 def save_connections(connections, dir=u'.'):
-    #_save(os.path.join(dir, FILE_CONNECTIONS), pickle.dumps(connections), compresslevel)
     # split whole connections to 2 buckets to reduce memory usage while installing.
     # TODO: find better ways...
     bucket_size = (len(connections) // 2) + 1
@@ -115,27 +120,44 @@ def _save_as_module(file, data):
 
 
 def _save_entries_as_module_extra(file, entries):
+    idx_file = re.sub(r'\.py$', '_idx.py', file)
     with open(file, 'w') as f:
-        f.write("# -*- coding: utf-8 -*-\n")
-        f.write('DATA={')
-        for k, v in entries.items():
-            s = u"%d:(u'%s',u'%s',u'%s',u'%s',u'%s',u'%s')," % (
-                k, v[4], v[5], v[6], v[7], v[8], v[9])
-            f.write(s if PY3 else s.encode('utf-8'))
-        f.write('}\n')
-        f.flush()
+        with open(idx_file, 'w') as f_idx:
+            f.write("# -*- coding: utf-8 -*-\n")
+            f.write('DATA={')
+            f_idx.write('DATA={')
+            for k, v in entries.items():
+                f.write('%d:(' % k)
+                _pos1 = f.tell()
+                f_idx.write('%d:%d,' % (k, _pos1))
+                s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
+                    v[4], v[5], v[6], v[7], v[8], v[9])
+                f.write(s if PY3 else s.encode('utf-8'))
+                f.write('),')
+            f.write('}\n')
+            f.flush()
+            f_idx.write('}\n')
+            f_idx.flush()
 
 
 def _save_entries_as_module_compact(file, entries):
+    idx_file = re.sub(r'\.py$', '_idx.py', file)
     with open(file, 'w') as f:
-        f.write("# -*- coding: utf-8 -*-\n")
-        f.write('DATA={')
-        for k, v in entries.items():
-            s = u"%d:(u'%s',%s,%s,%d)," % (
-                k, v[0], v[1], v[2], v[3])
-            f.write(s if PY3 else s.encode('utf-8'))
-        f.write('}\n')
-        f.flush()
+        with open(idx_file, 'w') as f_idx:
+            f.write("# -*- coding: utf-8 -*-\n")
+            f.write('DATA={')
+            f_idx.write('DATA={')
+            for k, v in entries.items():
+                f.write('%d:(' % k)
+                _pos1 = f.tell()
+                f_idx.write('%d:%d,' % (k, _pos1))
+                s = u"u'%s',%s,%s,%d" % (v[0], v[1], v[2], v[3])
+                f.write(s if PY3 else s.encode('utf-8'))
+                f.write('),')
+            f.write('}\n')
+            f.flush()
+            f_idx.write('}\n')
+            f_idx.flush()
 
 
 class Dictionary(object):
@@ -153,7 +175,21 @@ class Dictionary(object):
         if not matched:
             return []
         try:
-            return [self.entries[unpack('I', e)[0]] for e in outputs]
+            res = []
+            for e in outputs:
+                num = unpack('I', e)[0]
+                res.append((num,) + self.entries[num][:4])
+            return res
+        except Exception as e:
+            logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logging.error('input=%s' % s)
+            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            traceback.format_exc()
+            sys.exit(1)
+
+    def lookup_extra(self, num):
+        try:
+            return self.entries[num][4:]
         except Exception as e:
             logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logging.error('input=%s' % s)
@@ -165,12 +201,89 @@ class Dictionary(object):
         return self.connections[id1][id2]
 
 
-class SystemDictionary(Dictionary):
+class MMapDictionary(object):
     u"""
-    System dictionary class
+    Base MMap dictionar class
     """
-    def __init__(self, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
+    def __init__(self, compiledFST, entries_compact, entries_extra, open_files, connections):
+        self.compiledFST = compiledFST
+        self.matcher = Matcher(compiledFST)
+        self.entries_compact = entries_compact
+        self.entries_extra = entries_extra
+        self.open_files = open_files
+        self.connections = connections
+
+    def lookup(self, s):
+        (matched, outputs) = self.matcher.run(s.encode('utf8'))
+        if not matched:
+            return []
+        try:
+            matched_entries = []
+            for e in outputs:
+                idx = unpack('I', e)[0]
+                bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys())) if PY3 \
+                    else filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys())[0]
+                mm, mm_idx = self.entries_compact[bucket]
+                _pos1s = mm_idx[idx] + 2
+                _pos1e = mm.find(b"',", _pos1s) if PY3 else mm.find("',", _pos1s)
+                _pos2s = _pos1e + 2
+                _pos2e = mm.find(b",", _pos2s) if PY3 else mm.find(",", _pos2s)
+                _pos3s = _pos2e + 1
+                _pos3e = mm.find(b",", _pos3s) if PY3 else mm.find(",", _pos3s)
+                _pos4s = _pos3e + 1
+                _pos4e = mm.find(b")", _pos4s) if PY3 else mm.find(")", _pos4s)
+                _entry = (mm[_pos1s:_pos1e].decode('utf-8'), int(mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
+                matched_entries.append((idx,) + _entry)
+            return matched_entries
+        except Exception as e:
+            logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logging.error('input=%s' % s)
+            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            traceback.format_exc()
+            sys.exit(1)
+
+    def lookup_extra(self, idx):
+        try:
+            bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_extra.keys())) if PY3 \
+               else filter(lambda b: idx >= b[0] and idx < b[1], self.entries_extra.keys())[0]
+            mm, mm_idx = self.entries_extra[bucket]
+            _pos1s = mm_idx[idx] + 2
+            _pos1e = mm.find(b"',u'", _pos1s) if PY3 else mm.find("',u'", _pos1s)
+            _pos2s = _pos1e + 4
+            _pos2e = mm.find(b"',u'", _pos2s) if PY3 else mm.find("',u'", _pos2s)
+            _pos3s = _pos2e + 4
+            _pos3e = mm.find(b"',u'", _pos3s) if PY3 else mm.find("',u'", _pos3s)
+            _pos4s = _pos3e + 4
+            _pos4e = mm.find(b"',u'", _pos4s) if PY3 else mm.find("',u'", _pos4s)
+            _pos5s = _pos4e + 4
+            _pos5e = mm.find(b"',u'", _pos5s) if PY3 else mm.find("',u'", _pos5s)
+            _pos6s = _pos5e + 4
+            _pos6e = mm.find(b"')", _pos6s) if PY3 else mm.find("')", _pos6s)
+            return (
+                mm[_pos1s:_pos1e].decode('utf-8'), mm[_pos2s:_pos2e].decode('utf-8'), mm[_pos3s:_pos3e].decode('utf-8'),
+                mm[_pos4s:_pos4e].decode('utf-8'), mm[_pos5s:_pos5e].decode('utf-8'), mm[_pos6s:_pos6e].decode('utf-8')
+            )
+        except Exception as e:
+            logging.error('Cannot load extra info. The dictionary may be corrupted?')
+            logging.error('idx=%d' % idx)
+            traceback.format_exc()
+            sys.exit(1)
+
+    def get_trans_cost(self, id1, id2):
+        return self.connections[id1][id2]
+
+    def __del__(self):
+        for mm, mm_idx in self.entries_compact.values():
+            mm.close()
+        if self.entries_extra:
+            for mm, mm_idx in self.entries_extra.values():
+                mm.close()
+        for fp in self.open_files:
+            fp.close()
+    
+
+class UnknownsDictionary(object):
+    def __init__(self, chardefs, unknowns):
         self.char_categories = chardefs[0]
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns
@@ -200,6 +313,24 @@ class SystemDictionary(Dictionary):
         if cate in self.char_categories:
             return self.char_categories[cate]['LENGTH']
         return -1
+
+
+class SystemDictionary(Dictionary, UnknownsDictionary):
+    u"""
+    System dictionary class
+    """
+    def __init__(self, entries, connections, chardefs, unknowns):
+        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
+        UnknownsDictionary.__init__(self, chardefs, unknowns)
+
+
+class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
+    u"""
+    MMap System dictionary class
+    """
+    def __init__(self, mmap_entries, connections, chardefs, unknowns):
+        MMapDictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
+        UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
 class UserDictionary(Dictionary):

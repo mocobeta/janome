@@ -5,7 +5,7 @@ import sys
 PY3 = sys.version_info[0] == 3
 
 print(u'Tokenize (stream mode)')
-t = Tokenizer()
+t = Tokenizer(mmap=True)
 
 with open('text_lemon.txt') as f:
     text = f.read()
