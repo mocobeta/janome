@@ -11,6 +11,6 @@ t = Tokenizer(mmap=True)
 with open('text_lemon.txt', encoding='utf-8') as f:
     text = f.read()
     if not PY3:
-       text = unicode(text, 'utf-8')
+       text = unicode(text)
     for token in t.tokenize(text, stream=True):
         print(token)
