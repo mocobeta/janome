@@ -11,6 +11,9 @@ Janome
 .. image:: https://coveralls.io/repos/github/mocobeta/janome/badge.svg?branch=master
     :target: https://coveralls.io/github/mocobeta/janome?branch=master
 
+.. image:: https://badges.gitter.im/org.png
+    :target: https://gitter.im/janome-python/ja
+
 Janome is a Japanese morphological analysis engine written in pure Python.
 
 General documentation:
