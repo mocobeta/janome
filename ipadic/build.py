@@ -55,9 +55,24 @@ def build_dict(dicdir, enc, outdir=u'.'):
 
     assert len(surfaces) == len(entries)
 
-    fst = create_minimum_transducer(inputs)
-    compiledFST = compileFST(fst)
-    save_fstdata(compiledFST, dir=outdir)
+    inputs_size = len(inputs)
+    #logging.info('input size: %d' % inputs_size)
+    offset = 0
+    pos_offset = 0
+    _start = time.time()
+    _last_printed = 0
+    while offset < inputs_size:
+        processed, fst = create_minimum_transducer(inputs[offset:])
+        compiledFST = compileFST(fst)
+        save_fstdata(compiledFST, dir=outdir)
+        offset += processed + 1
+        pos_offset += len(compiledFST)
+        # progress
+        _elapsed = round(time.time() - _start)
+        progress = (float(offset) / inputs_size) * 100
+        logging.info('elapsed=%dsec, progress: %f %%, processed: %d words, fst size: %d bytes' % (_elapsed, progress, processed, pos_offset))
+        _last_printed = _elapsed
+        
     save_entries(entries, dir=outdir)
 
     # save connection costs as dict

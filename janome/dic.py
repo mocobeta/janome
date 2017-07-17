@@ -44,7 +44,8 @@ FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
 
 def save_fstdata(data, dir='.'):
-    _save(os.path.join(dir, FILE_FST_DATA), data, 9)
+    #_save(os.path.join(dir, FILE_FST_DATA), data, 9)
+    _save_uncompressed(os.path.join(dir, FILE_FST_DATA), data, 'ab')
 
 
 def save_entries(entries, dir=u'.'):
@@ -93,6 +94,12 @@ def save_chardefs(chardefs, dir=u'.'):
 def save_unknowns(unknowns, dir=u'.'):
     _save_as_module(os.path.join(dir, MODULE_UNKNOWNS), unknowns)
 
+def _save_uncompressed(file, data, mode):
+    if not data:
+        return
+    with open(file, mode) as f:
+        f.write(data)
+        f.flush()
 
 def _save(file, data, compresslevel):
     if not data:
@@ -101,6 +108,12 @@ def _save(file, data, compresslevel):
         f.write(data)
         f.flush()
 
+def _load_uncompressed(file):
+    if not os.path.exists(file):
+        return None
+    with open(file, 'rb') as f:
+        data = f.read()
+        return data
 
 def _load(file):
     if not os.path.exists(file):
@@ -320,7 +333,7 @@ class SystemDictionary(Dictionary, UnknownsDictionary):
     System dictionary class
     """
     def __init__(self, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
+        Dictionary.__init__(self, _load_uncompressed(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -329,7 +342,7 @@ class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
     MMap System dictionary class
     """
     def __init__(self, mmap_entries, connections, chardefs, unknowns):
-        MMapDictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
+        MMapDictionary.__init__(self, _load_uncompressed(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -368,7 +381,7 @@ class UserDictionary(Dictionary):
                 entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
-        fst = create_minimum_transducer(inputs)
+        processed, fst = create_minimum_transducer(inputs)
         compiledFST = compileFST(fst)
         return compiledFST, entries
 
@@ -386,7 +399,7 @@ class UserDictionary(Dictionary):
                 entries[morph_id] = (surface, 0, 0, -100000, part_of_speech, u'*', u'*', surface, reading, reading)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
-        fst = create_minimum_transducer(inputs)
+        processed, fst = create_minimum_transducer(inputs)
         compiledFST = compileFST(fst)
         return compiledFST, entries
 

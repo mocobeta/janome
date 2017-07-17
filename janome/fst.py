@@ -121,6 +121,8 @@ class FST(object):
     u"""
     FST (final dictionary) class
     """
+    MAX_SIZE = 200000
+
     def __init__(self):
         # must preserve inserting order
         self.dictionary = OrderedDict()
@@ -134,6 +136,9 @@ class FST(object):
     def insert(self, state):
         self.dictionary[hash(state)] = state
 
+    def exceed_max_size(self):
+        return len(self.dictionary) > FST.MAX_SIZE
+
     def print_dictionary(self):
         for s in self.dictionary.values():
             for (c, v) in s.trans_map.items():
@@ -145,8 +150,8 @@ class FST(object):
 # naive implementation for building fst
 # http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698
 def create_minimum_transducer(inputs):
-    _start = time.time()
-    _last_printed = 0
+    #_start = time.time()
+    #_last_printed = 0
     inputs_size = len(inputs)
     logging.info('input size: %d' % inputs_size)
 
@@ -156,6 +161,7 @@ def create_minimum_transducer(inputs):
 
     # previous word
     prev_word = bytes()
+    prev_output = bytes()
 
     def find_minimized(state):
         # if an equivalent state exists in the dictionary, use that
@@ -176,17 +182,22 @@ def create_minimum_transducer(inputs):
     current_word = bytes()
     current_output = bytes()
     processed = 0
+    need_finish = True
     # main loop
-    for (current_word, current_output) in inputs:
+    for current_word, current_output in inputs:
         # logging.debug('current word: ' + str(current_word))
         # logging.debug('current_output: ' + str(current_output))
 
         assert(current_word >= prev_word)
 
+        pref_len = prefix_len(prev_word, current_word)
+
+        if fstDict.exceed_max_size() and pref_len == 0:
+            need_finish = False
+            break
+
         for c in current_word:
             CHARS.add(c)
-
-        pref_len = prefix_len(prev_word, current_word)
 
         # expand buffer to current word length
         while len(buffer) <= len(current_word):
@@ -242,23 +253,17 @@ def create_minimum_transducer(inputs):
 
         # preserve current word for next loop
         prev_word = current_word
-
-        # progress
+        prev_output = current_output
         processed += 1
-        _elapsed = round(time.time() - _start)
-        if _elapsed % 30 == 0 and _elapsed > _last_printed:
-            progress = processed / inputs_size * 100
-            logging.info('elapsed=%dsec, progress: %f %%' % (_elapsed, progress))
-            _last_printed = _elapsed
 
-    # minimize the last word
-    for i in range(len(current_word), 0, -1):
-        buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
+    if need_finish:
+        # minimize the last word
+        for i in range(len(current_word), 0, -1):
+            buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
+        find_minimized(buffer[0])
 
-    find_minimized(buffer[0])
     logging.info('num of state: %d' % fstDict.size())
-
-    return fstDict
+    return (processed, fstDict)
 
 
 def compileFST(fst):

@@ -41,7 +41,7 @@ class TestFST(unittest.TestCase):
             ('jun'.encode('utf8'), pack('I', 30)),
             ('may'.encode('utf8'), pack('I', 31))
         ]
-        dictionary = fst.create_minimum_transducer(inputs)
+        pos, dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)
@@ -65,7 +65,7 @@ class TestFST(unittest.TestCase):
             (u'なし'.encode('utf8'), u'茶'.encode('utf8')),
             (u'もも'.encode('utf8'), u'桃'.encode('utf8'))
         ]
-        dictionary = fst.create_minimum_transducer(inputs)
+        pos, dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)
@@ -85,7 +85,7 @@ class TestFST(unittest.TestCase):
             (u'すも'.encode('utf8'), pack('I', 2)),
             (u'すもも'.encode('utf8'), pack('I', 3))
         ]
-        dictionary = fst.create_minimum_transducer(inputs)
+        pos, dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)
@@ -99,7 +99,7 @@ class TestFST(unittest.TestCase):
             (u'すも'.encode('utf8'), pack('I', 2)),
             (u'すもも'.encode('utf8'), pack('I', 3))
         ]
-        dictionary = fst.create_minimum_transducer(inputs)
+        pos, dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)
@@ -113,7 +113,7 @@ class TestFST(unittest.TestCase):
             (u'すも'.encode('utf8'), pack('I', 2)),
             (u'すもも'.encode('utf8'), pack('I', 3))
         ]
-        dictionary = fst.create_minimum_transducer(inputs)
+        pos, dictionary = fst.create_minimum_transducer(inputs)
         data = fst.compileFST(dictionary)
 
         m = Matcher(data)

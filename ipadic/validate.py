@@ -72,6 +72,7 @@ if __name__ == '__main__':
     SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)    
     print('Validate dictionary entries...')
     csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
+    nomatch_count = 0
     invalid_count = 0
     for path in csv_files:
         with io.open(path, encoding=enc) as f:
@@ -82,10 +83,11 @@ if __name__ == '__main__':
                 (matched, outputs) = SYS_DIC.matcher.run(surface.encode('utf8'))
                 if not matched:
                     print('No match for %s' % surface)
-                    invalid_count += 1
+                    nomatch_count += 1
                 for o in outputs:
                     try:
                         word_id = struct.unpack('I', o)[0]
+                        print(u"word id for %s : %d (%s)" % (surface.encode('utf8'), word_id, str(o)))
                         try:
                             entry = SYS_DIC.entries[word_id]
                             if not surface.startswith(entry[0]):
@@ -93,9 +95,12 @@ if __name__ == '__main__':
                         except KeyError:
                             print('Cannot find entry for %s, %d' % (surface.encode('utf8'), word_id))
                             invalid_count += 1
+                            break
                     except Exception:
-                        print('Invalid output for %s, %s' % (surface.encode('utf8'), str(o)))
+                        #print('Invalid output for %s, %s' % (surface.encode('utf8'), str(o)))
                         invalid_count += 1
+                        break
+    print('no matches = %d' % nomatch_count)                        
     print('invalid outputs = %d' % invalid_count)
 
 
