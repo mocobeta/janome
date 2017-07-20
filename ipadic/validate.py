@@ -29,11 +29,12 @@ import logging
 import sys
 import io
 import glob
+import traceback
 
 PY3 = sys.version_info[0] == 3
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     dicdir = sys.argv[1]
     enc = sys.argv[2]
 
@@ -72,36 +73,43 @@ if __name__ == '__main__':
     SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)    
     print('Validate dictionary entries...')
     csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
+    input_count = 0
     nomatch_count = 0
-    invalid_count = 0
+    invalid_match_count = 0
+    invalid_output_count = 0
     for path in csv_files:
         with io.open(path, encoding=enc) as f:
             for line in f:
+                input_count += 1
                 line = line.rstrip()
                 surface = line.split(',')[0]
-
-                (matched, outputs) = SYS_DIC.matcher.run(surface.encode('utf8'))
+                logging.debug(u"check word id & entry for %s" % (surface if PY3 else unicode(surface)))
+                (matched, outputs) = SYS_DIC.matcher.run(surface.encode('utf8'), common_prefix_match=True)
                 if not matched:
-                    print('No match for %s' % surface)
+                    logging.debug('No match for %s' % (surface if PY3 else unicode(surface)))
                     nomatch_count += 1
                 for o in outputs:
                     try:
                         word_id = struct.unpack('I', o)[0]
-                        print(u"word id for %s : %d (%s)" % (surface.encode('utf8'), word_id, str(o)))
+                        logging.debug(u"\tword id : %d" % (word_id))
                         try:
                             entry = SYS_DIC.entries[word_id]
                             if not surface.startswith(entry[0]):
-                                raise Exception('Must not match!')
+                                logging.warn('Must not match to %s' % entry[0])
+                                invalid_match_count += 1
+                                break
                         except KeyError:
-                            print('Cannot find entry for %s, %d' % (surface.encode('utf8'), word_id))
-                            invalid_count += 1
+                            logging.warn('\tCannot find entry')
+                            invalid_output_count += 1
                             break
                     except Exception:
-                        #print('Invalid output for %s, %s' % (surface.encode('utf8'), str(o)))
-                        invalid_count += 1
+                        logging.warn('\tInvalid output')
+                        invalid_output_count += 1
                         break
-    print('no matches = %d' % nomatch_count)                        
-    print('invalid outputs = %d' % invalid_count)
+    print('matches = %d' % (input_count - nomatch_count))
+    print('no matches = %d' % nomatch_count)
+    print('invalid matches = %d' % invalid_match_count)
+    print('invalid outputs = %d' % invalid_output_count)
 
 
     # validate connection costs

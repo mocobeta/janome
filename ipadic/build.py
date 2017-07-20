@@ -52,27 +52,42 @@ def build_dict(dicdir, enc, outdir=u'.'):
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
                 entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
     inputs = sorted(surfaces)  # inputs must be sorted.
+    inputs_size = len(inputs)
+    logging.info('input size: %d' % inputs_size)
+
+    # split inputs
+    inputs_parts = []
+    _part =[]
+    _cnt = 0
+    _prev = ''
+    for surface, mid in inputs:
+        if _cnt > 100000 and ord(_prev[0]) != ord(surface[0]):
+            inputs_parts.append(_part)
+            _part = []
+            _cnt = 0
+        _part.append((surface, mid))
+        _prev = surface
+        _cnt += 1
+    inputs_parts.append(_part)
+
+    #for _part in inputs_parts:
+    #    logging.debug('%d to %d' % (ord(_part[0][0][0]), ord(_part[len(_part)-1][0][0])))
 
     assert len(surfaces) == len(entries)
 
-    inputs_size = len(inputs)
-    #logging.info('input size: %d' % inputs_size)
-    offset = 0
-    pos_offset = 0
     _start = time.time()
     _last_printed = 0
-    while offset < inputs_size:
-        processed, fst = create_minimum_transducer(inputs[offset:])
+    processed = 0
+    for _part_idx, _part in enumerate(inputs_parts):
+        _processed, fst = create_minimum_transducer(_part)
         compiledFST = compileFST(fst)
-        save_fstdata(compiledFST, dir=outdir)
-        offset += processed + 1
-        pos_offset += len(compiledFST)
-        # progress
+        save_fstdata(compiledFST, dir=outdir, suffix='.%d' % _part_idx)
+        # show progress
+        processed += _processed
         _elapsed = round(time.time() - _start)
-        progress = (float(offset) / inputs_size) * 100
-        logging.info('elapsed=%dsec, progress: %f %%, processed: %d words, fst size: %d bytes' % (_elapsed, progress, processed, pos_offset))
+        progress = (float(processed) / inputs_size) * 100
+        logging.info('elapsed=%dsec, progress: %f %%' % (_elapsed, progress))
         _last_printed = _elapsed
-        
     save_entries(entries, dir=outdir)
 
     # save connection costs as dict

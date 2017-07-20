@@ -121,7 +121,7 @@ class FST(object):
     u"""
     FST (final dictionary) class
     """
-    MAX_SIZE = 200000
+    MAX_SIZE = 300000
 
     def __init__(self):
         # must preserve inserting order
@@ -135,6 +135,9 @@ class FST(object):
 
     def insert(self, state):
         self.dictionary[hash(state)] = state
+
+    def remove(self, state):
+        del self.dictionary[hash(state)]
 
     def exceed_max_size(self):
         return len(self.dictionary) > FST.MAX_SIZE
@@ -153,15 +156,14 @@ def create_minimum_transducer(inputs):
     #_start = time.time()
     #_last_printed = 0
     inputs_size = len(inputs)
-    logging.info('input size: %d' % inputs_size)
+    logging.info('partial input size: %d' % inputs_size)
 
     fstDict = FST()
     buffer = []
-    buffer.append(State())  # insert 'initial' state
+    #buffer.append(State())  # insert 'initial' state
 
     # previous word
     prev_word = bytes()
-    prev_output = bytes()
 
     def find_minimized(state):
         # if an equivalent state exists in the dictionary, use that
@@ -182,7 +184,6 @@ def create_minimum_transducer(inputs):
     current_word = bytes()
     current_output = bytes()
     processed = 0
-    need_finish = True
     # main loop
     for current_word, current_output in inputs:
         # logging.debug('current word: ' + str(current_word))
@@ -191,10 +192,6 @@ def create_minimum_transducer(inputs):
         assert(current_word >= prev_word)
 
         pref_len = prefix_len(prev_word, current_word)
-
-        if fstDict.exceed_max_size() and pref_len == 0:
-            need_finish = False
-            break
 
         for c in current_word:
             CHARS.add(c)
@@ -253,14 +250,13 @@ def create_minimum_transducer(inputs):
 
         # preserve current word for next loop
         prev_word = current_word
-        prev_output = current_output
+        
         processed += 1
-
-    if need_finish:
-        # minimize the last word
-        for i in range(len(current_word), 0, -1):
-            buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
-        find_minimized(buffer[0])
+    
+    # minimize the last word
+    for i in range(len(current_word), 0, -1):
+        buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
+    find_minimized(buffer[0])
 
     logging.info('num of state: %d' % fstDict.size())
     return (processed, fstDict)
@@ -272,9 +268,8 @@ def compileFST(fst):
     """
     arcs = []
     address = {}
-    cnt = 0
     pos = 0
-    for s in fst.dictionary.values():
+    for (num, s) in enumerate(fst.dictionary.values()):
         for i, (c, v) in enumerate(sorted(s.trans_map.items(), reverse=True)):
             bary = bytearray()
             flag = 0
@@ -305,7 +300,6 @@ def compileFST(fst):
             else:
                 arcs.append(b''.join(chr(b) for b in bary))
             # address count up
-            cnt += 1
             pos += len(bary)
         if s.is_final():
             bary = bytearray()
@@ -333,12 +327,11 @@ def compileFST(fst):
             else:
                 arcs.append(b''.join(chr(b) for b in bary))
             # address count up
-            cnt += 1
             pos += len(bary)
         address[s.id] = pos
 
-    logging.debug(address)
-    logging.info('compiled arcs size: %d' % len(arcs))
+    #logging.debug(address)
+    logging.debug('compiled arcs size: %d' % len(arcs))
     arcs.reverse()
     return b''.join(arcs)
 
@@ -346,42 +339,52 @@ def compileFST(fst):
 class Matcher(object):
     def __init__(self, dict_data, max_cache_size=5000, max_cached_word_len=15):
         if dict_data:
-            self.data = dict_data
-            self.data_len = len(dict_data)
+            self.dict_data = dict_data
             # bytes -> (position, final_outputs, outputs)
-            self.cache = OrderedDict()
+            self.cache = [OrderedDict() for i in range(0, len(dict_data))]
             self.max_cache_size = max_cache_size
             self.max_cached_word_len = max_cached_word_len
             self.lock = threading.Lock()
 
     def run(self, word, common_prefix_match=True):
+        accept, output = False, set()
+        for i, data in enumerate(self.dict_data):
+            accept, output = self._run(word, i, common_prefix_match)
+            if accept:
+                break
+        return accept, output
+
+    def _run(self, word, data_num, common_prefix_match):
         # logging.debug('word=' + str([c for c in word]))
         outputs = set()
         accept = False
         buf = bytearray()
         i = 0
         pos = 0
+        data = self.dict_data[data_num]
         word_len = len(word)
+        data_len = len(data)
 
         # any prefix is in cache?
         for j in range(min(word_len, self.max_cached_word_len), 0, -1):
-            if word[:j] in self.cache:
+            if word[:j] in self.cache[data_num]:
                 # A cached entry found. We can skip to the position.
-                pos = self.cache[word[:j]][0]
-                outputs |= self.cache[word[:j]][1]
-                buf += self.cache[word[:j]][2]
+                pos = self.cache[data_num][word[:j]][0]
+                outputs |= self.cache[data_num][word[:j]][1]
+                buf += self.cache[data_num][word[:j]][2]
                 accept = True
                 i = j
                 # move this entry to top
                 with self.lock:
-                    del[self.cache[word[:j]]]
-                    self.cache[word[:j]] = (pos, set(outputs),
+                    del[self.cache[data_num][word[:j]]]
+                    self.cache[data_num][word[:j]] = (pos, set(outputs),
                                             bytes(buf) if PY3 else str(buf))
                 break
 
-        while pos < self.data_len:
-            arc, incr = self.next_arc(pos)
+        while pos < data_len:
+            arc, incr = self.next_arc(data, pos)
             flag, label, output, final_output, target = arc
+            logging.debug('flag=%s, pos=%d, i=%d, incr=%d, word_length=%d' % (str(flag), pos, i, incr, word_len))
             if flag & FLAG_FINAL_ARC:
                 # accepted
                 accept = True
@@ -393,16 +396,19 @@ class Matcher(object):
                             outputs.add(str(buf + out))
                 pos += incr
                 if flag & FLAG_LAST_ARC or i > word_len:
-                    break
+                    if i == 0:
+                        continue
+                    else:
+                        break
                 if i < self.max_cached_word_len:
                     with self.lock:
                         # add to cache
-                        self.cache[word[:i]] = (
+                        self.cache[data_num][word[:i]] = (
                             pos, set(o for o in outputs if o),
                             bytes(buf) if PY3 else str(buf))
                         # check cache size
-                        if len(self.cache) >= self.max_cache_size:
-                            self.cache.popitem(last=False)
+                        if len(self.cache[data_num]) >= self.max_cache_size:
+                            self.cache[data_num].popitem(last=False)
             elif flag & FLAG_LAST_ARC:
                 if i >= word_len:
                     break
@@ -423,7 +429,7 @@ class Matcher(object):
                     pos += incr
         return accept, set(o for o in outputs if o)
 
-    def next_arc(self, addr=0):
+    def next_arc(self, data, addr=0):
         assert addr >= 0
         # arc address
         pos = addr
@@ -433,36 +439,36 @@ class Matcher(object):
         final_output = [b'']
         target = 0
         # read flag
-        flag = unpack('b', self.data[pos:pos+1])[0]
+        flag = unpack('b', data[pos:pos+1])[0]
         pos += 1
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
                 # read final outputs
-                final_output_count = unpack('I', self.data[pos:pos+4])[0]
+                final_output_count = unpack('I', data[pos:pos+4])[0]
                 pos += 4
                 buf = []
                 for c in range(0, final_output_count):
-                    output_size = unpack('I', self.data[pos:pos+4])[0]
+                    output_size = unpack('I', data[pos:pos+4])[0]
                     pos += 4
                     if output_size:
-                        buf.append(self.data[pos:pos+output_size])
+                        buf.append(data[pos:pos+output_size])
                         pos += output_size
                 final_output = buf
         else:
             # read label
             if PY3:
-                label = unpack('B', self.data[pos:pos+1])[0]
+                label = unpack('B', data[pos:pos+1])[0]
             else:
-                label = unpack('c', self.data[pos:pos+1])[0]
+                label = unpack('c', data[pos:pos+1])[0]
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
                 # read output
-                output_size = unpack('I', self.data[pos:pos+4])[0]
+                output_size = unpack('I', data[pos:pos+4])[0]
                 pos += 4
-                output = self.data[pos:pos+output_size]
+                output = data[pos:pos+output_size]
                 pos += output_size
             # read target's (relative) address
-            target = unpack('I', self.data[pos:pos+4])[0]
+            target = unpack('I', data[pos:pos+4])[0]
             pos += 4
         incr = pos - addr
         arc = (flag, label, output, final_output, target)
