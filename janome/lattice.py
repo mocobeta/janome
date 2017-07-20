@@ -135,9 +135,15 @@ class Lattice:
                 node.back_index = enode.index
                 node.back_pos = enode.pos
         node.pos = self.p
+        if len(self.snodes) <= (self.p):
+            add_snodes_len = self.p - len(self.snodes) + 1
+            self.snodes = self.snodes + [[] for i in range(0, add_snodes_len)]
         node.index = len(self.snodes[self.p])
         self.snodes[self.p].append(node)
         node_len = len(node.surface) if hasattr(node, 'surface') else 1
+        if len(self.enodes) <= (self.p + node_len):
+            add_len = self.p + node_len - len(self.enodes) + 1
+            self.enodes = self.enodes + [[] for i in range(0, add_len)]
         self.enodes[self.p + node_len].append(node)
 
     def forward(self):

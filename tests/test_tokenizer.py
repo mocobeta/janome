@@ -143,6 +143,13 @@ class TestTokenizer(unittest.TestCase):
             else:
                 self.assertEqual(len(tokens), 3627)
 
+    def test_tokenize_large_text2(self):
+        with open('tests/text_large.txt') as f:
+            text = f.read()
+            if not PY3:
+                text = unicode(text, 'utf-8')
+            tokens = Tokenizer().tokenize(text)
+
     def test_tokenize_large_text_stream(self):
         with open('tests/text_lemon.txt') as f:
             text = f.read()
@@ -153,6 +160,13 @@ class TestTokenizer(unittest.TestCase):
                 self.assertEqual(len(tokens), 3598)
             else:
                 self.assertEqual(len(tokens), 3627)
+
+    def test_tokenize_large_text_stream2(self):
+        with open('tests/text_large.txt') as f:
+            text = f.read()
+            if not PY3:
+                text = unicode(text, 'utf-8')
+            tokens = list(Tokenizer().tokenize(text, stream = True))
 
     def test_tokenize_wakati(self):
         text = u'すもももももももものうち'
