@@ -156,7 +156,7 @@ def create_minimum_transducer(inputs):
     #_start = time.time()
     #_last_printed = 0
     inputs_size = len(inputs)
-    logging.info('partial input size: %d' % inputs_size)
+    logging.debug('partial input size: %d' % inputs_size)
 
     fstDict = FST()
     buffer = []
@@ -384,7 +384,6 @@ class Matcher(object):
         while pos < data_len:
             arc, incr = self.next_arc(data, pos)
             flag, label, output, final_output, target = arc
-            logging.debug('flag=%s, pos=%d, i=%d, incr=%d, word_length=%d' % (str(flag), pos, i, incr, word_len))
             if flag & FLAG_FINAL_ARC:
                 # accepted
                 accept = True
@@ -487,9 +486,9 @@ if __name__ == '__main__':
         (u'jul'.encode(u'utf8'), u'31'.encode(u'utf8')),
         (u'jun'.encode(u'utf8'), u'30'.encode(u'utf8'))
     ]
-    dict = create_minimum_transducer(inputs1)
-    data = compileFST(dict)
+    processed, fst = create_minimum_transducer(inputs1)
+    data = compileFST(fst)
 
-    m = Matcher(data)
+    m = Matcher([data])
     print(m.run(u'apr'.encode(u'utf8')))
     print(m.run(u'aug'.encode(u'utf8')))
