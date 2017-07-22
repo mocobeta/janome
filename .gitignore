@@ -10,6 +10,7 @@ build/
 .vscode/
 venv*/
 sysdic
+work
 ipadic/mecab-ipadic*
 tests/userdic
 tests/userdic_simple

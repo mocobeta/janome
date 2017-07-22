@@ -33,9 +33,8 @@ SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 FILE_FST_DATA = 'fst.data'
 
 MODULE_ENTRIES_EXTRA = 'entries_extra%d.py'
-MODULE_ENTRIES_EXTRA_BUCKETS = 'entries_extra_buckets.py'  # for mmap mode
 MODULE_ENTRIES_COMPACT = 'entries_compact%d.py'
-MODULE_ENTRIES_COMPACT_BUCKETS = 'entries_compact_buckets.py'  # for mmap mode
+MODULE_ENTRIES_BUCKETS = 'entries_buckets.py'
 MODULE_CONNECTIONS = 'connections%d.py'
 MODULE_CHARDEFS = 'chardef.py'
 MODULE_UNKNOWNS = 'unknowns.py'
@@ -43,37 +42,35 @@ MODULE_UNKNOWNS = 'unknowns.py'
 FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
 
-def save_fstdata(data, dir='.'):
-    _save(os.path.join(dir, FILE_FST_DATA), data, 9)
+def save_fstdata(data, dir, suffix=''):
+    _save(os.path.join(dir, FILE_FST_DATA + suffix), data, 9)
 
 
-def save_entries(entries, dir=u'.'):
-    # split whole entries to 10 buckets to reduce memory usage while installing.
-    # TODO: find better ways...
-    
-    # save surface forms, costs
-    bucket_size = (len(entries) // 3) + 1
-    offset = 0
-    buckets = {}
-    for i in range(1, 4):
-        _save_entries_as_module_compact(
-            os.path.join(dir, MODULE_ENTRIES_COMPACT % i),
-            {k:v for (k,v) in list(entries.items())[offset:offset+bucket_size]})
-        buckets[i] = (offset, min(len(entries), offset+bucket_size))
-        offset += bucket_size
-    _save_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT_BUCKETS), buckets)
+def load_all_fstdata():
+    return [_load(os.path.join(SYSDIC_DIR, data_file))
+            for data_file in os.listdir(SYSDIC_DIR) if data_file.startswith(FILE_FST_DATA)]
 
-    # save extra data
-    bucket_size = (len(entries) // 10) + 1
-    offset = 0
-    buckets = {}
-    for i in range(1, 11):
-        _save_entries_as_module_extra(
-            os.path.join(dir, MODULE_ENTRIES_EXTRA % i),
-            {k:v for (k,v) in list(entries.items())[offset:offset+bucket_size]})
-        buckets[i] = (offset, min(len(entries), offset+bucket_size))
-        offset += bucket_size
-    _save_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA_BUCKETS), buckets)
+
+def start_save_entries(dir, bucket_num):
+    for i in range(0, bucket_num):
+        _start_entries_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT % i))
+        _start_entries_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA % i))
+
+
+def end_save_entries(dir, bucket_num):
+    for i in range(0, bucket_num):
+        _end_entries_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT % i))
+        _end_entries_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA % i))
+
+
+def save_entry(dir, bucket_idx, morph_id, entry):
+    _save_entry_as_module_compact(os.path.join(dir, MODULE_ENTRIES_COMPACT % bucket_idx), morph_id, entry)
+    _save_entry_as_module_extra(os.path.join(dir, MODULE_ENTRIES_EXTRA % bucket_idx), morph_id, entry)
+
+
+def save_entry_buckets(dir, buckets):
+    _save_as_module(os.path.join(dir, MODULE_ENTRIES_BUCKETS), buckets)
+
 
 def save_connections(connections, dir=u'.'):
     # split whole connections to 2 buckets to reduce memory usage while installing.
@@ -115,50 +112,62 @@ def _save_as_module(file, data):
         return
     with open(file, 'w') as f:
         f.write(u'DATA=')
-        f.write(str(data) if PY3 else unicode(data))
+        f.write(str(data).replace('\\\\', '\\') if PY3 else unicode(data))
         f.flush()
 
 
-def _save_entries_as_module_extra(file, entries):
+def _start_entries_as_module(file):
     idx_file = re.sub(r'\.py$', '_idx.py', file)
     with open(file, 'w') as f:
         with open(idx_file, 'w') as f_idx:
             f.write("# -*- coding: utf-8 -*-\n")
             f.write('DATA={')
             f_idx.write('DATA={')
-            for k, v in entries.items():
-                f.write('%d:(' % k)
-                _pos1 = f.tell()
-                f_idx.write('%d:%d,' % (k, _pos1))
-                s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
-                    v[4], v[5], v[6], v[7], v[8], v[9])
-                f.write(s if PY3 else s.encode('utf-8'))
-                f.write('),')
-            f.write('}\n')
-            f.flush()
-            f_idx.write('}\n')
-            f_idx.flush()
 
 
-def _save_entries_as_module_compact(file, entries):
+def _end_entries_as_module(file):
     idx_file = re.sub(r'\.py$', '_idx.py', file)
-    with open(file, 'w') as f:
-        with open(idx_file, 'w') as f_idx:
-            f.write("# -*- coding: utf-8 -*-\n")
-            f.write('DATA={')
-            f_idx.write('DATA={')
-            for k, v in entries.items():
-                f.write('%d:(' % k)
-                _pos1 = f.tell()
-                f_idx.write('%d:%d,' % (k, _pos1))
-                s = u"u'%s',%s,%s,%d" % (v[0], v[1], v[2], v[3])
-                f.write(s if PY3 else s.encode('utf-8'))
-                f.write('),')
+    with open(file, 'a') as f:
+        with open(idx_file, 'a') as f_idx:
             f.write('}\n')
-            f.flush()
             f_idx.write('}\n')
+            f.flush()
             f_idx.flush()
 
+
+def _save_entry_as_module_compact(file, morph_id, entry):
+    idx_file = re.sub(r'\.py$', '_idx.py', file)
+    with open(file, 'a') as f:
+        with open(idx_file, 'a') as f_idx:
+            f.write('%d:(' % morph_id)
+            _pos1 = f.tell()
+            f_idx.write('%d:%d,' % (morph_id, _pos1))
+            s = u"u'%s',%s,%s,%d" % (
+                entry[0].encode('unicode_escape').decode('ascii') if PY3 else entry[0].encode('unicode_escape'),
+                entry[1],
+                entry[2],
+                entry[3])
+            f.write(s)
+            f.write('),')
+
+
+def _save_entry_as_module_extra(file, morph_id, entry):
+    idx_file = re.sub(r'\.py$', '_idx.py', file)
+    with open(file, 'a') as f:
+        with open(idx_file, 'a') as f_idx:
+            f.write('%d:(' % morph_id)
+            _pos1 = f.tell()
+            f_idx.write('%d:%d,' % (morph_id, _pos1))
+            s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
+                entry[4].encode('unicode_escape').decode('ascii') if PY3 else entry[4].encode('unicode_escape'),
+                entry[5].encode('unicode_escape').decode('ascii') if PY3 else entry[5].encode('unicode_escape'),
+                entry[6].encode('unicode_escape').decode('ascii') if PY3 else entry[6].encode('unicode_escape'),
+                entry[7].encode('unicode_escape').decode('ascii') if PY3 else entry[7].encode('unicode_escape'),
+                entry[8].encode('unicode_escape').decode('ascii') if PY3 else entry[8].encode('unicode_escape'),
+                entry[9].encode('unicode_escape').decode('ascii') if PY3 else entry[9].encode('unicode_escape'))
+            f.write(s)
+            f.write('),')
+            
 
 class Dictionary(object):
     u"""
@@ -232,7 +241,7 @@ class MMapDictionary(object):
                 _pos3e = mm.find(b",", _pos3s) if PY3 else mm.find(",", _pos3s)
                 _pos4s = _pos3e + 1
                 _pos4e = mm.find(b")", _pos4s) if PY3 else mm.find(")", _pos4s)
-                _entry = (mm[_pos1s:_pos1e].decode('utf-8'), int(mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
+                _entry = (mm[_pos1s:_pos1e].decode('unicode_escape'), int(mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
                 matched_entries.append((idx,) + _entry)
             return matched_entries
         except Exception as e:
@@ -260,8 +269,8 @@ class MMapDictionary(object):
             _pos6s = _pos5e + 4
             _pos6e = mm.find(b"')", _pos6s) if PY3 else mm.find("')", _pos6s)
             return (
-                mm[_pos1s:_pos1e].decode('utf-8'), mm[_pos2s:_pos2e].decode('utf-8'), mm[_pos3s:_pos3e].decode('utf-8'),
-                mm[_pos4s:_pos4e].decode('utf-8'), mm[_pos5s:_pos5e].decode('utf-8'), mm[_pos6s:_pos6e].decode('utf-8')
+                mm[_pos1s:_pos1e].decode('unicode_escape'), mm[_pos2s:_pos2e].decode('unicode_escape'), mm[_pos3s:_pos3e].decode('unicode_escape'),
+                mm[_pos4s:_pos4e].decode('unicode_escape'), mm[_pos5s:_pos5e].decode('unicode_escape'), mm[_pos6s:_pos6e].decode('unicode_escape')
             )
         except Exception as e:
             logging.error('Cannot load extra info. The dictionary may be corrupted?')
@@ -320,7 +329,7 @@ class SystemDictionary(Dictionary, UnknownsDictionary):
     System dictionary class
     """
     def __init__(self, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), entries, connections)
+        Dictionary.__init__(self, load_all_fstdata(), entries, connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -329,7 +338,7 @@ class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
     MMap System dictionary class
     """
     def __init__(self, mmap_entries, connections, chardefs, unknowns):
-        MMapDictionary.__init__(self, _load(os.path.join(SYSDIC_DIR, FILE_FST_DATA)), mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
+        MMapDictionary.__init__(self, load_all_fstdata(), mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -350,7 +359,7 @@ class UserDictionary(Dictionary):
         """
         build_method = getattr(self, 'build' + type)
         compiledFST, entries = build_method(user_dict, enc)
-        Dictionary.__init__(self, compiledFST, entries, connections)
+        Dictionary.__init__(self, [compiledFST], entries, connections)
 
     def buildipadic(self, user_dict, enc):
         surfaces = []
@@ -368,7 +377,7 @@ class UserDictionary(Dictionary):
                 entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
-        fst = create_minimum_transducer(inputs)
+        processed, fst = create_minimum_transducer(inputs)
         compiledFST = compileFST(fst)
         return compiledFST, entries
 
@@ -386,7 +395,7 @@ class UserDictionary(Dictionary):
                 entries[morph_id] = (surface, 0, 0, -100000, part_of_speech, u'*', u'*', surface, reading, reading)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
-        fst = create_minimum_transducer(inputs)
+        processed, fst = create_minimum_transducer(inputs)
         compiledFST = compileFST(fst)
         return compiledFST, entries
 
@@ -401,7 +410,7 @@ class UserDictionary(Dictionary):
             raise Exception('Not a directory : %s' % to_dir)
         elif not os.path.exists(to_dir):
             os.makedirs(to_dir, mode=int('0755', 8))
-        _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST, compressionlevel)
+        _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST[0], compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
 
@@ -410,12 +419,17 @@ class CompiledUserDictionary(Dictionary):
     User dictionary class (compiled)
     """
     def __init__(self, dic_dir, connections):
-        compiledFST, entries = self.load_dict(dic_dir)
-        Dictionary.__init__(self, compiledFST, entries, connections)
+        data, entries = self.load_dict(dic_dir)
+        Dictionary.__init__(self, [data], entries, connections)
 
     def load_dict(self, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
             raise Exception('No such directory : ' % dic_dir)
-        compiledFST = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
+        data = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
-        return compiledFST, entries
+        return data, entries
+
+
+class LoadingDictionaryError(Exception):
+    def __init__(self):
+        self.message = 'Cannot load dictionary data. Try mmap mode for very large dictionary.'

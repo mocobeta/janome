@@ -16,7 +16,9 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
 
-version = '0.3.3-dev'
+fst_data = [data_file for data_file in os.listdir('sysdic') if data_file.startswith('fst.data')]
+
+version = '0.3.3-dev2'
 name = 'janome'
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst'), encoding='utf-8') as f:
@@ -44,7 +46,7 @@ setup(
     classifiers=classifiers,
     url='http://mocobeta.github.io/janome/',
     packages=['janome','sysdic'],
-    package_data={'sysdic': ['fst.data']},
+    package_data={'sysdic': fst_data},
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer'],
     scripts=['bin/janome'],
     test_suite = 'suite'
