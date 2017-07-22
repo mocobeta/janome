@@ -24,4 +24,7 @@ environment:
 install:
   - "%PYTHON%\\python.exe setup.py install"
 
+test:
+  - "%PYTHON%\\python.exe setup.py test"
+
 build: off
