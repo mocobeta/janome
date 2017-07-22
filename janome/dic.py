@@ -421,3 +421,8 @@ class CompiledUserDictionary(Dictionary):
         data = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
         return data, entries
+
+
+class LoadingDictionaryError(Exception):
+    def __init__(self):
+        self.message = 'Cannot load dictionary data. Try mmap mode for very large dictionary.'

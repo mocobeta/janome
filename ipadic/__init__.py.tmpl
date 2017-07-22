@@ -3,7 +3,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(base_dir)
 sys.path.insert(0, parent_dir)
 
-from janome.dic import SystemDictionary
+from janome.dic import LoadingDictionaryError
 from . import connections1, connections2
 from . import chardef, unknowns
 
@@ -19,7 +19,10 @@ def __add_extra_info(entries, extra_entries_info):
 def entries(compact = False):
     global __entries
     if not __entries:
-        from sysdic import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
+        try:
+            from sysdic import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
+        except:
+            raise LoadingDictionaryError()
         __entries = entries_compact0.DATA
         __entries.update(entries_compact1.DATA)
         __entries.update(entries_compact2.DATA)
@@ -42,7 +45,10 @@ def entries(compact = False):
         del entries_compact9.DATA
     if not compact and len(__entries[0]) < 5:
         # need to load extra token info
-        from . import entries_extra0, entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9
+        try:
+            from . import entries_extra0, entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9
+        except:
+            raise LoadingDictionaryError()
         __add_extra_info(__entries, entries_extra0.DATA)
         __add_extra_info(__entries, entries_extra1.DATA)
         __add_extra_info(__entries, entries_extra2.DATA)

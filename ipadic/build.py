@@ -208,6 +208,7 @@ def terminate(*args,**kwargs):
     pool.terminate()
     pool.join()
 
+
 import signal
 signal.signal(signal.SIGTERM, terminate)
 signal.signal(signal.SIGINT, terminate)
@@ -229,7 +230,5 @@ if __name__ == '__main__':
         create_pool(processes)
         build_dict(dicdir, outdir, workdir, pool)
         build_unknown_dict(dicdir, enc, outdir)
-
-
     else:
         print('Usage: build.py [--collect|--build] <options>')
