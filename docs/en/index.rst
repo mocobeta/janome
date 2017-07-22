@@ -38,7 +38,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.2
+* janome: 0.3.3
 
 Install
 -------
@@ -240,6 +240,11 @@ When this option is set to Tokenizer object, tokenize() method always runs in wa
       print(token)
 
 
+Memory-mapped file support (v0.3.3+)
+----------------------------------------
+
+If 'mmap=True' option is given to Tokenizer.__init__(), dictionary entries are not loaded to process space but searched through memory-mapped file.
+
 Use janome from the command-line (v0.2.6+, Lunux/Mac only)
 ----------------------------------------------------------
 
@@ -306,6 +311,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.07.23 janome Version 0.3.3 was released
 * 2017.07.05 janome Version 0.3.2 was released 
 * 2017.07.02 janome Version 0.3.1 was released
 * 2017.06.30 janome Version 0.3.0 was released
