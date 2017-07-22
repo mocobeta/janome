@@ -19,16 +19,31 @@ def __add_extra_info(entries, extra_entries_info):
 def entries(compact = False):
     global __entries
     if not __entries:
-        from . import entries_compact1, entries_compact2, entries_compact3
-        __entries = entries_compact1.DATA
+        from sysdic import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
+        __entries = entries_compact0.DATA
+        __entries.update(entries_compact1.DATA)
         __entries.update(entries_compact2.DATA)
         __entries.update(entries_compact3.DATA)
+        __entries.update(entries_compact4.DATA)
+        __entries.update(entries_compact5.DATA)
+        __entries.update(entries_compact6.DATA)
+        __entries.update(entries_compact7.DATA)
+        __entries.update(entries_compact8.DATA)
+        __entries.update(entries_compact9.DATA)
+        del entries_compact0.DATA
         del entries_compact1.DATA
         del entries_compact2.DATA
         del entries_compact3.DATA
+        del entries_compact4.DATA
+        del entries_compact5.DATA
+        del entries_compact6.DATA
+        del entries_compact7.DATA
+        del entries_compact8.DATA
+        del entries_compact9.DATA
     if not compact and len(__entries[0]) < 5:
         # need to load extra token info
-        from . import entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9, entries_extra10
+        from . import entries_extra0, entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9
+        __add_extra_info(__entries, entries_extra0.DATA)
         __add_extra_info(__entries, entries_extra1.DATA)
         __add_extra_info(__entries, entries_extra2.DATA)
         __add_extra_info(__entries, entries_extra3.DATA)
@@ -38,7 +53,7 @@ def entries(compact = False):
         __add_extra_info(__entries, entries_extra7.DATA)
         __add_extra_info(__entries, entries_extra8.DATA)
         __add_extra_info(__entries, entries_extra9.DATA)
-        __add_extra_info(__entries, entries_extra10.DATA)
+        del entries_extra0.DATA
         del entries_extra1.DATA
         del entries_extra2.DATA
         del entries_extra3.DATA
@@ -48,7 +63,6 @@ def entries(compact = False):
         del entries_extra7.DATA
         del entries_extra8.DATA
         del entries_extra9.DATA
-        del entries_extra10.DATA
     return __entries
 
 
@@ -56,13 +70,13 @@ def entries(compact = False):
 def mmap_entries(compact = False):
     import mmap
     from importlib import import_module
-    from . import entries_compact_buckets, entries_extra_buckets
+    from . import entries_buckets
 
     __mmap_entries_compact = {}
     __mmap_entries_extra = None
     __open_files = []
-    for i in range(1, 4):
-        bucket = entries_compact_buckets.DATA[i]
+    for i in range(0, 10):
+        bucket = entries_buckets.DATA[i]
         fp = open(os.path.join(base_dir, 'entries_compact%d.py' % i), 'r+b')
         mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
         mm_idx = import_module('.entries_compact%d_idx' % i, 'sysdic')
@@ -70,8 +84,8 @@ def mmap_entries(compact = False):
         __mmap_entries_compact[bucket] = (mm, mm_idx.DATA)
     if not compact:
         __mmap_entries_extra = {}
-        for i in range(1, 11):
-            bucket = entries_extra_buckets.DATA[i]
+        for i in range(0, 10):
+            bucket = entries_buckets.DATA[i]
             fp = open(os.path.join(base_dir, 'entries_extra%d.py' % i), 'r+b')
             mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
             mm_idx = import_module('.entries_extra%d_idx' % i, 'sysdic')

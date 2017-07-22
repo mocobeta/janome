@@ -34,10 +34,10 @@ class TestFST(unittest.TestCase):
             ('apr'.encode('utf8'), pack('I', 30)),
             ('aug'.encode('utf8'), pack('I', 31)),
             ('dec'.encode('utf8'), pack('I', 31)),
-            ('feb'.encode('utf8'), pack('I', 28)),
-            ('feb'.encode('utf8'), pack('I', 29))
+            ('feb'.encode('utf8'), pack('I', 28))
         ]
         inputs2 = [
+            ('feb'.encode('utf8'), pack('I', 29)),
             ('jan'.encode('utf8'), pack('I', 31)),
             ('jul'.encode('utf8'), pack('I', 31)),
             ('jun'.encode('utf8'), pack('I', 30)),

@@ -156,7 +156,7 @@ def create_minimum_transducer(inputs):
     #_start = time.time()
     #_last_printed = 0
     inputs_size = len(inputs)
-    logging.debug('partial input size: %d' % inputs_size)
+    logging.info('(partial) input size: %d' % inputs_size)
 
     fstDict = FST()
     buffer = []
@@ -258,7 +258,7 @@ def create_minimum_transducer(inputs):
         buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
     find_minimized(buffer[0])
 
-    logging.info('num of state: %d' % fstDict.size())
+    logging.debug('num of state: %d' % fstDict.size())
     return (processed, fstDict)
 
 
@@ -349,9 +349,10 @@ class Matcher(object):
     def run(self, word, common_prefix_match=True):
         accept, output = False, set()
         for i, data in enumerate(self.dict_data):
-            accept, output = self._run(word, i, common_prefix_match)
-            if accept:
-                break
+            a, o = self._run(word, i, common_prefix_match)
+            if a:
+                accept = True
+                output = output.union(o)
         return accept, output
 
     def _run(self, word, data_num, common_prefix_match):
