@@ -94,7 +94,8 @@ def collect(dicdir, enc, outdir, workdir):
     save_entry_buckets(outdir, buckets)
 
 
-def save_partial_fst((part_idx, part_file), outdir):
+def save_partial_fst(arg, outdir):
+    part_idx, part_file = arg
     with open(part_file, 'rb') as f:
         _part = pickle.load(f)
         _processed, fst = create_minimum_transducer(_part)

@@ -112,7 +112,7 @@ def _save_as_module(file, data):
         return
     with open(file, 'w') as f:
         f.write(u'DATA=')
-        f.write(str(data) if PY3 else unicode(data))
+        f.write(str(data).replace('\\\\', '\\') if PY3 else unicode(data))
         f.flush()
 
 
@@ -142,8 +142,11 @@ def _save_entry_as_module_compact(file, morph_id, entry):
             f.write('%d:(' % morph_id)
             _pos1 = f.tell()
             f_idx.write('%d:%d,' % (morph_id, _pos1))
-            s = u"u'%s',%s,%s,%d" % (entry[0].encode('unicode_escape'), entry[1], entry[2], entry[3])              
-            #f.write(s if PY3 else s.encode('utf-8'))
+            s = u"u'%s',%s,%s,%d" % (
+                entry[0].encode('unicode_escape').decode('ascii') if PY3 else entry[0].encode('unicode_escape'),
+                entry[1],
+                entry[2],
+                entry[3])
             f.write(s)
             f.write('),')
 
@@ -156,8 +159,12 @@ def _save_entry_as_module_extra(file, morph_id, entry):
             _pos1 = f.tell()
             f_idx.write('%d:%d,' % (morph_id, _pos1))
             s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
-                entry[4].encode('unicode_escape'), entry[5].encode('unicode_escape'), entry[6].encode('unicode_escape'), entry[7].encode('unicode_escape'), entry[8].encode('unicode_escape'), entry[9].encode('unicode_escape'))
-            #f.write(s if PY3 else s.encode('utf-8'))
+                entry[4].encode('unicode_escape').decode('ascii') if PY3 else entry[4].encode('unicode_escape'),
+                entry[5].encode('unicode_escape').decode('ascii') if PY3 else entry[5].encode('unicode_escape'),
+                entry[6].encode('unicode_escape').decode('ascii') if PY3 else entry[6].encode('unicode_escape'),
+                entry[7].encode('unicode_escape').decode('ascii') if PY3 else entry[7].encode('unicode_escape'),
+                entry[8].encode('unicode_escape').decode('ascii') if PY3 else entry[8].encode('unicode_escape'),
+                entry[9].encode('unicode_escape').decode('ascii') if PY3 else entry[9].encode('unicode_escape'))
             f.write(s)
             f.write('),')
             
