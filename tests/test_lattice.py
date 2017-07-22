@@ -33,7 +33,7 @@ class TestLattice(unittest.TestCase):
         lattice = Lattice(5, SYS_DIC)
         self.assertEqual(7, len(lattice.snodes))
         self.assertTrue(isinstance(lattice.snodes[0][0], BOS))
-        self.assertEqual(8, len(lattice.enodes))
+        self.assertEqual(9, len(lattice.enodes))
         self.assertTrue(isinstance(lattice.enodes[1][0], BOS))
 
     def test_add_forward_end(self):
