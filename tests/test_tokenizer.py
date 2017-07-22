@@ -137,28 +137,28 @@ class TestTokenizer(unittest.TestCase):
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
-                text = unicode(text, 'utf-8')
+                text = unicode(text)
             tokens = Tokenizer().tokenize(text)
 
     def test_tokenize_large_text2(self):
         with open('tests/text_large.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
-                text = unicode(text, 'utf-8')
+                text = unicode(text)
             tokens = Tokenizer().tokenize(text)
 
     def test_tokenize_large_text_stream(self):
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
-                text = unicode(text, 'utf-8')
+                text = unicode(text)
             tokens = list(Tokenizer().tokenize(text, stream = True))
 
     def test_tokenize_large_text_stream2(self):
         with open('tests/text_large.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
-                text = unicode(text, 'utf-8')
+                text = unicode(text)
             tokens = list(Tokenizer().tokenize(text, stream = True))
 
     def test_tokenize_wakati(self):
