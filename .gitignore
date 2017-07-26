@@ -9,7 +9,7 @@ build/
 .idea/
 .vscode/
 venv*/
-sysdic*
+sysdic
 work
 ipadic/mecab-ipadic*
 tests/userdic
