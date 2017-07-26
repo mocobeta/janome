@@ -81,7 +81,7 @@ class SurfaceNode(BaseNode):
     """
     Node class with surface form only.
     """
-    __slots__ = ['surface']
+    __slots__ = ['num', 'surface', 'left_id', 'right_id', 'cost', 'node_type']
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         super(SurfaceNode, self).__init__()
