@@ -39,7 +39,7 @@ class TestLattice(unittest.TestCase):
     def test_add_forward_end(self):
         s = u'すもも'
         lattice = Lattice(len(s), SYS_DIC)
-        entries = SYS_DIC.lookup(s)
+        entries = SYS_DIC.lookup(s.encode('utf8'))
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -49,7 +49,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = SYS_DIC.lookup(s[1:])
+        entries = SYS_DIC.lookup(s[1:].encode('utf8'))
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -58,7 +58,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = SYS_DIC.lookup(s[2:])
+        entries = SYS_DIC.lookup(s[2:].encode('utf8'))
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -75,7 +75,7 @@ class TestLattice(unittest.TestCase):
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = SYS_DIC.lookup(s[pos:])
+            entries = SYS_DIC.lookup(s[pos:].encode('utf8'))
             for e in entries:
                 lattice.add(SurfaceNode(e))
             pos += lattice.forward()
@@ -95,7 +95,7 @@ class TestLattice(unittest.TestCase):
     def test_add_forward_end_mmap(self):
         s = u'すもも'
         lattice = Lattice(len(s), SYS_DIC)
-        entries = MMAP_SYS_DIC.lookup(s)
+        entries = MMAP_SYS_DIC.lookup(s.encode('utf8'))
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -105,7 +105,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = MMAP_SYS_DIC.lookup(s[1:])
+        entries = MMAP_SYS_DIC.lookup(s[1:].encode('utf8'))
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -114,7 +114,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = MMAP_SYS_DIC.lookup(s[2:])
+        entries = MMAP_SYS_DIC.lookup(s[2:].encode('utf8'))
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -131,7 +131,7 @@ class TestLattice(unittest.TestCase):
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = MMAP_SYS_DIC.lookup(s[pos:])
+            entries = MMAP_SYS_DIC.lookup(s[pos:].encode('utf8'))
             for e in entries:
                 lattice.add(SurfaceNode(e))
             pos += lattice.forward()

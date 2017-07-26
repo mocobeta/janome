@@ -180,7 +180,7 @@ class Dictionary(object):
         self.connections = connections
 
     def lookup(self, s):
-        (matched, outputs) = self.matcher.run(s.encode('utf8'))
+        (matched, outputs) = self.matcher.run(s)
         if not matched:
             return []
         try:
@@ -223,7 +223,7 @@ class MMapDictionary(object):
         self.connections = connections
 
     def lookup(self, s):
-        (matched, outputs) = self.matcher.run(s.encode('utf8'))
+        (matched, outputs) = self.matcher.run(s)
         if not matched:
             return []
         try:

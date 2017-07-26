@@ -211,15 +211,16 @@ class Tokenizer:
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
         while not self.__should_split(text, pos):
+            encoded_partial_text = text[pos:pos+min(50, len(text)-pos)].encode('utf-8')
             # user dictionary
             if self.user_dic:
-                entries = self.user_dic.lookup(text[pos:])
+                entries = self.user_dic.lookup(encoded_partial_text)
                 for e in entries:
                     lattice.add(SurfaceNode(e, NodeType.USER_DICT))
                 matched = len(entries) > 0
 
             # system dictionary
-            entries = self.sys_dic.lookup(text[pos:])
+            entries = self.sys_dic.lookup(encoded_partial_text)
             for e in entries:
                 lattice.add(SurfaceNode(e, NodeType.SYS_DICT))
             matched = len(entries) > 0
