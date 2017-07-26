@@ -241,6 +241,13 @@ tokenize() メソッドに 'wakati = True' オプションを与えると, 分�
       print(token)
 
 
+(experimental) NEologd 辞書を使う (v0.3.3 以上)
+--------------------------------------------------------
+
+NEologd 辞書を内包した janome パッケージを作成する手順を以下で公開しています。実験的なものなので，諸々了解のうえお試しください :)
+
+`NEologd 辞書を内包した janome をビルドする方法 <https://github.com/mocobeta/janome/wiki/(very-experimental)-NEologd-%E8%BE%9E%E6%9B%B8%E3%82%92%E5%86%85%E5%8C%85%E3%81%97%E3%81%9F-janome-%E3%82%92%E3%83%93%E3%83%AB%E3%83%89%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95>`_
+
 Memory-mapped file サポート (v0.3.3 以上)
 --------------------------------------------------------
 
@@ -322,7 +329,7 @@ A. ikawaha さんの, Go で書かれた形態素解析器 kagome にあやか�
 
 Q. `neologd <https://github.com/neologd/mecab-ipadic-neologd>`_ 内包版はないの.
 
-A. やりたいです!
+A. やりたいです! => `NEologd 辞書を内包した janome をビルドする方法 <https://github.com/mocobeta/janome/wiki/(very-experimental)-NEologd-%E8%BE%9E%E6%9B%B8%E3%82%92%E5%86%85%E5%8C%85%E3%81%97%E3%81%9F-janome-%E3%82%92%E3%83%93%E3%83%AB%E3%83%89%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95>`_
 
 Q. バグ見つけた or なんか変 or 改善要望
 
@@ -332,17 +339,6 @@ For Contributors
 ----------------
 
 See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
-
-やりたいことリスト
----------------------
-
-* 単語グラフ(ラティス)の可視化
-* neologd 対応
-* UniDic 対応
-* N-Best パス
-* API ドキュメント
-* SEARCH モード (検索のリコール向上を目的としたモード)
-* Lucene の Analyzer みたいに, 文字フィルタやトークンフィルタがあったら便利そう
 
 License
 ------------
