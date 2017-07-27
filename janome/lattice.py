@@ -37,7 +37,7 @@ class BaseNode(object):
         # cost of this node
         self.cost = 0
         # minimum cost to this node from BOS
-        self.min_cost = int(pow(2,31)-1)
+        self.min_cost = 2147483647  # int(pow(2,31)-1)
         # position and index info for Lattice#backward() method
         self.back_pos = -1
         self.back_index = -1
@@ -52,7 +52,8 @@ class Node(BaseNode):
     __slots__ = [
         'surface', 'left_id', 'right_id', 'cost'
         'part_of_speech', 'infl_type', 'infl_form',
-        'base_form', 'reading', 'phonetic', 'node_type'
+        'base_form', 'reading', 'phonetic', 'node_type',
+        'min_cost', 'back_pos', 'back_index'
     ]
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
@@ -81,7 +82,7 @@ class SurfaceNode(BaseNode):
     """
     Node class with surface form only.
     """
-    __slots__ = ['num', 'surface', 'left_id', 'right_id', 'cost', 'node_type']
+    __slots__ = ['num', 'surface', 'left_id', 'right_id', 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         super(SurfaceNode, self).__init__()
