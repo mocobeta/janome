@@ -56,7 +56,7 @@ def collect(dicdir, enc, outdir, workdir):
     _part =[]
     _cnt = 0
     for surface, mid in inputs:
-        if len(_part) >= 500000:
+        if len(_part) >= 200000:
             with open(os.path.join(workdir, 'input%d.pkl' % _cnt), 'wb') as f:
                 pickle.dump(_part, f)
             _part = []
