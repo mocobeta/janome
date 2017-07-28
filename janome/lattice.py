@@ -119,7 +119,6 @@ class EOS(BaseNode):
     def __str__(self):
         return '__EOS__' + ' [back_pos=%d]' % self.back_pos
 
-
 class Lattice:
     def __init__(self, size, dic):
         self.snodes = [[BOS()]] + [[] for i in range(0, size + 1)]
@@ -129,12 +128,14 @@ class Lattice:
         self.dic = dic
 
     def add(self, node):
+        min_cost, best_node = node.min_cost, None
         for enode in self.enodes[self.p]:
-            cost = self.dic.get_trans_cost(enode.right_id, node.left_id) + node.cost
-            if enode.min_cost + cost < node.min_cost:
-                node.min_cost = enode.min_cost + cost
-                node.back_index = enode.index
-                node.back_pos = enode.pos
+            cost =  enode.min_cost + self.dic.get_trans_cost(enode.right_id, node.left_id) + node.cost
+            if cost < min_cost:
+                min_cost, best_node = cost, enode
+        node.min_cost = min_cost
+        node.back_index = best_node.index
+        node.back_pos = best_node.pos
         node.pos = self.p
         node.index = len(self.snodes[self.p])
         self.snodes[self.p].append(node)
