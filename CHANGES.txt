@@ -1,3 +1,6 @@
+* 0.3.4 (2017.07.29)
+  - Add analyzer framework. #37
+
 * 0.3.3 (2017.07.23)
   - Memory-mapped file support. #33
   - Fix error on analyzing large text without panctuations. #34

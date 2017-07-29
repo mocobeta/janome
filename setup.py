@@ -18,7 +18,7 @@ if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdi
 
 fst_data = [data_file for data_file in os.listdir('sysdic') if data_file.startswith('fst.data')]
 
-version = '0.3.4-dev1'
+version = '0.3.4'
 name = 'janome'
 
 with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst'), encoding='utf-8') as f:
