@@ -18,15 +18,34 @@ import re
 import unicodedata
 
 class CharFilter(object):
+    u"""
+    Base CharFilter class. 
+
+    A CharFilter modifies or transforms the input text according to the rule described in apply() method.
+    Subclasses must implement apply() method.
+
+    Added in *version 0.3.4*
+    """
     def filter(self, text):
         return self.apply(text)
 
     def apply(self, text):
-        return text
+        raise NotImplementedError
 
 
 class RegexReplaceCharFilter(CharFilter):
+    u"""
+    RegexReplaceCharFilter replaces string matched with a regular expression pattern to replacement string.
+
+    Added in *version 0.3.4*
+    """
     def __init__(self, pat, repl):
+        """
+        Initialize RegexReplaceCharFilter with a regular expression pattern string and replacement.
+
+        :param pattern: regular expression string.
+        :param repl: replacement string.
+        """
         self.pattern = re.compile(pat)
         self.replacement = repl
 
@@ -35,7 +54,19 @@ class RegexReplaceCharFilter(CharFilter):
 
 
 class UnicodeNormalizeCharFilter(CharFilter):
+    u"""
+    UnicodeNormalizeCharFilter normalizes Unicode string.
+
+    Added in *version 0.3.4*
+    """
     def __init__(self, form='NFKC'):
+        """
+        Initialize UnicodeNormalizeCharFilter with normalization form.
+
+        See also `unicodedata.normalize <https://docs.python.org/3.6/library/unicodedata.html#unicodedata.normalize>`_ for details.
+
+        :param form: (Optional) normalization form. valid values for *form* are 'NFC', 'NFKC', 'NFD', and 'NFKD'. default is 'NFKC'
+        """
         self.form = form
 
     def apply(self, text):
