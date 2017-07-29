@@ -178,5 +178,5 @@ class TestDictionary(unittest.TestCase):
         compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections)
         self.assertEqual(1, len(compiled_user_dic.lookup(u'とうきょうスカイツリー駅'.encode('utf8'))))
 
-if __name__ == u'__main__':
+if __name__ == '__main__':
     unittest.main()

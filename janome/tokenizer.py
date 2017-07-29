@@ -15,7 +15,7 @@
 # limitations under the License.
 
 
-"""
+u"""
 The tokenizer module supplies Token and Tokenizer classes.
 
 Usage:
@@ -177,7 +177,7 @@ class Tokenizer:
 
     def tokenize(self, text, stream = False, wakati = False):
         u"""
-        Tokenize the text string.
+        Tokenize the input text.
 
         :param text: unicode string to be tokenized
         :param stream: (Optional) if given True use stream mode. default is False.

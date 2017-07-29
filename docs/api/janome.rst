@@ -12,21 +12,6 @@ janome\.dic module
     :undoc-members:
     :show-inheritance:
 
-janome\.fst module
-------------------
-
-.. automodule:: janome.fst
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-janome\.lattice module
-----------------------
-
-.. automodule:: janome.lattice
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 janome\.tokenizer module
 ------------------------
@@ -37,10 +22,28 @@ janome\.tokenizer module
     :show-inheritance:
 
 
-Module contents
----------------
+janome\.analyzer module
+------------------------
 
-.. automodule:: janome
+.. automodule:: janome.analyzer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+janome\.charfilter module
+----------------------------
+
+.. automodule:: janome.charfilter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+janome\.tokenfilter module
+----------------------------
+
+.. automodule:: janome.tokenfilter
     :members:
     :undoc-members:
     :show-inheritance:

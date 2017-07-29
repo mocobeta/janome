@@ -19,6 +19,9 @@ from test_fst import TestFST
 from test_dic import TestDictionary
 from test_lattice import TestLattice
 from test_tokenizer import TestTokenizer
+from test_charfilter import TestCharFilter
+from test_tokenfilter import TestTokenFilter
+from test_analyzer import TestAnalyzer
 
 def suite():
     suite = unittest.TestSuite()
@@ -26,6 +29,9 @@ def suite():
     suite.addTests(unittest.makeSuite(TestDictionary))
     suite.addTests(unittest.makeSuite(TestLattice))
     suite.addTests(unittest.makeSuite(TestTokenizer))
+    suite.addTests(unittest.makeSuite(TestCharFilter))
+    suite.addTests(unittest.makeSuite(TestTokenFilter))
+    suite.addTests(unittest.makeSuite(TestAnalyzer))
     return suite
 
 mySuite = suite()
