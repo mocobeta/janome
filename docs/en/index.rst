@@ -25,6 +25,8 @@ Source Codes
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
+If you like janome, please star the repository! :)
+
 API reference
 -------------
 
@@ -38,7 +40,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.3
+* janome: 0.3.4
 
 Install
 -------
@@ -46,13 +48,13 @@ Install
 PyPI
 ^^^^
 
-.. note:: It requires 500 to 600 MB RAM for install and pre-compile dictionary data. 
-
 `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
 .. code-block:: bash
 
   $ pip install janome
+
+.. note:: It requires 500 to 600 MB RAM for install and pre-compile dictionary data. 
 
 Usage
 -----
@@ -195,6 +197,41 @@ Once compiling has been successfully completed, the data is saved in '/tmp/userd
 
 .. note:: Use same major python version at both compile time and runtime.  Forward/backward dictionary data compatibility is not guaranteed.
 
+(experimental) Analyzer framework (v0.3.4+)
+-------------------------------------------------
+
+Analyzer framework is for pre- and post- processing. Analyzer framework includes following classes.
+
+* `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ class for pre-processing like character normalization.
+* `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ class for post-processing like lowercase/uppercase conversion, token filtering by POS tags.
+* `Analyzer <http://mocobeta.github.io/janome/api/janome.html#janome.analyzer.Analyzer>`_ class for combining CharFilters, a Tokenizer and TokenFilters to assemble custom analysis chain.
+
+Analyzser usage
+^^^^^^^^^^^^^^^^^^^^
+
+::
+
+  >>> from janome.tokenizer import Tokenizer
+  >>> from janome.analyzer import Analyzer
+  >>> from janome.charfilter import *
+  >>> from janome.tokenfilter import *
+  >>> text = u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
+  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
+  >>> tokenizer = Tokenizer()
+  >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
+  >>> a = Analyzer(char_filters, tokenizer, token_filters)
+  >>> for token in a.analyze(text):
+  ...     print(token)
+  ... 
+  janome  名詞,固有名詞,組織,*,*,*,*,*,*
+  pure    名詞,固有名詞,組織,*,*,*,*,*,*
+  python  名詞,一般,*,*,*,*,*,*,*
+  な       助動詞,*,*,*,特殊・ダ,体言接続,だ,ナ,ナ
+  形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
+  です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
+
+See reference for built-in CharFilters and TokenFilters. You can implement custom filters by extending CharFilter or TokenFilter.
+
 Streaming mode (v0.3.1+)
 -------------------------
 
@@ -311,6 +348,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.07.29 janome Version 0.3.4 was released
 * 2017.07.23 janome Version 0.3.3 was released
 * 2017.07.05 janome Version 0.3.2 was released 
 * 2017.07.02 janome Version 0.3.1 was released

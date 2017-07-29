@@ -47,3 +47,4 @@ janome\.tokenfilter module
     :members:
     :undoc-members:
     :show-inheritance:
+

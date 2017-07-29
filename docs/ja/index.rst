@@ -24,6 +24,8 @@ Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解
 
 `https://github.com/mocobeta/janome <https://github.com/mocobeta/janome>`_
 
+気に入ったらリポジトリにも★つけていってください！ :)
+
 API リファレンス
 --------------------------
 
@@ -38,7 +40,7 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-* janome: 0.3.3
+* janome: 0.3.4
 
 インストール
 ---------------
@@ -46,14 +48,13 @@ Python 2.7.x または Python 3.3+ インタプリタ
 PyPI
 ^^^^
 
-.. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします. 利用可能なメモリ容量にご注意ください. (バージョン 0.2.6 より, RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました.)
-
 `https://pypi.python.org/pypi/Janome <https://pypi.python.org/pypi/Janome>`_
 
 .. code-block:: bash
 
   $ pip install janome
 
+.. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします. 利用可能なメモリ容量にご注意ください. (バージョン 0.2.6 より, RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました.)
 
 使い方
 -----------
@@ -196,6 +197,49 @@ user_simpledic.csv ::
 
 .. note:: コンパイル済みユーザー辞書は, コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください. 辞書の前方/後方互換性は保証されないため, Python のメジャーバージョンが異なると読めない可能性があります.
 
+(experimental) Analyzer フレームワーク (v0.3.4 以上)
+----------------------------------------------------------------
+
+v0.3.4 から，形態素解析の前処理・後処理を行うための Analyzer フレームワークが追加されました．Analyzer フレームワークは下記のクラスを含みます．
+
+* 文字の正規化などの前処理を行う `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ クラス
+* 小文字化，品詞によるトークンのフィルタリングなど，形態素解析後の後処理を行う `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ クラス
+* CharFilter, Tokenizer, TokenFilter を組み合わせてカスタム解析フローを組み立てる `Analyzer <http://mocobeta.github.io/janome/api/janome.html#janome.analyzer.Analyzer>`_ クラス
+
+Analyzer の使い方
+^^^^^^^^^^^^^^^^^^^^
+
+Analyzer 初期化時に，CharFilter のリスト，初期化済み Tokenizer オブジェクト，TokenFilter のリストを指定します．0 個以上，任意の数の CharFilter や TokenFilter を指定できます．
+Analyzer を初期化したら，analyze() メソッドに解析したい文字列を渡します．戻り値はトークンの generator です（最後に指定した TokenFilter の出力により，generator の返す要素の型が決まります）．
+
+以下の実行例では，前処理としてユニコード正規化と正規表現による文字列置換を行い，形態素解析を実行後に，名詞の連続のまとめあげ（複合名詞化），品詞によるフィルタリング，表層形の小文字化という後処理を行っています．
+
+.. note:: CharFilter や TokenFilter は，リストに指定した順で適用されるため，順番には注意してください．
+
+::
+
+  >>> from janome.tokenizer import Tokenizer
+  >>> from janome.analyzer import Analyzer
+  >>> from janome.charfilter import *
+  >>> from janome.tokenfilter import *
+  >>> text = u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
+  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
+  >>> tokenizer = Tokenizer()
+  >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
+  >>> a = Analyzer(char_filters, tokenizer, token_filters)
+  >>> for token in a.analyze(text):
+  ...     print(token)
+  ... 
+  janome  名詞,固有名詞,組織,*,*,*,*,*,*
+  pure    名詞,固有名詞,組織,*,*,*,*,*,*
+  python  名詞,一般,*,*,*,*,*,*,*
+  な       助動詞,*,*,*,特殊・ダ,体言接続,だ,ナ,ナ
+  形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
+  です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
+
+
+組み込みの CharFilter や TokenFilter の種類や使い方についてはリファレンスを参照してください．また，CharFilter や TokenFilter を拡張すれば，任意のフィルター処理を実装することもできます．
+
 ストリーミングモード (v0.3.1 以上)
 -------------------------------------------------------
 
@@ -333,7 +377,7 @@ A. やりたいです! => `NEologd 辞書を内包した janome をビルドす�
 
 Q. バグ見つけた or なんか変 or 改善要望
 
-A. `@moco_beta <https://twitter.com/moco_beta>`_ 宛につぶやくか, Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください.
+A. `Gitter room <https://gitter.im/janome-python/ja>`_ でつぶやくか，Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください.
 
 For Contributors
 ----------------
@@ -356,6 +400,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.07.29 janome Version 0.3.4 リリース
 * 2017.07.23 janome Version 0.3.3 リリース
 * 2017.07.05 janome Version 0.3.2 リリース
 * 2017.07.02 janome Version 0.3.1 リリース
