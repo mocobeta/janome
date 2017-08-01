@@ -388,7 +388,7 @@ See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome
 作者について
 --------------
 
-`プロフィール <https://medium.com/@mocobeta>`_
+`プロフィール <https://medium.com/@mocobeta/about-me-b28838ba631f>`_
 
 License
 ------------

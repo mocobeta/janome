@@ -235,7 +235,7 @@ See reference for built-in CharFilters and TokenFilters. You can implement custo
 Streaming mode (v0.3.1+)
 -------------------------
 
-When 'stream = True' option is given to tokenize() method, it runs in streaming mode. In streaming mode, partial analyzed results are returned through `generator <https://wiki.python.org/moin/Generators>`_ interface.
+When ``stream = True`` option is given to tokenize() method, it runs in streaming mode. In streaming mode, partial analyzed results are returned through `generator <https://wiki.python.org/moin/Generators>`_ interface.
 
 Use this option when you analyze very large text data.
 
@@ -335,7 +335,7 @@ See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome
 Author
 ---------
 
-`Profile <https://medium.com/@mocobeta>`_
+`Profile <https://medium.com/@mocobeta/about-me-b28838ba631f>`_
 
 License
 ------------
