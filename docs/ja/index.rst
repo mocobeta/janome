@@ -13,11 +13,11 @@ Welcome to janome's documentation! (Japanese)
 Janome とは
 -----------
 
-Janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
+Janome (蛇の目) は，Pure Python で書かれた，辞書内包の形態素解析器です。
 
-依存ライブラリなしで簡単にインストールでき, アプリケーションに組み込みやすいシンプルな API を備える形態素解析ライブラリを目指しています.
+依存ライブラリなしで簡単にインストールでき，アプリケーションに組み込みやすいシンプルな API を備える形態素解析ライブラリを目指しています。
 
-内包辞書として mecab-ipadic-2.7.0-20070801 を使っています.
+内包辞書として mecab-ipadic-2.7.0-20070801 を使っています。
 
 ソースコードリポジトリ
 --------------------------
@@ -54,14 +54,14 @@ PyPI
 
   $ pip install janome
 
-.. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします. 利用可能なメモリ容量にご注意ください. (バージョン 0.2.6 より, RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました.)
+.. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします。利用可能なメモリ容量にご注意ください。（バージョン 0.2.6 より，RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました。）
 
 使い方
 -----------
 
-janome.tokenizer パッケージの Tokenizer オブジェクトを作り, tokenize() メソッドに解析したい文字列を渡します.
+janome.tokenizer パッケージの Tokenizer オブジェクトを作り，tokenize() メソッドに解析したい文字列を渡します。
 
-戻り値は Token オブジェクトのリストです. Token は表層形や品詞といった形態素情報を含みます. 詳しくは `リファレンス <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ を参照してください。
+戻り値は Token オブジェクトのリストです。Token は表層形や品詞といった形態素情報を含みます。詳しくは `リファレンス <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ を参照してください。
 
 ::
 
@@ -81,7 +81,7 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り, token
 for Windows users
 ^^^^^^^^^^^^^^^^^
 
-文字化けする場合は decode('utf8') をかけてください.
+文字化けする場合は ``decode('utf8')`` をかけてください。
 
 ::
 
@@ -97,9 +97,9 @@ for Windows users
 MeCab IPADIC フォーマット
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-デフォルトユーザー定義辞書のフォーマットは, MeCab 辞書と同じです. たとえば以下のような CSV ファイルを作成し, Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します.
+デフォルトユーザー定義辞書のフォーマットは，MeCab 辞書と同じです。たとえば以下のような CSV ファイルを作成し，Tokenizer クラスの初期化時にファイルパスとエンコーディングを指定します。
 
-辞書フォーマットは MeCab の `ドキュメント <http://taku910.github.io/mecab/dic.html>`_ をご参照ください.
+辞書フォーマットは MeCab の `ドキュメント <http://taku910.github.io/mecab/dic.html>`_ をご参照ください。
 
 userdic.csv ::
 
@@ -133,9 +133,9 @@ userdic.csv ::
 簡略辞書フォーマット (v0.2.7 以上)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Kuromoji のユーザー辞書に似た, 簡略化された辞書フォーマットです(ただし Janome には search mode がないため, search mode 用の項目はありません). 表層形, 品詞, 読みのみを記述し, 詳細品詞やスコアは指定できません.
+Kuromoji のユーザー辞書に似た，簡略化された辞書フォーマットです（ただし Janome には search mode がないため，search mode 用の項目はありません）。表層形，品詞，読みのみを記述し，詳細品詞やスコアは指定できません。
 
-簡略辞書フォーマットを使うには,以下のような「<表層形>,<品詞>,<読み>」を並べた CSV ファイルを用意し, Tokenizer 初期化時にファイルパスと辞書タイプ(udic_type='simpledic')を指定してください.
+簡略辞書フォーマットを使うには，以下のような「*<表層形>,<品詞>,<読み>*」を並べた CSV ファイルを用意し，Tokenizer 初期化時にファイルパスと辞書タイプ（``udic_type='simpledic'``）を指定してください。
 
 user_simpledic.csv ::
 
@@ -169,11 +169,11 @@ user_simpledic.csv ::
 コンパイル済みのユーザー辞書を使う
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ユーザー定義辞書は, 巨大になるとバイナリコンパイルに時間がかかるため, あらかじめコンパイルしておき, コンパイル済みの辞書を使うことも可能です.
+ユーザー定義辞書は，巨大になるとバイナリコンパイルに時間がかかるため，あらかじめコンパイルしておき，コンパイル済みの辞書を使うことも可能です。
 
-現在のところ, コンパイルのためのツールはありませんが, `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます.
+現在のところ，コンパイルのためのツールはありませんが， `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。
 
-.. note:: v0.3.1 から, ユーザー辞書コンパイル時の API が少し変わっているため注意してください.
+.. note:: v0.3.1 から，ユーザー辞書コンパイル時の API が少し変わっているため注意してください。
 
 辞書のコンパイル(MeCab IPADIC format) ::
 
@@ -189,18 +189,18 @@ user_simpledic.csv ::
   >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
-これで, /tmp/userdic 以下にコンパイル済みのユーザー辞書が保存されます. 使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します.
+これで， */tmp/userdic* 以下にコンパイル済みのユーザー辞書が保存されます。使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します。
 
 ::
 
   >>> t = Tokenizer("/tmp/userdic")
 
-.. note:: コンパイル済みユーザー辞書は, コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください. 辞書の前方/後方互換性は保証されないため, Python のメジャーバージョンが異なると読めない可能性があります.
+.. note:: コンパイル済みユーザー辞書は，コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください。辞書の前方/後方互換性は保証されないため，Python のメジャーバージョンが異なると読めない可能性があります。
 
 (experimental) Analyzer フレームワーク (v0.3.4 以上)
 ----------------------------------------------------------------
 
-v0.3.4 から，形態素解析の前処理・後処理を行うための Analyzer フレームワークが追加されました．Analyzer フレームワークは下記のクラスを含みます．
+Analyzer は，形態素解析の前処理・後処理をテンプレ化するためのフレームワークです。Analyzer フレームワークは下記のクラスを含みます。
 
 * 文字の正規化などの前処理を行う `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ クラス
 * 小文字化，品詞によるトークンのフィルタリングなど，形態素解析後の後処理を行う `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ クラス
@@ -209,12 +209,12 @@ v0.3.4 から，形態素解析の前処理・後処理を行うための Analyz
 Analyzer の使い方
 ^^^^^^^^^^^^^^^^^^^^
 
-Analyzer 初期化時に，CharFilter のリスト，初期化済み Tokenizer オブジェクト，TokenFilter のリストを指定します．0 個以上，任意の数の CharFilter や TokenFilter を指定できます．
-Analyzer を初期化したら，analyze() メソッドに解析したい文字列を渡します．戻り値はトークンの generator です（最後に指定した TokenFilter の出力により，generator の返す要素の型が決まります）．
+Analyzer 初期化時に，CharFilter のリスト，初期化済み Tokenizer オブジェクト，TokenFilter のリストを指定します。0 個以上，任意の数の CharFilter や TokenFilter を指定できます。
+Analyzer を初期化したら，analyze() メソッドに解析したい文字列を渡します。戻り値はトークンの generator です（最後に指定した TokenFilter の出力により，generator の返す要素の型が決まります）。
 
-以下の実行例では，前処理としてユニコード正規化と正規表現による文字列置換を行い，形態素解析を実行後に，名詞の連続のまとめあげ（複合名詞化），品詞によるフィルタリング，表層形の小文字化という後処理を行っています．
+以下の実行例では，前処理としてユニコード正規化と正規表現による文字列置換を行い，形態素解析を実行後に，名詞の連続のまとめあげ（複合名詞化），品詞によるフィルタリング，表層形の小文字化という後処理を行っています。
 
-.. note:: CharFilter や TokenFilter は，リストに指定した順で適用されるため，順番には注意してください．
+.. note:: CharFilter や TokenFilter は，リストに指定した順で適用されるため，順番には注意してください。
 
 ::
 
@@ -238,14 +238,14 @@ Analyzer を初期化したら，analyze() メソッドに解析したい文字�
   です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
 
-組み込みの CharFilter や TokenFilter の種類や使い方についてはリファレンスを参照してください．また，CharFilter や TokenFilter を拡張すれば，任意のフィルター処理を実装することもできます．
+組み込みの CharFilter や TokenFilter の種類や使い方についてはリファレンスを参照してください。また，CharFilter や TokenFilter を拡張すれば，任意のフィルター処理を実装することもできます。
 
 ストリーミングモード (v0.3.1 以上)
 -------------------------------------------------------
 
-tokenize() メソッドに 'stream = True' オプションを与えると, ストリーミングモードで動作します．ストリーミングモードでは, 部分的な解析が完了する都度, 解析結果を返します. 戻り値はリストではなく `generator <https://wiki.python.org/moin/Generators>`_ になります．
+tokenize() メソッドに ``stream = True`` オプションを与えると，ストリーミングモードで動作します。ストリーミングモードでは，部分的な解析が完了する都度，解析結果を返します。戻り値はリストではなく `generator <https://wiki.python.org/moin/Generators>`_ になります。
 
-内部的にすべての Token のリストを保持しなくなるため, 巨大な文書を解析する場合でも, メモリ消費量が一定以下に抑制されます.
+内部的にすべての Token のリストを保持しなくなるため，巨大な文書を解析する場合でも，メモリ消費量が一定以下に抑制されます。
 
 .. code-block:: python
 
@@ -259,7 +259,7 @@ tokenize() メソッドに 'stream = True' オプションを与えると, ス�
 分かち書きモード (v0.3.1 以上)
 --------------------------------------------------------
 
-tokenize() メソッドに 'wakati = True' オプションを与えると, 分かち書きモード（表層形のみを返すモード）で動作します. 分かち書きモードで解析した場合の戻り値は, Token オブジェクトのリストではなく文字列 (str) のリストになります.
+tokenize() メソッドに ``wakati = True`` オプションを与えると，分かち書きモード（表層形のみを返すモード）で動作します。分かち書きモードで解析した場合の戻り値は，Token オブジェクトのリストではなく文字列 (str) のリストになります。
 
 ::
 
@@ -268,15 +268,15 @@ tokenize() メソッドに 'wakati = True' オプションを与えると, 分�
   >>> tokens
   ['分かち書き', 'モード', 'が', 'つき', 'まし', 'た', '！']
 
-分かち書きモードしか使わない場合, Tokenizer オブジェクト初期化時に 'wakati = True' オプションを与えると, 詳細品詞・読みなど, 不要なデータを辞書からロードしなくなります. 普通にすべての辞書データをロードして初期化した場合より, 少し（50MB程度）メモリ使用量が抑制されます.
+分かち書きモードしか使わない場合，Tokenizer オブジェクト初期化時に ``wakati = True`` オプションを与えると，詳細品詞・読みなど，不要なデータを辞書からロードしなくなります。普通にすべての辞書データをロードして初期化した場合より，少し（50MB程度）メモリ使用量が抑制されます。
 
 ::
 
   >>> t = Tokenizer(wakati=True)
 
-なお, このオプションを与えて Tokenizer を初期化した場合, tokenize() メソッドは常に分かち書きモードで動作します（tokenize 時に 'wakati = False' と指定しても無視されます）.
+なお, このオプションを与えて Tokenizer を初期化した場合，tokenize() メソッドは常に分かち書きモードで動作します（tokenize 時に ``wakati = False`` と指定しても無視されます）。
 
-分かち書きモードはストリームモードと併用することができます. その場合の戻り値は文字列 (str) の generator となります。
+分かち書きモードはストリームモードと併用することができます。その場合の戻り値は文字列 (str) の generator となります。
 
 .. code-block:: python
 
@@ -295,18 +295,18 @@ NEologd 辞書を内包した janome パッケージを作成する手順を以�
 Memory-mapped file サポート (v0.3.3 以上)
 --------------------------------------------------------
 
-Tokenizer オブジェクトの初期化時に 'mmap=True' オプションを与えると，辞書エントリは Memory-mapped file としてアクセスされるようになります。
+Tokenizer オブジェクトの初期化時に ``mmap=True`` オプションを与えると，辞書エントリは Memory-mapped file としてアクセスされるようになります。
 
 Tokenizer の初期化時，プロセス空間に辞書エントリをロードしないため，初期化が高速になります。
 
-コマンドラインから使う (v0.2.6 以上, Lunux/Mac only)
+コマンドラインから使う (v0.2.6 以上，Lunux/Mac only)
 --------------------------------------------------------
 
-コマンドラインから実行可能なスクリプト janome がついています. (Linux/Mac のみ. Windows 版(bat)は少々お待ちください.)
+コマンドラインから実行可能なスクリプト janome がついています。(Linux/Mac のみ。Windows 版 (bat) はもう少しお待ちください。PR 歓迎！)
 
-簡単に動作を確認したいときにお使いください.
+簡単に動作を確認したいときにお使いください。
 
-標準入力から文字列を受け取り、形態素解析を実行します. 指定できるオプションを見るには "janome -h" とタイプしてください.
+標準入力から文字列を受け取り，形態素解析を実行します。指定できるオプションを見るには "janome -h" とタイプしてください。
 
 ::
 
@@ -325,64 +325,70 @@ Tokenizer の初期化時，プロセス空間に辞書エントリをロード�
 
 .. note:: 
 
-  バージョン 0.3 では，大きな文書を解析したときにメモリを大量に消費（リーク）してしまう問題が解決されました. 内部バッファに収まらないサイズの文書が与えられた場合, 部分的に解析することでメモリ使用量を抑制しています. よりメモリ使用量を抑制したい場合は「ストリーミングモード」を使ってください.
+  バージョン 0.3 では，大きな文書を解析したときにメモリを大量に消費（リーク）してしまう問題が解決されました。内部バッファに収まらないサイズの文書が与えられた場合，部分的に解析することでメモリ使用量を抑制しています。よりメモリ使用量を抑制したい場合は「ストリーミングモード」を使ってください。
 
   詳しくはこちら： `[janome開発日誌] 省メモリ対応をした janome 0.3.1 をリリースしました <https://medium.com/@mocobeta/janome-release-0-3-1-3e7afd9d1de3>`_
 
-  この修正の影響で, 0.2 系と 0.3 系以上 では, 大きなドキュメントを解析したときの解析結果が若干異なる可能性があります.
+  この修正の影響で，0.2 系と 0.3 系以上 では，大きなドキュメントを解析したときの解析結果が若干異なる可能性があります。
 
 
-古いバージョン(< 0.3)では, 入力全体を読んでラティスを構築するため, 入力文字列が大きくなると多くのリソースを消費します. 数十キロバイト以上の文書を解析する場合は, なるべく適度に分割して与えてください. 
+古いバージョン(< 0.3)では，入力全体を読んでラティスを構築するため，入力文字列が大きくなると多くのリソースを消費します。数十キロバイト以上の文書を解析する場合は，なるべく適度に分割して与えてください。
+
 
 よくある（かもしれない）質問
 ---------------------------------
 
-Q. Tokenizer の初期化が遅いんだけど.
+Q. Tokenizer の初期化が遅いんだけど。
 
-A. インタプリタ起動直後の, 初回の Tokenizer インスタンス生成時に, システム辞書を読み込むのですが, 現在のバージョンでは1~2秒かかる仕様です. 2回目以降はシステム辞書がすでに読み込まれているため速くなります. 今後改善していきたいのですが, 現行ではご勘弁ください. (そのため, インタプリタをしょっちゅう再起動するようなユースケースだと厳しいです.) => v0.3.3 以上の mmap サポートを使うと初期化が高速になるため，必要に応じて検討ください。
+A. インタプリタ起動直後の，初回の Tokenizer インスタンス生成時に，システム辞書を読み込むのですが，現在のバージョンでは1~2秒かかる仕様です。2回目以降はシステム辞書がすでに読み込まれているため速くなります。今後改善していきたいのですが，現行ではご勘弁ください. (そのため, インタプリタをしょっちゅう再起動するようなユースケースだと厳しいです。) => v0.3.3 以上の mmap サポートを使うと初期化が高速になるため，必要に応じて検討ください。
 
-Q. 解析結果の精度は.
+Q. 解析結果の精度は。
 
-A. 辞書, 言語モデルともに MeCab のデフォルトシステム辞書をそのまま使わせていただいているため, バグがなければ, MeCab と同等の解析結果になると思います.
+A. 辞書，言語モデルともに MeCab のデフォルトシステム辞書をそのまま使わせていただいているため，バグがなければ，MeCab と同等の解析結果になると思います。
 
-Q. 形態素解析の速度は.
+Q. 形態素解析の速度は。
 
-A. 文章の長さによりますが, 手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒でした. mecab-python の10倍程度(長い文章だとそれ以上)遅い, というくらいでしょうか. 性能向上させていきたいですが, いまのところは速度を追うのがメインの目的ではないです.
+A. 文章の長さによりますが，手元の PC では 1 センテンスあたり数ミリ〜数十ミリ秒でした。mecab-python の10倍程度（長い文章だとそれ以上）遅い，というくらいでしょうか。性能向上させていきたいですが，いまのところは速度を追うのがメインの目的ではないです。
 
-Q. 実装（データ構造, アルゴリズム）について.
+Q. 実装（データ構造，アルゴリズム）について。
 
-A. 辞書は, FST (正確には Minimal Acyclic Subsequential Transducer, `論文 <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698>`_) を使っています. 実装は `Apache Lucene <https://lucene.apache.org/core/>`_ (Kuromoji) と `kagome <https://github.com/ikawaha/kagome>`_ を参考にさせていただきました. エンジンはオーソドックスなビタビで, ほぼ `自然言語処理の基礎 <http://www.amazon.co.jp/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86%E3%81%AE%E5%9F%BA%E7%A4%8E-%E5%A5%A5%E6%9D%91-%E5%AD%A6/dp/4339024511>`_ の3章だけ読んで書きました.
+A. 辞書は，FST (正確には Minimal Acyclic Subsequential Transducer, `論文 <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698>`_) を使っています。実装は `Apache Lucene <https://lucene.apache.org/core/>`_ (Kuromoji) と `kagome <https://github.com/ikawaha/kagome>`_ を参考にさせていただきました。エンジンはオーソドックスなビタビで，ほぼ `自然言語処理の基礎 <http://www.amazon.co.jp/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86%E3%81%AE%E5%9F%BA%E7%A4%8E-%E5%A5%A5%E6%9D%91-%E5%AD%A6/dp/4339024511>`_ の3章だけ読んで書きました。
 
-Janome は Lucene の単語辞書やクエリパーサで使われている FST について調べていて生まれました. もしも内部実装にご興味があれば, 以下もどうぞ.
+Janome は Lucene の単語辞書やクエリパーサで使われている FST について調べていて生まれました。もしも内部実装にご興味があれば，以下もどうぞ。
 
 * `Lucene FST のアルゴリズム (1) ～図解編～ <http://mocobeta-backup.tumblr.com/post/111076688132/lucene-fst-1>`_
 * `Lucene FST のアルゴリズム (2) 〜実装編〜 <http://mocobeta-backup.tumblr.com/post/113693778372/lucene-fst-2>`_
 * `Pyconjp2015 - Python で作って学ぶ形態素解析 <http://www.slideshare.net/tomokouchida505/pyconjp2015-python>`_
 
-Q. Python 2 系への対応は.
+Q. Python 2 系への対応は。
 
-A. デスヨネー. => 対応しました. janomePy2 をご利用ください. => janome 本体が Python2.7 にも対応しました.
+A. デスヨネー。 => 対応しました。janomePy2 をご利用ください。=> janome 本体が Python2.7 にも対応しました。
 
-Q. 学習器ついてないの.
+Q. 学習器ついてないの。
 
-A. 今のところありません.
+A. 今のところありません。
 
-Q. Janome ってどういう意味.
+Q. Janome ってどういう意味。
 
-A. ikawaha さんの, Go で書かれた形態素解析器 kagome にあやかりつつ, 蛇(Python)をかけて命名しました. 日本語のJaともかかっているのは takuya-a さんに言われて気づきました :)
+A. ikawaha さんの，Go で書かれた形態素解析器 kagome にあやかりつつ，蛇（Python）をかけて命名しました。日本語の Ja ともかかっているのは takuya-a さんに言われて気づきました :)
 
-Q. `neologd <https://github.com/neologd/mecab-ipadic-neologd>`_ 内包版はないの.
+Q. `neologd <https://github.com/neologd/mecab-ipadic-neologd>`_ 内包版はないの。
 
 A. やりたいです! => `NEologd 辞書を内包した janome をビルドする方法 <https://github.com/mocobeta/janome/wiki/(very-experimental)-NEologd-%E8%BE%9E%E6%9B%B8%E3%82%92%E5%86%85%E5%8C%85%E3%81%97%E3%81%9F-janome-%E3%82%92%E3%83%93%E3%83%AB%E3%83%89%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95>`_
 
 Q. バグ見つけた or なんか変 or 改善要望
 
-A. `Gitter room <https://gitter.im/janome-python/ja>`_ でつぶやくか，Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください.
+A. `Gitter room <https://gitter.im/janome-python/ja>`_ でつぶやくか，Github リポジトリに `Issue <https://github.com/mocobeta/janome/issues>`_ 立ててください。
 
 For Contributors
 ----------------
 
 See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
+
+作者について
+--------------
+
+`プロフィール <https://medium.com/@mocobeta>`_
 
 License
 ------------
@@ -412,7 +418,7 @@ History
 * 2015.05.03 janome Version 0.2.4 リリース
 * 2015.05.03 janome Version 0.2.3 リリース
 * 2015.04.24 janome Version 0.2.2 リリース
-* 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated (数日中に PyPI から削除します.)
+* 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated （数日中に PyPI から削除します。）
 * 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
 * 2015.04.08 janome Version 0.1.3 公開
 

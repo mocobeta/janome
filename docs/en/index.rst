@@ -81,7 +81,7 @@ The return value is a list of Token objects. Token includes morphological inform
 for Windows users
 ^^^^^^^^^^^^^^^^^
 
-Use decode('utf8') if output is garbled.
+Use ``decode('utf8')`` if output is garbled.
 
 ::
 
@@ -137,7 +137,7 @@ Simplified dictionary format (v0.2.7+)
 
 Janome provides alternative simplified dictionary format like `Kuromoji <https://www.atilika.com/en/products/kuromoji.html>`_ user dictionary. This format supports surface form, part-of-speech and reading only.
 
-To use simplified dictionary format, create a CSV file that includes "<surface form>,<part-of-speech>,<reading>" in each line (see the example below) and pass the file path and the dictionary type (udic_type='simpledic') to Tokenizer's constructor.
+To use simplified dictionary format, create a CSV file that includes "<surface form>,<part-of-speech>,<reading>" in each line (see the example below) and pass the file path and the dictionary type ``(udic_type='simpledic')`` to Tokenizer's constructor.
 
 user_simpledic.csv ::
 
@@ -189,13 +189,13 @@ How to compile user dictionary (simplified format): ::
   >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
-Once compiling has been successfully completed, the data is saved in '/tmp/userdic' directory. Pass the directory path to Tokenizer's constructor to use it.
+Once compiling has been successfully completed, the data is saved in ``/tmp/userdic`` directory. Pass the directory path to Tokenizer's constructor to use it.
 
 ::
 
   >>> t = Tokenizer("/tmp/userdic")
 
-.. note:: Use same major python version at both compile time and runtime.  Forward/backward dictionary data compatibility is not guaranteed.
+.. note:: Use same major python version at both compile time and runtime. Forward/backward dictionary data compatibility is not guaranteed.
 
 (experimental) Analyzer framework (v0.3.4+)
 -------------------------------------------------
@@ -260,15 +260,15 @@ When 'wakati = True' option is given to tokenize() method, it runs in 'wakati-ga
   >>> tokens
   ['分かち書き', 'モード', 'が', 'つき', 'まし', 'た', '！']
 
-If you use 'wakati-gaki' mode only, it is recommended to give 'wakati = True' option to Tokenizer.__init__(). When Tokenizer object is initialized as below, extra information (detailed part of speech, reading, etc.) for tokens are not loaded from dictionary so the memory usage is reduced.
+If you use 'wakati-gaki' mode only, it is recommended to give ``wakati = True`` option to Tokenizer.__init__(). When Tokenizer object is initialized as below, extra information (detailed part of speech, reading, etc.) for tokens are not loaded from dictionary so the memory usage is reduced.
 
 ::
 
   >>> t = Tokenizer(wakati=True)
 
-When this option is set to Tokenizer object, tokenize() method always runs in wakati-gaki mode ('wakati = False' option to tokenize() method is ignored.) 
+When this option is set to Tokenizer object, tokenize() method always runs in wakati-gaki mode (``wakati = False`` option to tokenize() method is ignored.) 
 
-'wakati-gaki' mode works well with streaming mode. tokenize() method returns generator of string when it is given 'stream=True' and 'wakati=True' options.
+'wakati-gaki' mode works well with streaming mode. tokenize() method returns generator of string when it is given ``stream=True`` and ``wakati=True`` options.
 
 .. code-block:: python
 
@@ -280,12 +280,12 @@ When this option is set to Tokenizer object, tokenize() method always runs in wa
 Memory-mapped file support (v0.3.3+)
 ----------------------------------------
 
-If 'mmap=True' option is given to Tokenizer.__init__(), dictionary entries are not loaded to process space but searched through memory-mapped file.
+If ``mmap=True`` option is given to Tokenizer.__init__(), dictionary entries are not loaded to process space but searched through memory-mapped file.
 
 Use janome from the command-line (v0.2.6+, Lunux/Mac only)
 ----------------------------------------------------------
 
-Janome has executable built-in script 'janome' for command-line usage. (currently for Lunux/Mac only... patches are welcome!)
+Janome has executable built-in script "janome" for command-line usage. (currently for Lunux/Mac only... patches are welcome!)
 
 It reads a sentence at a time from standard input and outputs the analysis result. To see supported options, type "janome -h".
 
@@ -325,12 +325,17 @@ A. Janome uses FST (`Minimal Acyclic Subsequential Transducer <http://citeseerx.
 
 Q. I found bugs. Or have requests for enhancement.
 
-A. Bug reports and requests (and of course, patches) are welcome. Create issues in `Github repository <https://github.com/mocobeta/janome/issues>`_ or contact to `@moco_beta <https://twitter.com/moco_beta>`_.
+A. Bug reports or requests (and of course, patches) are welcome. Create issues in `Github repository <https://github.com/mocobeta/janome/issues>`_ or leave your comment to `Gitter room <https://gitter.im/janome-python/en>`_.
 
 For Contributors
 ----------------
 
 See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
+
+Author
+---------
+
+`Profile <https://medium.com/@mocobeta>`_
 
 License
 ------------
