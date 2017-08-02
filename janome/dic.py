@@ -19,12 +19,24 @@ import os
 import io
 import pickle
 import gzip
-from struct import pack, unpack
-from .fst import Matcher, create_minimum_transducer, compileFST
+from struct import pack
+from .fst import Matcher, create_minimum_transducer, compileFST, unpack_uint
 import traceback
 import logging
 import sys
 import re
+try:
+    from functools import lru_cache
+except ImportError:
+    from functools import wraps
+    def lru_cache(**kwargs):
+        def _dummy(function):
+            @wraps(function)
+            def __dummy(*args, **kwargs):
+                return function(*args, **kwargs)
+            return __dummy
+        return _dummy
+
 
 PY3 = sys.version_info[0] == 3
 
@@ -186,7 +198,7 @@ class Dictionary(object):
         try:
             res = []
             for e in outputs:
-                num = unpack('I', e)[0]
+                num = unpack_uint(e)
                 res.append((num,) + self.entries[num][:4])
             return res
         except Exception as e:
@@ -229,7 +241,7 @@ class MMapDictionary(object):
         try:
             matched_entries = []
             for e in outputs:
-                idx = unpack('I', e)[0]
+                idx = unpack_uint(e)
                 bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys())) if PY3 \
                     else filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys())[0]
                 mm, mm_idx = self.entries_compact[bucket]
@@ -297,6 +309,7 @@ class UnknownsDictionary(object):
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns
 
+    @lru_cache(maxsize=None)
     def get_char_categories(self, c):
         res = {}
         for chr_range in self.char_ranges:
