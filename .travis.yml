@@ -5,6 +5,10 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+jdk:
+  - openjdk8
+env:
+  - REDPEN_VERSION=1.9.0
 install:
   - pip install coveralls
 before_script:
@@ -13,3 +17,6 @@ script:
   - coverage run --source=janome setup.py test
 after_success:
   - coveralls
+  - wget -q https://github.com/redpen-cc/redpen/releases/download/redpen-${REDPEN_VERSION}/redpen-${REDPEN_VERSION}.tar.gz
+  - tar xzf redpen-${REDPEN_VERSION}.tar.gz
+  - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/ja/redpen-conf-ja.xml -f rest docs/ja/index.rst
