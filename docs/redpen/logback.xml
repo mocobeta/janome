@@ -1,0 +1,15 @@
+<configuration>
+
+  <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+    <Target>System.err</Target>
+    <encoder>
+      <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level] %class - %msg%n</Pattern>
+    </encoder>
+  </appender>
+
+  <root>
+    <level value="error" />
+    <appender-ref ref="STDERR"/>
+  </root>
+
+</configuration>
