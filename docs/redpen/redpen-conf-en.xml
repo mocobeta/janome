@@ -1,0 +1,54 @@
+<redpen-conf lang="en">
+    <validators>
+        <!--Rules on sentence length-->
+        <validator name="SentenceLength">
+            <property name="max_len" value="120"/>
+        </validator>
+        <validator name="CommaNumber" />
+        <validator name="HeaderLength" />
+
+        <!--Rules on expressions-->
+        <validator name="SymbolWithSpace"/>
+        <!--validator name="SectionLength">
+            <property name="max_char_num" value="2000"/>
+        </validator-->
+        <!--validator name="Contraction" /-->
+        <!--validator name="SuccessiveWord" /-->
+        <validator name="EndOfSentence" />
+        <validator name="FrequentSentenceStart"/>
+        <!--validator name="UnexpandedAcronym"/-->
+        <!--validator name="WeakExpression"/-->
+
+        <!--Rules on sections and paragraphs-->
+        <!--validator name="ParagraphNumber"/-->
+        <!--validator name="SpaceBeginningOfSentence"/-->
+        <validator name="ParenthesizedSentence">
+            <property name="max_nesting_level" value="2" />
+            <property name="max_count" value="2" />
+            <property name="max_length" value="10" />
+        </validator>
+        <!--validator name="EmptySection" /-->
+        <validator name="GappedSection" />
+        <validator name="SectionLevel" />
+        <validator name="ListLevel" />
+
+        <!--Rules on symbols and terminologies-->
+        <validator name="InvalidSymbol"/>
+        <!--validator name="Spelling">
+            <property name="dict" value="redpen/spelling.txt" />
+        </validator-->
+        <!--validator name="WordFrequency"/-->
+        <validator name="Hyphenation"/>
+        <!--validator name="NumberFormat"/-->
+
+        <!--Load JavaScript validators-->
+        <validator name="JavaScript" />
+    </validators>
+    <symbols>
+        <symbol name="FULL_STOP" value="." after-space="true" />
+        <symbol name="COMMA" value="," after-space="false" />
+        <symbol name="LEFT_PARENTHESIS" value="(" before-space="false" after-space="false" />
+        <symbol name="RIGHT_PARENTHESIS" value=")" before-space="false" after-space="false" />
+        <symbol name="HYPHEN_SIGN" value="-" />
+    </symbols>
+</redpen-conf>

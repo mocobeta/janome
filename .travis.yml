@@ -23,3 +23,4 @@ after_success:
   - tar xzf redpen-${REDPEN_VERSION}.tar.gz
   - cp docs/redpen/logback.xml redpen-distribution-${REDPEN_VERSION}/conf/logback.xml
   - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/redpen/redpen-conf-ja.xml -f rest docs/ja/index.rst
+  - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/redpen/redpen-conf-en.xml -f rest docs/en/index.rst
