@@ -357,7 +357,7 @@ class Matcher(object):
         output = set()
         for i in range(len(self.dict_data)):
             output |= self._run(word, i, common_prefix_match)
-        return bool(output), output
+        return bool(output), output  # accept if output is not empty
 
     def _run(self, word, data_num, common_prefix_match):
         # logging.debug('word=' + str([c for c in word]))
