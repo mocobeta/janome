@@ -128,12 +128,13 @@ class Lattice:
         self.dic = dic
 
     def add(self, node):
-        min_cost, best_node = node.min_cost, None
+        min_cost, best_node, node_left_id = node.min_cost - node.cost, None, node.left_id
+        dic = self.dic
         for enode in self.enodes[self.p]:
-            cost =  enode.min_cost + self.dic.get_trans_cost(enode.right_id, node.left_id) + node.cost
+            cost =  enode.min_cost + dic.get_trans_cost(enode.right_id, node_left_id)
             if cost < min_cost:
                 min_cost, best_node = cost, enode
-        node.min_cost = min_cost
+        node.min_cost = min_cost + node.cost
         node.back_index = best_node.index
         node.back_pos = best_node.pos
         node.pos = self.p
