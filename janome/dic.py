@@ -309,7 +309,7 @@ class UnknownsDictionary(object):
         self.char_ranges = chardefs[1]
         self.unknowns = unknowns
 
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=1024)
     def get_char_categories(self, c):
         res = {}
         for chr_range in self.char_ranges:
