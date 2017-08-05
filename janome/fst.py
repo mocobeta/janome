@@ -23,6 +23,18 @@ from collections import OrderedDict
 import logging
 import time
 import threading
+try:
+    from functools import lru_cache
+except ImportError:
+    from functools import wraps
+    def lru_cache(**kwargs):
+        def _dummy(function):
+            @wraps(function)
+            def __dummy(*args, **kwargs):
+                return function(*args, **kwargs)
+            return __dummy
+        return _dummy
+
 
 PY3 = sys.version_info[0] == 3
 
@@ -353,6 +365,7 @@ class Matcher(object):
             self.max_cached_word_len = max_cached_word_len
             self.lock = threading.Lock()
 
+
     def run(self, word, common_prefix_match=True):
         output = set()
         for i in range(len(self.dict_data)):
@@ -367,6 +380,7 @@ class Matcher(object):
         data = self.dict_data[data_num]
         word_len, data_len = len(word), len(data)
 
+        # simple lru cache for python2 (python2 does not provide functools.lru_cache)
         # any prefix is in cache?
         for j in range(min(word_len, self.max_cached_word_len), 2, -1):
             if word[:j] in self.cache[data_num]:
@@ -409,7 +423,7 @@ class Matcher(object):
 
         return outputs
 
-
+    @lru_cache(maxsize=8192)
     def next_arc(self, data, addr):
         assert addr >= 0
         # arc address
