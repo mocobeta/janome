@@ -238,7 +238,7 @@ Analyzer を初期化したら，analyze() メソッドに解析したい文字�
   です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
 
-Analyzer usage for word count (v0.3.5 以上)
+Analyzer の利用例: ワードカウント (v0.3.5 以上)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TokenCountFilter を使うと，入力文字列中の単語出現頻度を数えることができます。以下は，文字列中の名詞の出現回数を数える例です（POSKeepFilterで名詞のみフィルタしています）。出現回数の多い順に，単語（表層形）とその出現回数のタプルが返されます。
@@ -432,22 +432,22 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
-* 2017.08.06 janome Version 0.3.5 リリース
-* 2017.07.29 janome Version 0.3.4 リリース
-* 2017.07.23 janome Version 0.3.3 リリース
+* 2017.08.06 `janome Version 0.3.5 リリース <https://medium.com/@mocobeta/janome-0-3-5-release-ee5de2196330>`_
+* 2017.07.29 `janome Version 0.3.4 リリース <https://medium.com/@mocobeta/janome-0-3-4-release-63ed21f4fda9>`_
+* 2017.07.23 `janome Version 0.3.3 リリース <https://medium.com/@mocobeta/janoe-0-3-3-release-eddd139eec9e>`_
 * 2017.07.05 janome Version 0.3.2 リリース
-* 2017.07.02 janome Version 0.3.1 リリース
+* 2017.07.02 `janome Version 0.3.1 リリース <https://medium.com/@mocobeta/janome-release-0-3-1-3e7afd9d1de3>`_
 * 2017.06.30 janome Version 0.3.0 リリース
-* 2016.05.07 janome Vesrion 0.2.8 リリース
-* 2016.03.05 janome Version 0.2.7 リリース
-* 2015.10.26 janome Version 0.2.6 リリース
+* 2016.05.07 `janome Vesrion 0.2.8 リリース <http://mocobeta-backup.tumblr.com/post/143988723452/janome-028>`_
+* 2016.03.05 `janome Version 0.2.7 リリース <http://mocobeta-backup.tumblr.com/post/140503222592/janome-027>`_
+* 2015.10.26 `janome Version 0.2.6 リリース <http://mocobeta-backup.tumblr.com/post/131952293527/janome-026>`_
 * 2015.05.11 janome Version 0.2.5 リリース
 * 2015.05.03 janome Version 0.2.4 リリース
 * 2015.05.03 janome Version 0.2.3 リリース
 * 2015.04.24 janome Version 0.2.2 リリース
-* 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated （数日中に PyPI から削除します。）
-* 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
-* 2015.04.08 janome Version 0.1.3 公開
+* 2015.04.24 `janome Version 0.2.0 リリース <http://mocobeta-backup.tumblr.com/post/117180400907/python27-34-janome-020>`_ / janomePy2 は deprecated （数日中に PyPI から削除します。）
+* 2015.04.11 `janome Version 0.1.4 リリース / janomePy2 0.1.4 公開 <http://mocobeta-backup.tumblr.com/post/116108998822/janomepy2-janome-014>`_
+* 2015.04.08 `janome Version 0.1.3 公開 <http://mocobeta-backup.tumblr.com/post/115843098157/pure-python-janome>`_
 
 詳細: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
