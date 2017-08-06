@@ -135,7 +135,7 @@ class ExtractAttributeFilter(TokenFilter):
     u"""
     An ExtractAttributeFilter extracts a specified attribute of Token.
 
-    **NOTES** This filter must placed the last of token filter chain because return values are strings but not tokens.
+    **NOTES** This filter must placed the last of token filter chain because return values are not tokens but strings.
 
     Added in *version 0.3.4*
     """
@@ -156,9 +156,11 @@ class ExtractAttributeFilter(TokenFilter):
 
 class TokenCountFilter(TokenFilter):
     u"""
-    An TokenCountFilter counts word frequency. Here, 'word' means an attribute of Token.
+    An TokenCountFilter counts word frequencies in the input text. Here, 'word' means an attribute of Token.
 
-    **NOTES** This filter must placed the last of token filter chain because return values are word-count pairs but not tokens.
+    This filter generates word-frequency pairs sorted in descending order of frequency.
+
+    **NOTES** This filter must placed the last of token filter chain because return values are not tokens but string-integer tuples.
 
     Added in *version 0.3.5*
     """

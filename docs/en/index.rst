@@ -40,7 +40,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.4
+* janome: 0.3.5
 
 Install
 -------
@@ -230,7 +230,27 @@ Analyzser usage
   形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
   です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
-See reference for built-in CharFilters and TokenFilters. You can implement custom filters by extending CharFilter or TokenFilter.
+Analyzer usage for word count (v0.3.5+)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can count word frequencies in the input text by using TokenCountFilter.
+
+::
+
+  >>> from janome.tokenizer import Tokenizer
+  >>> from janome.analyzer import Analyzer
+  >>> from janome.tokenfilter import *
+  >>> text = u'すもももももももものうち'
+  >>> token_filters = [POSKeepFilter('名詞'), TokenCountFilter()]
+  >>> a = Analyzer(token_filters=token_filters)
+  >>> for k, v in a.analyze(text):
+  ...   print('%s: %d' % (k, v))
+  ...
+  もも: 2
+  すもも: 1
+  うち: 1
+
+See API reference for other built-in CharFilters and TokenFilters. You can implement custom filters by extending CharFilter or TokenFilter.
 
 Streaming mode (v0.3.1+)
 -------------------------
@@ -353,6 +373,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.08.06 janome Version 0.3.5 was released
 * 2017.07.29 janome Version 0.3.4 was released
 * 2017.07.23 janome Version 0.3.3 was released
 * 2017.07.05 janome Version 0.3.2 was released 
