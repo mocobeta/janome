@@ -88,7 +88,7 @@ See LICENSE.txt and NOTICE.txt for license details.
 Acknowledgement
 ================
 
-Special thanks to @ikawaha and @takuya_a.
+Special thanks to @ikawaha, @takuyaa and @nakagami.
 
 Copyright
 ==========
