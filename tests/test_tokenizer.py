@@ -58,24 +58,24 @@ class TestTokenizer(unittest.TestCase):
         text = u'𠮷野屋'
         tokens = Tokenizer().tokenize(text)
         self.assertEqual(3, len(tokens))
-        self._check_token(tokens[0], u'𠮷', u'記号,一般,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[0], u'𠮷', u'記号,一般,*,*,*,*,𠮷,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[1], u'野', u'名詞,一般,*,*,*,*,野,ノ,ノ', NodeType.SYS_DICT)
         self._check_token(tokens[2], u'屋', u'名詞,接尾,一般,*,*,*,屋,ヤ,ヤ', NodeType.SYS_DICT)
 
         text = u'한국어'
         tokens = Tokenizer().tokenize(text)
         self.assertEqual(1, len(tokens))
-        self._check_token(tokens[0], u'한국어', u'記号,一般,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[0], u'한국어', u'記号,一般,*,*,*,*,한국어,*,*', NodeType.UNKNOWN)
 
     def test_tokenize_unknown(self):
         text = u'2009年10月16日'
         tokens = Tokenizer().tokenize(text)
         self.assertEqual(6, len(tokens))
-        self._check_token(tokens[0], u'2009', u'名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[0], u'2009', u'名詞,数,*,*,*,*,2009,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[1], u'年', u'名詞,接尾,助数詞,*,*,*,年,ネン,ネン', NodeType.SYS_DICT)
-        self._check_token(tokens[2], u'10', u'名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[2], u'10', u'名詞,数,*,*,*,*,10,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[3], u'月', u'名詞,一般,*,*,*,*,月,ツキ,ツキ', NodeType.SYS_DICT)
-        self._check_token(tokens[4], u'16', u'名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[4], u'16', u'名詞,数,*,*,*,*,16,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[5], u'日', u'名詞,接尾,助数詞,*,*,*,日,ニチ,ニチ', NodeType.SYS_DICT)
 
         text = u'マルチメディア放送（VHF-HIGH帯）「モバキャス」'
@@ -84,13 +84,13 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[0], u'マルチメディア', u'名詞,一般,*,*,*,*,マルチメディア,マルチメディア,マルチメディア', NodeType.SYS_DICT)
         self._check_token(tokens[1], u'放送', u'名詞,サ変接続,*,*,*,*,放送,ホウソウ,ホーソー', NodeType.SYS_DICT)
         self._check_token(tokens[2], u'（', u'記号,括弧開,*,*,*,*,（,（,（', NodeType.SYS_DICT)
-        self._check_token(tokens[3], u'VHF', u'名詞,固有名詞,組織,*,*,*,*,*,*', NodeType.UNKNOWN)
-        self._check_token(tokens[4], u'-', u'名詞,サ変接続,*,*,*,*,*,*,*', NodeType.UNKNOWN)
-        self._check_token(tokens[5], u'HIGH', u'名詞,一般,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[3], u'VHF', u'名詞,固有名詞,組織,*,*,*,VHF,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[4], u'-', u'名詞,サ変接続,*,*,*,*,-,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[5], u'HIGH', u'名詞,一般,*,*,*,*,HIGH,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[6], u'帯', u'名詞,接尾,一般,*,*,*,帯,タイ,タイ', NodeType.SYS_DICT)
         self._check_token(tokens[7], u'）', u'記号,括弧閉,*,*,*,*,）,）,）', NodeType.SYS_DICT)
         self._check_token(tokens[8], u'「', u'記号,括弧開,*,*,*,*,「,「,「', NodeType.SYS_DICT)
-        self._check_token(tokens[9], u'モバキャス', u'名詞,固有名詞,一般,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[9], u'モバキャス', u'名詞,固有名詞,一般,*,*,*,モバキャス,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[10], u'」', u'記号,括弧閉,*,*,*,*,」,」,」', NodeType.SYS_DICT)
 
     def test_tokenize_with_userdic(self):

@@ -247,7 +247,7 @@ class Tokenizer:
                     assert unknown_entries
                     for entry in unknown_entries:
                         left_id, right_id, cost, part_of_speech = entry
-                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', '*', '*', '*')
+                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', buf, '*', '*')
                         lattice.add(Node(dummy_dict_entry, NodeType.UNKNOWN))
 
             pos += lattice.forward()
