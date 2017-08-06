@@ -93,6 +93,32 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[9], u'モバキャス', u'名詞,固有名詞,一般,*,*,*,モバキャス,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[10], u'」', u'記号,括弧閉,*,*,*,*,」,」,」', NodeType.SYS_DICT)
 
+    def test_tokenize_unknown_no_baseform(self):
+        text = u'2009年10月16日'
+        tokens = Tokenizer().tokenize(text, baseform_unk=False)
+        self.assertEqual(6, len(tokens))
+        self._check_token(tokens[0], u'2009', u'名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[1], u'年', u'名詞,接尾,助数詞,*,*,*,年,ネン,ネン', NodeType.SYS_DICT)
+        self._check_token(tokens[2], u'10', u'名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[3], u'月', u'名詞,一般,*,*,*,*,月,ツキ,ツキ', NodeType.SYS_DICT)
+        self._check_token(tokens[4], u'16', u'名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[5], u'日', u'名詞,接尾,助数詞,*,*,*,日,ニチ,ニチ', NodeType.SYS_DICT)
+
+        text = u'マルチメディア放送（VHF-HIGH帯）「モバキャス」'
+        tokens = Tokenizer().tokenize(text, baseform_unk=False)
+        self.assertEqual(11, len(tokens))
+        self._check_token(tokens[0], u'マルチメディア', u'名詞,一般,*,*,*,*,マルチメディア,マルチメディア,マルチメディア', NodeType.SYS_DICT)
+        self._check_token(tokens[1], u'放送', u'名詞,サ変接続,*,*,*,*,放送,ホウソウ,ホーソー', NodeType.SYS_DICT)
+        self._check_token(tokens[2], u'（', u'記号,括弧開,*,*,*,*,（,（,（', NodeType.SYS_DICT)
+        self._check_token(tokens[3], u'VHF', u'名詞,固有名詞,組織,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[4], u'-', u'名詞,サ変接続,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[5], u'HIGH', u'名詞,一般,*,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[6], u'帯', u'名詞,接尾,一般,*,*,*,帯,タイ,タイ', NodeType.SYS_DICT)
+        self._check_token(tokens[7], u'）', u'記号,括弧閉,*,*,*,*,）,）,）', NodeType.SYS_DICT)
+        self._check_token(tokens[8], u'「', u'記号,括弧開,*,*,*,*,「,「,「', NodeType.SYS_DICT)
+        self._check_token(tokens[9], u'モバキャス', u'名詞,固有名詞,一般,*,*,*,*,*,*', NodeType.UNKNOWN)
+        self._check_token(tokens[10], u'」', u'記号,括弧閉,*,*,*,*,」,」,」', NodeType.SYS_DICT)
+
     def test_tokenize_with_userdic(self):
         text = u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
         udic_file = os.path.join(parent_dir, 'tests/user_ipadic.csv')

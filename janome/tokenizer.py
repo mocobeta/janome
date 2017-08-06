@@ -175,35 +175,36 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, stream = False, wakati = False):
+    def tokenize(self, text, stream=False, wakati=False, baseform_unk=True):
         u"""
         Tokenize the input text.
 
         :param text: unicode string to be tokenized
         :param stream: (Optional) if given True use stream mode. default is False.
         :param wakati: (Optinal) if given True returns surface forms only. default is False.
+        :param baseform_unk: (Optional) if given True sets base_form attribute for unknown tokens. default is True.
 
         :return: list of tokens (stream=False, wakati=False) or token generator (stream=True, wakati=False) or list of string (stream=False, wakati=True) or string generator (stream=True, wakati=True)
         """
         if self.wakati:
             wakati = True
         if stream:
-            return self.__tokenize_stream(text, wakati)
+            return self.__tokenize_stream(text, wakati, baseform_unk)
         else:
-            return list(self.__tokenize_stream(text, wakati))
+            return list(self.__tokenize_stream(text, wakati, baseform_unk))
 
-    def __tokenize_stream(self, text, wakati = False):
+    def __tokenize_stream(self, text, wakati, baseform_unk):
         text = text.strip()
         text_length = len(text)
         processed = 0
         while processed < text_length:
-            tokens, pos = self.__tokenize_partial(text[processed:], wakati)
+            tokens, pos = self.__tokenize_partial(text[processed:], wakati, baseform_unk)
             for token in tokens:
                 yield token
             processed += pos
 
 
-    def __tokenize_partial(self, text, wakati = False):
+    def __tokenize_partial(self, text, wakati, baseform_unk):
         if self.wakati and not wakati:
             raise WakatiModeOnlyException
 
@@ -247,7 +248,8 @@ class Tokenizer:
                     assert unknown_entries
                     for entry in unknown_entries:
                         left_id, right_id, cost, part_of_speech = entry
-                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', buf, '*', '*')
+                        base_form = buf if baseform_unk else '*'
+                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', base_form, '*', '*')
                         lattice.add(Node(dummy_dict_entry, NodeType.UNKNOWN))
 
             pos += lattice.forward()
