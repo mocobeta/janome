@@ -20,7 +20,7 @@ The analyzer module supplies Analyzer framework for pre-processing and post-proc
 
 Added in *version 0.3.4*
 
-*NOTE* This is experimental. The class/method interfaces can be modified in the future releases.
+**NOTE** This is experimental. The class/method interfaces can be modified in the future releases.
 
 Usage:
 
@@ -43,6 +43,20 @@ python	名詞,一般,*,*,*,*,*,*,*
 形態素解析器	名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
 です	助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
+Usage (word count with TokenCountFilter):
+
+>>> from janome.tokenizer import Tokenizer
+>>> from janome.analyzer import Analyzer
+>>> from janome.tokenfilter import *
+>>> text = u'すもももももももものうち'
+>>> token_filters = [POSKeepFilter('名詞'), TokenCountFilter()]
+>>> a = Analyzer(token_filters=token_filters)
+>>> for k, v in a.analyze(text):
+...   print('%s: %d' % (k, v))
+...
+もも: 2
+すもも: 1
+うち: 1
 """
 
 import sys
