@@ -85,5 +85,34 @@ class TestTokenFilter(unittest.TestCase):
             ExtractAttributeFilter('foo')
 
 
+    def test_count_token_filter(self):
+        tf = TokenCountFilter()
+        d = dict(tf.apply(self.t.tokenize(u'すもももももももものうち')))
+        self.assertEqual(1, d[u'すもも'])
+        self.assertEqual(2, d[u'もも'])
+        self.assertEqual(2, d[u'も'])
+        self.assertEqual(1, d[u'の'])
+        self.assertEqual(1, d[u'うち'])
+
+        counts = list(map(lambda x: x[1], tf.apply(self.t.tokenize(u'すもももももももものうち'))))
+        self.assertEqual([2,2,1,1,1], counts)
+
+        tf = TokenCountFilter('base_form')
+        d = dict(tf.apply(self.t.tokenize(u'CountFilterで簡単に単語数が数えられます')))
+        self.assertEqual(1, d[u'CountFilter'])
+        self.assertEqual(1, d[u'で'])
+        self.assertEqual(1, d[u'簡単'])
+        self.assertEqual(1, d[u'に'])
+        self.assertEqual(1, d[u'単語'])
+        self.assertEqual(1, d[u'数'])
+        self.assertEqual(1, d[u'が'])
+        self.assertEqual(1, d[u'数える'])
+        self.assertEqual(1, d[u'られる'])
+        self.assertEqual(1, d[u'ます'])
+
+        # invalid attribute name
+        with self.assertRaises(Exception):
+            TokenCountFilter('foo')
+
 if __name__ == '__main__':
     unittest.main()

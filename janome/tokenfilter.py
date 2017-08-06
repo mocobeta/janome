@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections import defaultdict
 
 class TokenFilter(object):
     u"""
@@ -140,7 +141,7 @@ class ExtractAttributeFilter(TokenFilter):
     """
     def __init__(self, att):
         u"""
-        Initialize ExtractAttributeTokenFilter object.
+        Initialize ExtractAttributeFilter object.
 
         :param att: attribute name should be extraced from a token. valid values for *att* are 'surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
         """
@@ -151,3 +152,28 @@ class ExtractAttributeFilter(TokenFilter):
     def apply(self, tokens):
         for token in tokens:
             yield getattr(token, self.att)
+
+
+class TokenCountFilter(TokenFilter):
+    u"""
+    An TokenCountFilter counts word frequency. Here, 'word' means an attribute of Token.
+
+    **NOTES** This filter must placed the last of token filter chain because return values are word-count pairs but not tokens.
+
+    Added in *version 0.3.5*
+    """
+    def __init__(self, att='surface'):
+        u"""
+        Initialize TokenCountFilter object.
+
+        :param att: attribute name should be extraced from a token. valid values for *att* are 'surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
+        """
+        if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
+            raise Exception('Unknown attribute name: %s' % att)
+        self.att = att
+
+    def apply(self, tokens):
+        token_counts = defaultdict(int)
+        for token in tokens:
+            token_counts[getattr(token, self.att)] += 1
+        return ((k, v) for k, v in sorted(token_counts.items(), key=lambda x: x[1], reverse=True))
