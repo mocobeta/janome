@@ -21,54 +21,26 @@ class NodeType:
     UNKNOWN = "UNKNOWN"
 
 
-class BaseNode(object):
-    """
-    Base node class
-    """
-    def __init__(self):
-        # position in the lattice of this node
-        self.pos = 0
-        # index of this node
-        self.index = 0
-        # left context ID of this node
-        self.left_id = 0
-        # right context ID of this node
-        self.right_id = 0
-        # cost of this node
-        self.cost = 0
-        # minimum cost to this node from BOS
-        self.min_cost = 2147483647  # int(pow(2,31)-1)
-        # position and index info for Lattice#backward() method
-        self.back_pos = -1
-        self.back_index = -1
-        # node type
-        self.node_type = NodeType.SYS_DICT
-
-
-class Node(BaseNode):
+class Node(object):
     """
     Node class
     """
     __slots__ = [
-        'surface', 'left_id', 'right_id', 'cost'
+        'pos', 'index', 'surface', 'left_id', 'right_id', 'cost',
         'part_of_speech', 'infl_type', 'infl_form',
         'base_form', 'reading', 'phonetic', 'node_type',
         'min_cost', 'back_pos', 'back_index'
     ]
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
-        super(Node, self).__init__()
-        surface, left_id, right_id, cost, part_of_speech, infl_type, infl_form, base_form, reading, phonetic = dict_entry
-        self.surface = surface
-        self.left_id = left_id
-        self.right_id = right_id
-        self.cost = cost
-        self.part_of_speech = part_of_speech
-        self.infl_type = infl_type
-        self.infl_form = infl_form
-        self.base_form = base_form
-        self.reading = reading
-        self.phonetic = phonetic
+        self.pos = 0
+        self.index = 0
+        self.min_cost = 2147483647  # int(pow(2,31)-1)
+        self.back_pos = -1
+        self.back_index = -1
+
+        self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech, self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic = dict_entry
+
         self.node_type = node_type
 
     def __str__(self):
@@ -78,43 +50,49 @@ class Node(BaseNode):
                 self.back_pos, self.back_index)
 
 
-class SurfaceNode(BaseNode):
+class SurfaceNode(object):
     """
     Node class with surface form only.
     """
-    __slots__ = ['num', 'surface', 'left_id', 'right_id', 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
+    __slots__ = ['pos', 'index', 'num', 'surface', 'left_id', 'right_id', 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
-        super(SurfaceNode, self).__init__()
-        self.num = dict_entry[0]
-        self.surface = dict_entry[1]
-        self.left_id = dict_entry[2]
-        self.right_id = dict_entry[3]
-        self.cost = dict_entry[4]
+        self.pos = 0
+        self.index = 0
+        self.min_cost = 2147483647  # int(pow(2,31)-1)
+        self.back_pos = -1
+        self.back_index = -1
+
+        self.num, self.surface, self.left_id, self.right_id, self.cost = dict_entry
         self.node_type = node_type
 
 
-class BOS(BaseNode):
+class BOS(object):
     """
     BOS node
     """
     def __init__(self):
-        super(BOS, self).__init__()
+        self.pos = 0
+        self.index = 0
+        self.right_id = 0
         self.cost = 0
         self.min_cost = 0
+        self.back_pos = -1
+        self.back_index = -1
 
     def __str__(self):
         return '__BOS__'
 
 
-class EOS(BaseNode):
+class EOS(object):
     """
     EOS node
     """
     def __init__(self, pos):
-        super(EOS, self).__init__()
+        self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.pos = pos
         self.cost = 0
+        self.left_id = 0
 
     def __str__(self):
         return '__EOS__' + ' [back_pos=%d]' % self.back_pos
