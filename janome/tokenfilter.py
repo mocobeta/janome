@@ -34,25 +34,27 @@ class TokenFilter(object):
 
 class LowerCaseFilter(TokenFilter):
     u"""
-    A LowerCaseFilter converts the surface of token to lowercase.
+    A LowerCaseFilter converts the surface and base_form of tokens to lowercase.
 
     Added in *version 0.3.4*
     """
     def apply(self, tokens):
         for token in tokens:
             token.surface = token.surface.lower()
+            token.base_form = token.base_form.lower()
             yield token
 
 
 class UpperCaseFilter(TokenFilter):
     u"""
-    An UpperCaseFilter converts the surface of token to uppercase.
+    An UpperCaseFilter converts the surface and base_form of tokens to uppercase.
 
     Added in *version 0.3.4*
     """
     def apply(self, tokens):
         for token in tokens:
             token.surface = token.surface.upper()
+            token.base_form = token.base_form.upper()
             yield token
     
 
@@ -164,18 +166,23 @@ class TokenCountFilter(TokenFilter):
 
     Added in *version 0.3.5*
     """
-    def __init__(self, att='surface'):
+    def __init__(self, att='surface', sorted=False):
         u"""
         Initialize TokenCountFilter object.
 
         :param att: attribute name should be extraced from a token. valid values for *att* are 'surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
+        :param sorted: sort items by term frequency
         """
         if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
             raise Exception('Unknown attribute name: %s' % att)
         self.att = att
+        self.sorted = sorted
 
     def apply(self, tokens):
         token_counts = defaultdict(int)
         for token in tokens:
             token_counts[getattr(token, self.att)] += 1
-        return ((k, v) for k, v in sorted(token_counts.items(), key=lambda x: x[1], reverse=True))
+        if self.sorted:
+            return ((k, v) for k, v in sorted(token_counts.items(), key=lambda x: x[1], reverse=True))
+        else:
+            return ((k, v) for k, v in token_counts.items())
