@@ -98,9 +98,6 @@ class TestTokenFilter(unittest.TestCase):
         self.assertEqual(1, d[u'の'])
         self.assertEqual(1, d[u'うち'])
 
-        counts = list(map(lambda x: x[1], tf.apply(self.t.tokenize(u'すもももももももものうち'))))
-        self.assertEqual([1,2,2,1,1], counts)
-
         # sort by frequency
         tf = TokenCountFilter(sorted=True)
         counts = list(map(lambda x: x[1], tf.apply(self.t.tokenize(u'すもももももももものうち'))))
