@@ -36,11 +36,15 @@ class TestTokenFilter(unittest.TestCase):
         tf = LowerCaseFilter()
         tokens = tf.apply(self.t.tokenize(u'Python JavaScript'))
         self.assertEqual([u'python', u' ', u'javascript'], list(map(lambda token: token.surface, tokens)))
+        tokens = tf.apply(self.t.tokenize(u'Python JavaScript'))
+        self.assertEqual([u'python', u' ', u'javascript'], list(map(lambda token: token.base_form, tokens)))
 
     def test_uppercase_filter(self):
         tf = UpperCaseFilter()
         tokens = tf.apply(self.t.tokenize(u'Python JavaScript'))
         self.assertEqual([u'PYTHON', u' ', u'JAVASCRIPT'], list(map(lambda token: token.surface, tokens)))
+        tokens = tf.apply(self.t.tokenize(u'Python JavaScript'))
+        self.assertEqual([u'PYTHON', u' ', u'JAVASCRIPT'], list(map(lambda token: token.base_form, tokens)))
 
     def test_pos_stop_filter(self):
         tf = POSStopFilter([u'助詞', u'記号', u'動詞,非自立'])
@@ -94,6 +98,11 @@ class TestTokenFilter(unittest.TestCase):
         self.assertEqual(1, d[u'の'])
         self.assertEqual(1, d[u'うち'])
 
+        counts = list(map(lambda x: x[1], tf.apply(self.t.tokenize(u'すもももももももものうち'))))
+        self.assertEqual([1,2,2,1,1], counts)
+
+        # sort by frequency
+        tf = TokenCountFilter(sorted=True)
         counts = list(map(lambda x: x[1], tf.apply(self.t.tokenize(u'すもももももももものうち'))))
         self.assertEqual([2,2,1,1,1], counts)
 
