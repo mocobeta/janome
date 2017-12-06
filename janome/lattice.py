@@ -100,7 +100,7 @@ class EOS(object):
 class Lattice:
     def __init__(self, size, dic):
         self.snodes = [[BOS()]] + [[] for i in range(0, size + 1)]
-        self.enodes = [[], [BOS()]] + [[] for i in range(0, size + 2)]
+        self.enodes = [[], [BOS()]] + [[] for i in range(0, size + 1)]
         self.conn_costs = [[]]
         self.p = 1
         self.dic = dic

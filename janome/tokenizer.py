@@ -141,7 +141,7 @@ class Tokenizer:
     A Tokenizer tokenizes Japanese texts with system and optional user defined dictionary.
     It is strongly recommended to re-use a Tokenizer object because object initialization cost is high. 
     """
-    MAX_CHUNK_SIZE = 1000
+    MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
 
     def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False, mmap=False):
@@ -212,7 +212,7 @@ class Tokenizer:
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
         while not self.__should_split(text, pos):
-            encoded_partial_text = text[pos:pos+min(50, len(text)-pos)].encode('utf-8')
+            encoded_partial_text = text[pos:pos+min(50, chunk_size-pos)].encode('utf-8')
             # user dictionary
             if self.user_dic:
                 entries = self.user_dic.lookup(encoded_partial_text)
@@ -238,7 +238,7 @@ class Tokenizer:
                     assert length >= 0
                     # buffer for unknown word
                     buf = text[pos]
-                    for p in range(pos + 1, min(len(text), pos + length + 1)):
+                    for p in range(pos + 1, min(chunk_size, pos + length + 1)):
                         _cates =  self.sys_dic.get_char_categories(text[p])
                         if cate in _cates or any(cate in _compat_cates for _compat_cates in _cates.values()):
                             buf += text[p]

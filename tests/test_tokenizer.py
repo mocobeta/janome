@@ -173,6 +173,13 @@ class TestTokenizer(unittest.TestCase):
                 text = unicode(text)
             tokens = Tokenizer().tokenize(text)
 
+    def test_tokenize_large_text3(self):
+        with open('tests/text_large_nonjp.txt', encoding='utf-8') as f:
+            text = f.read()
+            if not PY3:
+                text = unicode(text)
+            tokens = Tokenizer().tokenize(text)
+
     def test_tokenize_large_text_stream(self):
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
@@ -182,6 +189,13 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenize_large_text_stream2(self):
         with open('tests/text_large.txt', encoding='utf-8') as f:
+            text = f.read()
+            if not PY3:
+                text = unicode(text)
+            tokens = list(Tokenizer().tokenize(text, stream = True))
+
+    def test_tokenize_large_text_stream3(self):
+        with open('tests/text_large_nonjp.txt', encoding='utf-8') as f:
             text = f.read()
             if not PY3:
                 text = unicode(text)
