@@ -436,6 +436,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.12.07 janome Version 0.3.6 リリース
 * 2017.08.06 `janome Version 0.3.5 リリース <https://medium.com/@mocobeta/janome-0-3-5-release-ee5de2196330>`_
 * 2017.07.29 `janome Version 0.3.4 リリース <https://medium.com/@mocobeta/janome-0-3-4-release-63ed21f4fda9>`_
 * 2017.07.23 `janome Version 0.3.3 リリース <https://medium.com/@mocobeta/janoe-0-3-3-release-eddd139eec9e>`_

@@ -373,6 +373,7 @@ Copyright(C) 2015, moco_beta. All rights reserved.
 History
 ----------
 
+* 2017.12.07 janome Version 0.3.6 was released
 * 2017.08.06 janome Version 0.3.5 was released
 * 2017.07.29 janome Version 0.3.4 was released
 * 2017.07.23 janome Version 0.3.3 was released
