@@ -1,3 +1,9 @@
+* 0.3.6 (2017.12.07)
+  - Optimize tokenize() method. #43
+    (thanks @nakagami)
+  - Trivial fixes in Tokenfilter. #46
+  - Fix list index out of range error when tokenizing large text #49
+
 * 0.3.5 (2017.08.06)
   - Optimize tokenize() method. #40
     (thanks @nakagami)
