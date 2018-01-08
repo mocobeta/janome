@@ -40,7 +40,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.5
+* janome: 0.3.6
 
 Install
 -------
