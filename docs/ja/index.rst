@@ -78,6 +78,29 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り，toke
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
+
+[重要] Tokenizer 初期化に関する注意事項
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Tokenizer オブジェクトの初期化はコストが高いため，インスタンスを使いまわしてください。 以下のようなサンプルコードを掲載しているブログ記事等がありますが，これは非常に遅くなる書き方で，誤っています。
+
+.. code-block:: python
+
+  for s in sentences:
+      t = Tokenizer()
+      for token in t.tokenize(s):
+          ...
+
+正しくは以下のように，**ループの外で** Tokenizer を初期化します。
+
+.. code-block:: python
+
+  t = Tokenizer()
+  for s in sentences:
+      for token in t.tokenize(s):
+          ...
+
+
 for Windows users
 ^^^^^^^^^^^^^^^^^
 
