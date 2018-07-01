@@ -19,7 +19,7 @@ for token in a.analyze(text):
 print('')
 print(u'Analyzer example: Count nouns with POSKeepFilter and TokenCountFilter')
 text = u'すもももももももものうち'
-token_filters = [POSKeepFilter(u'名詞'), TokenCountFilter()]
+token_filters = [POSKeepFilter([u'名詞']), TokenCountFilter()]
 a = Analyzer(token_filters=token_filters)
 for k, v in a.analyze(text):
     print('%s: %d' % (k, v))
