@@ -454,7 +454,7 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015, moco_beta. All rights reserved.
+Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 
 History
 ----------
