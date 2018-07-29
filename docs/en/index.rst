@@ -16,7 +16,7 @@ What's Janome?
 
 Janome (蛇の目) is a Japanese morphological analysis engine (or tokenizer, pos-tagger) written in pure Python including the built-in dictionary and the language model.
 
-We aim to build a library which is easy to install and provides simple and consice APIs for various python applications. 
+We aim to build a library which is easy to install and provides concise, well-designed APIs for various python applications. 
 
 Janome uses mecab-ipadic-2.7.0-20070801 as the built-in dictionary.
 
@@ -91,8 +91,8 @@ Use ``decode('utf8')`` if output is garbled.
   ...     print(str(token).decode('utf8'))
 
 
-Use with user defined dictionary
----------------------------------
+How to use with user defined dictionary
+---------------------------------------
 
 MeCab IPADIC format
 ^^^^^^^^^^^^^^^^^^^
@@ -368,7 +368,7 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015, moco_beta. All rights reserved.
+Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 
 History
 ----------
