@@ -61,7 +61,7 @@ Usage
 
 Create janome.tokenizer.Tokenizer object and call tokenize() method with the sentences you want to analyze.
 
-The return value is a list of Token objects. Token includes morphological information such as surface form, part-of-speech. See `reference <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ for more details.
+The return value is a list of Token objects. Token includes morphologic information such as surface form, part-of-speech. See `reference <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ for more details.
 
 ::
 
@@ -135,7 +135,7 @@ userdic.csv ::
 Simplified dictionary format (v0.2.7+)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Janome provides alternative simplified dictionary format like `Kuromoji <https://www.atilika.com/en/products/kuromoji.html>`_ user dictionary. This format supports surface form, part-of-speech and reading only.
+Janome provides alternative simplified dictionary format similar to `Kuromoji <https://www.atilika.com/en/kuromoji/>`_ user dictionary. This format supports surface form, part-of-speech and reading only.
 
 To use simplified dictionary format, create a CSV file that includes "<surface form>,<part-of-speech>,<reading>" in each line (see the example below) and pass the file path and the dictionary type ``(udic_type='simpledic')`` to Tokenizer's constructor.
 
@@ -302,8 +302,8 @@ Memory-mapped file support (v0.3.3+)
 
 If ``mmap=True`` option is given to Tokenizer.__init__(), dictionary entries are not loaded to process space but searched through memory-mapped file.
 
-Use janome from the command-line (v0.2.6+, Lunux/Mac only)
-----------------------------------------------------------
+Command-line interface (v0.2.6+, Lunux/Mac only)
+--------------------------------------------------
 
 Janome has executable built-in script "janome" for command-line usage. (currently for Lunux/Mac only... patches are welcome!)
 
@@ -324,7 +324,7 @@ It reads a sentence at a time from standard input and outputs the analysis resul
 Note for analyzing large document set
 -------------------------------------
 
-.. note:: This memory leak problem is solved at v0.3. The analysed results with janome version 0.3 or over can be a bit different from ones with version 0.2. You may want to examine streaming and/or wakati-gaki mode to reduce memory usage more.
+.. note:: This memory leak problem was solved at v0.3. The analysed results with janome version 0.3 or over can be a bit different from ones with version 0.2. You may want to examine streaming and/or wakati-gaki mode to reduce memory usage more.
 
 In older version (< 0.3), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
 
@@ -337,7 +337,7 @@ A. Janome uses MeCab IPADIC dictionary, so the accuracy is roughly same to MeCab
 
 Q. How is the speed of analysis?
 
-A. Basically depends on the input length. But according to my benchmark script, one sentence would take a few milliseconds to a few tens of milliseconds on desktop computers.
+A. Basically depends on the input length. According to my benchmark script, one sentence would take a few milliseconds to a few tens of milliseconds on commodity PCs.
 
 Q. What data structures and algorithms are used?
 
