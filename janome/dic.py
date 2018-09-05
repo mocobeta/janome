@@ -67,7 +67,7 @@ def load_all_fstdata():
     try:
         return [_load(os.path.join(SYSDIC_DIR, data_file))
                 for data_file in os.listdir(SYSDIC_DIR) if data_file.startswith(FILE_FST_DATA)]
-    except OSError:
+    except NotADirectoryError:
         return load_all_fstdata_from_package()
 
 def load_all_fstdata_from_package():
