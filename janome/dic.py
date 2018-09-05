@@ -67,14 +67,13 @@ def load_all_fstdata():
     try:
         return [_load(os.path.join(SYSDIC_DIR, data_file))
                 for data_file in os.listdir(SYSDIC_DIR) if data_file.startswith(FILE_FST_DATA)]
-    except NotADirectoryError:
+    except OSError:
         return load_all_fstdata_from_package()
 
 def load_all_fstdata_from_package():
     fstdata = []
     for suffix in itertools.count():
         data = _load_package_data('sysdic', '{0}.{1}'.format(FILE_FST_DATA, suffix))
-        # data = _load('sysdic', '{0}.{1}'.format(FILE_FST_DATA, suffix))
         if data is None:
             break
         fstdata.append(data)
@@ -140,7 +139,7 @@ def _load(file):
 def _load_package_data(package, resource):
     try:
         rawdata = pkgutil.get_data(package, resource)
-    except OSError:
+    except IOError:
         return None
     return zlib.decompress(rawdata, zlib.MAX_WBITS | 16)
 
