@@ -26,6 +26,7 @@ from janome.dic import *
 from sysdic import entries, mmap_entries, connections, chardef, unknowns
 
 import unittest
+import unittest.mock
 
 
 class TestDictionary(unittest.TestCase):
@@ -145,7 +146,12 @@ class TestDictionary(unittest.TestCase):
 
         self.assertEqual(2, len(sys_dic.lookup(u'叩く'.encode('utf8'))))
         self.assertEqual(2, len(sys_dic.lookup(u'叩く'.encode('utf8'))))
-        
+
+    def test_load_all_fst_data_from_package(self):
+        with unittest.mock.patch('janome.dic.load_all_fstdata', new=load_all_fstdata_from_package):
+            sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+            self.assertEqual(11, len(sys_dic.lookup(u'小書き'.encode('utf8'))))
+
     def test_user_dictionary(self):
         # create user dictionary from csv
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),

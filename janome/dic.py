@@ -70,6 +70,7 @@ def load_all_fstdata():
     except OSError:
         return load_all_fstdata_from_package()
 
+
 def load_all_fstdata_from_package():
     fstdata = []
     for suffix in itertools.count():
