@@ -16,7 +16,7 @@ What's Janome?
 
 Janome (蛇の目) is a Japanese morphological analysis engine (or tokenizer, pos-tagger) written in pure Python including the built-in dictionary and the language model.
 
-We aim to build a library which is easy to install and provides concise, well-designed APIs for various python applications. 
+We aim to build a library which is easy to install, provides well-designed APIs for various python applications.
 
 Janome uses mecab-ipadic-2.7.0-20070801 as the built-in dictionary.
 
@@ -54,7 +54,7 @@ PyPI
 
   $ pip install janome
 
-.. note:: It requires 500 to 600 MB RAM for install and pre-compile dictionary data. 
+.. note:: It requires 500 to 600 MB RAM for installing and pre-compiling dictionary data.
 
 Usage
 -----
@@ -97,7 +97,7 @@ How to use with user defined dictionary
 MeCab IPADIC format
 ^^^^^^^^^^^^^^^^^^^
 
-You can add custom entries to the built-in dictionary at runtime by using user defined dictionary.
+You can add custom entries besides the built-in dictionary at runtime by using user defined dictionary.
 
 Default dictionary format is equal to MeCab IPADIC format. Create a CSV file as below and pass the file path and the character encoding to Tokenizer's constructor.
 
@@ -202,9 +202,9 @@ Once compiling has been successfully completed, the data is saved in ``/tmp/user
 
 Analyzer framework is for pre- and post- processing. Analyzer framework includes following classes.
 
-* `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ class for pre-processing like character normalization.
-* `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ class for post-processing like lowercase/uppercase conversion, token filtering by POS tags.
-* `Analyzer <http://mocobeta.github.io/janome/api/janome.html#janome.analyzer.Analyzer>`_ class for combining CharFilters, a Tokenizer and TokenFilters to assemble custom analysis chain.
+* `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ class performs pre-processing such as character normalization.
+* `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ class performs post-processing such as lowercase/uppercase conversion, token filtering by POS tags.
+* `Analyzer <http://mocobeta.github.io/janome/api/janome.html#janome.analyzer.Analyzer>`_ class combines CharFilters, a Tokenizer and TokenFilters to assemble custom analysis chain.
 
 Analyzser usage
 ^^^^^^^^^^^^^^^^^^^^
@@ -255,7 +255,7 @@ See API reference for other built-in CharFilters and TokenFilters. You can imple
 Streaming mode (v0.3.1+)
 -------------------------
 
-When ``stream = True`` option is given to tokenize() method, it runs in streaming mode. In streaming mode, partial analyzed results are returned through `generator <https://wiki.python.org/moin/Generators>`_ interface.
+When ``stream = True`` option is given to tokenize() method, it runs on streaming mode. On streaming mode, partial analyzed results are returned through `generator <https://wiki.python.org/moin/Generators>`_ interface.
 
 Use this option when you analyze very large text data.
 
@@ -271,7 +271,7 @@ Use this option when you analyze very large text data.
 'wakati-gaki' mode (v0.3.1+)
 -------------------------------
 
-When 'wakati = True' option is given to tokenize() method, it runs in 'wakati-gaki' ('分かち書き') mode. In wakati-gaki mode, tokenize() method returns sufrace forms only. Return type is list of string, not list of Token.
+When 'wakati = True' option is given to tokenize() method, it runs on 'wakati-gaki' ('分かち書き') mode. On wakati-gaki mode, tokenize() method returns sufrace forms only. Return type is a list of string, not list of Token.
 
 ::
 
@@ -286,7 +286,7 @@ If you use 'wakati-gaki' mode only, it is recommended to give ``wakati = True`` 
 
   >>> t = Tokenizer(wakati=True)
 
-When this option is set to Tokenizer object, tokenize() method always runs in wakati-gaki mode (``wakati = False`` option to tokenize() method is ignored.) 
+When this option is passed to Tokenizer object, tokenize() method always runs in wakati-gaki mode (``wakati = False`` option is ignored.)
 
 'wakati-gaki' mode works well with streaming mode. tokenize() method returns generator of string when it is given ``stream=True`` and ``wakati=True`` options.
 
@@ -307,7 +307,7 @@ Command-line interface (v0.2.6+, Lunux/Mac only)
 
 Janome has executable built-in script "janome" for command-line usage. (currently for Lunux/Mac only... patches are welcome!)
 
-It reads a sentence at a time from standard input and outputs the analysis result. To see supported options, type "janome -h".
+It reads a sentence at a time from standard input and outputs the analyzed results. To see supported options, type "janome -h".
 
 ::
 
@@ -324,7 +324,7 @@ It reads a sentence at a time from standard input and outputs the analysis resul
 Note for analyzing large document set
 -------------------------------------
 
-.. note:: This memory leak problem was solved at v0.3. The analysed results with janome version 0.3 or over can be a bit different from ones with version 0.2. You may want to examine streaming and/or wakati-gaki mode to reduce memory usage more.
+.. note:: This memory leak problem was solved at v0.3. The analyzed results with version 0.3 or over can be a bit different from ones with version 0.2. You may want to examine streaming and/or wakati-gaki mode to reduce memory usage more.
 
 In older version (< 0.3), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
 
