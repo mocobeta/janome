@@ -22,6 +22,7 @@ PY3 = sys.version_info[0] == 3
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
+import janome.dic
 from janome.dic import *
 from sysdic import entries, mmap_entries, connections, chardef, unknowns
 
@@ -145,7 +146,19 @@ class TestDictionary(unittest.TestCase):
 
         self.assertEqual(2, len(sys_dic.lookup(u'叩く'.encode('utf8'))))
         self.assertEqual(2, len(sys_dic.lookup(u'叩く'.encode('utf8'))))
-        
+
+    def test_load_all_fst_data_from_package(self):
+        # Py2.7 doesn't have unittest.mock, so manually replaced the method
+        store = janome.dic.load_all_fstdata
+        janome.dic.load_all_fstdata = janome.dic.load_all_fstdata_from_package
+        try:
+            sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+            self.assertEqual(11, len(sys_dic.lookup(u'小書き'.encode('utf8'))))
+        except Exception:
+            janome.dic.load_all_fstdata = store
+            raise
+
+
     def test_user_dictionary(self):
         # create user dictionary from csv
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),

@@ -25,6 +25,11 @@ import traceback
 import logging
 import sys
 import re
+import itertools
+import pkgutil
+import zlib
+
+
 try:
     from functools import lru_cache
 except ImportError:
@@ -59,8 +64,21 @@ def save_fstdata(data, dir, suffix=''):
 
 
 def load_all_fstdata():
-    return [_load(os.path.join(SYSDIC_DIR, data_file))
-            for data_file in os.listdir(SYSDIC_DIR) if data_file.startswith(FILE_FST_DATA)]
+    try:
+        return [_load(os.path.join(SYSDIC_DIR, data_file))
+                for data_file in os.listdir(SYSDIC_DIR) if data_file.startswith(FILE_FST_DATA)]
+    except OSError:
+        return load_all_fstdata_from_package()
+
+
+def load_all_fstdata_from_package():
+    fstdata = []
+    for suffix in itertools.count():
+        data = _load_package_data('sysdic', '{0}.{1}'.format(FILE_FST_DATA, suffix))
+        if data is None:
+            break
+        fstdata.append(data)
+    return fstdata
 
 
 def start_save_entries(dir, bucket_num):
@@ -118,6 +136,13 @@ def _load(file):
         data = f.read()
         return data
 
+
+def _load_package_data(package, resource):
+    try:
+        rawdata = pkgutil.get_data(package, resource)
+    except IOError:
+        return None
+    return zlib.decompress(rawdata, zlib.MAX_WBITS | 16)
 
 def _save_as_module(file, data):
     if not data:
@@ -179,7 +204,7 @@ def _save_entry_as_module_extra(file, morph_id, entry):
                 entry[9].encode('unicode_escape').decode('ascii') if PY3 else entry[9].encode('unicode_escape'))
             f.write(s)
             f.write('),')
-            
+
 
 class Dictionary(object):
     u"""
@@ -301,7 +326,7 @@ class MMapDictionary(object):
                 mm.close()
         for fp in self.open_files:
             fp.close()
-    
+
 
 class UnknownsDictionary(object):
     def __init__(self, chardefs, unknowns):
