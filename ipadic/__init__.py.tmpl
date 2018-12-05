@@ -83,7 +83,7 @@ def mmap_entries(compact = False):
     __open_files = []
     for i in range(0, 10):
         bucket = entries_buckets.DATA[i]
-        fp = open(os.path.join(base_dir, 'entries_compact%d.py' % i), 'r+b')
+        fp = open(os.path.join(base_dir, 'entries_compact%d.py' % i), 'rb')
         mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
         mm_idx = import_module('.entries_compact%d_idx' % i, 'sysdic')
         __open_files.append(fp)
@@ -92,7 +92,7 @@ def mmap_entries(compact = False):
         __mmap_entries_extra = {}
         for i in range(0, 10):
             bucket = entries_buckets.DATA[i]
-            fp = open(os.path.join(base_dir, 'entries_extra%d.py' % i), 'r+b')
+            fp = open(os.path.join(base_dir, 'entries_extra%d.py' % i), 'rb')
             mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
             mm_idx = import_module('.entries_extra%d_idx' % i, 'sysdic')
             __open_files.append(fp)
