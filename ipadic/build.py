@@ -21,6 +21,7 @@ from io import open
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
+import logging
 import time
 import glob
 from janome.fst import *
@@ -28,6 +29,14 @@ from janome.dic import *
 from struct import pack
 import pickle
 from collections import OrderedDict
+
+logger = logging.getLogger('dic_builder')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 PY3 = sys.version_info[0] == 3
 
@@ -50,7 +59,7 @@ def collect(dicdir, enc, outdir, workdir):
                 morph_id += 1
     inputs = sorted(surfaces)  # inputs must be sorted.
     inputs_size = len(surfaces)
-    logging.info('input size: %d' % inputs_size)
+    logger.info('input size: %d' % inputs_size)
 
     # split inputs
     _part =[]
@@ -101,7 +110,7 @@ def save_partial_fst(arg, outdir):
         _processed, fst = create_minimum_transducer(_part)
         compiledFST = compileFST(fst)
         save_fstdata(compiledFST, dir=outdir, suffix='.%d' % part_idx)
-        logging.info('processed entries=%d' % _processed)
+        logger.info('processed entries=%d' % _processed)
         return _processed
 
 
@@ -117,7 +126,7 @@ def build_dict(dicdir, outdir, workdir, pool):
     pool.join()
 
     _elapsed = round(time.time() - _start)
-    logging.info('elapsed=%dsec' % _elapsed)
+    logger.info('elapsed=%dsec' % _elapsed)
 
     # save connection costs as dict
     matrix_file = os.path.join(dicdir, FILE_MATRIX_DEF)
@@ -216,8 +225,6 @@ signal.signal(signal.SIGINT, terminate)
 signal.signal(signal.SIGQUIT, terminate)
 
 if __name__ == '__main__':
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
     mode = sys.argv[1]
     dicdir = sys.argv[2]
     enc = sys.argv[3]
@@ -227,7 +234,7 @@ if __name__ == '__main__':
     if mode == '--collect':
         collect(dicdir, enc, outdir, workdir)
     elif mode == '--build':
-        logging.info('worker processes: %d' % processes)
+        logger.info('worker processes: %d' % processes)
         create_pool(processes)
         build_dict(dicdir, outdir, workdir, pool)
         build_unknown_dict(dicdir, enc, outdir)

@@ -35,6 +35,13 @@ except ImportError:
             return __dummy
         return _dummy
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 PY3 = sys.version_info[0] == 3
 
@@ -175,7 +182,7 @@ def create_minimum_transducer(inputs):
     #_start = time.time()
     #_last_printed = 0
     inputs_size = len(inputs)
-    logging.info('(partial) input size: %d' % inputs_size)
+    logger.info('(partial) input size: %d' % inputs_size)
 
     fstDict = FST()
     buffer = []
@@ -205,9 +212,6 @@ def create_minimum_transducer(inputs):
     processed = 0
     # main loop
     for current_word, current_output in inputs:
-        # logging.debug('current word: ' + str(current_word))
-        # logging.debug('current_output: ' + str(current_output))
-
         assert(current_word >= prev_word)
 
         pref_len = prefix_len(prev_word, current_word)
@@ -277,7 +281,7 @@ def create_minimum_transducer(inputs):
         buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
     find_minimized(buffer[0])
 
-    logging.debug('num of state: %d' % fstDict.size())
+    logger.debug('num of state: %d' % fstDict.size())
     return (processed, fstDict)
 
 
@@ -349,8 +353,7 @@ def compileFST(fst):
             pos += len(bary)
         address[s.id] = pos
 
-    #logging.debug(address)
-    logging.debug('compiled arcs size: %d' % len(arcs))
+    logger.debug('compiled arcs size: %d' % len(arcs))
     arcs.reverse()
     return b''.join(arcs)
 
@@ -373,7 +376,6 @@ class Matcher(object):
         return bool(output), output  # accept if output is not empty
 
     def _run(self, word, data_num, common_prefix_match):
-        # logging.debug('word=' + str([c for c in word]))
         outputs = set()
         buf = b''
         i = pos = 0
@@ -466,7 +468,6 @@ class Matcher(object):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
     inputs1 = [
         (u'apr'.encode(u'utf8'), u'30'),
         (u'aug'.encode(u'utf8'), u'31'),

@@ -32,15 +32,22 @@ import io
 import glob
 import traceback
 
+logger = logging.getLogger('dic_validator')
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 PY3 = sys.version_info[0] == 3
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     dicdir = sys.argv[1]
     enc = sys.argv[2]
 
     # check dictionary entries buckets (for mmap support)
-    print('Validate dictionary entries buckets...')
+    logger.info('Validate dictionary entries buckets...')
     _start, _end = min(entries_compact0.DATA.keys()), max(entries_compact0.DATA.keys()) + 1
     _ok0 = _start == entries_buckets.DATA[0][0] and _end == entries_buckets.DATA[0][1]
     _start, _end = min(entries_compact1.DATA.keys()), max(entries_compact1.DATA.keys()) + 1
@@ -61,7 +68,7 @@ if __name__ == '__main__':
     _ok8 = _start == entries_buckets.DATA[8][0] and _end == entries_buckets.DATA[8][1]
     _start, _end = min(entries_compact9.DATA.keys()), max(entries_compact9.DATA.keys()) + 1
     _ok9 = _start == entries_buckets.DATA[9][0] and _end == entries_buckets.DATA[9][1]
-    print('Compact entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
+    logger.info('Compact entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
     _start, _end = min(entries_extra0.DATA.keys()), max(entries_extra0.DATA.keys()) + 1
     _ok0 = _start == entries_buckets.DATA[0][0] and _end == entries_buckets.DATA[0][1]
     _start, _end = min(entries_extra1.DATA.keys()), max(entries_extra1.DATA.keys()) + 1
@@ -82,7 +89,7 @@ if __name__ == '__main__':
     _ok8 = _start == entries_buckets.DATA[8][0] and _end == entries_buckets.DATA[8][1]
     _start, _end = min(entries_extra9.DATA.keys()), max(entries_extra9.DATA.keys()) + 1
     _ok9 = _start == entries_buckets.DATA[9][0] and _end == entries_buckets.DATA[9][1]
-    print('Extra entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
+    logger.info('Extra entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
     
     # validate dictionary entries
     SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)    
@@ -98,27 +105,27 @@ if __name__ == '__main__':
                 input_count += 1
                 line = line.rstrip()
                 surface = line.split(',')[0]
-                logging.debug(u"check word id & entry for %s" % (surface if PY3 else unicode(surface)))
+                logger.debug(u"check word id & entry for %s" % (surface if PY3 else unicode(surface)))
                 (matched, outputs) = SYS_DIC.matcher.run(surface.encode('utf8'), common_prefix_match=True)
                 if not matched:
-                    logging.debug('No match for %s' % (surface if PY3 else unicode(surface)))
+                    logger.debug('No match for %s' % (surface if PY3 else unicode(surface)))
                     nomatch_count += 1
                 for o in outputs:
                     try:
                         word_id = struct.unpack('I', o)[0]
-                        logging.debug(u"\tword id : %d" % (word_id))
+                        logger.debug(u"\tword id : %d" % (word_id))
                         try:
                             entry = SYS_DIC.entries[word_id]
                             if not surface.startswith(entry[0]):
-                                logging.warn('Must not match to %s' % entry[0])
+                                logger.warn('Must not match to %s' % entry[0])
                                 invalid_match_count += 1
                                 break
                         except KeyError:
-                            logging.warn('\tCannot find entry')
+                            logger.warn('\tCannot find entry')
                             invalid_output_count += 1
                             break
                     except Exception:
-                        logging.warn('\tInvalid output')
+                        logger.warn('\tInvalid output')
                         invalid_output_count += 1
                         break
     print('matches = %d' % (input_count - nomatch_count))
