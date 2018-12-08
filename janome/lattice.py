@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+PY3 = sys.version_info[0] == 3
 
 class NodeType:
     SYS_DICT = "SYS_DICT"
@@ -161,7 +163,6 @@ class Lattice:
 
     # generate Graphviz dot file
     def generate_dotfile(self, filename='lattice.gv'):
-
         def is_unknown(node):
             return hasattr(node, 'node_type') and node.node_type == NodeType.UNKNOWN
 
@@ -188,10 +189,10 @@ class Lattice:
                     edges.append((node1_id, node2_id))
 
         # output dot file
-        with open(filename, 'w') as f:
-            f.write('digraph G {\n')
-            f.write('  rankdir=LR;\n')
-            f.write('  ranksep=2.0;\n')
+        with self.__open_file(filename, mode='w', encoding='utf-8') as f:
+            f.write(u'digraph G {\n')
+            f.write(u'  rankdir=LR;\n')
+            f.write(u'  ranksep=2.0;\n')
             for node_id in node_ids:
                 (pos, idx) = node_id
                 node = self.snodes[pos][idx]
@@ -199,7 +200,7 @@ class Lattice:
                 label = '%s\\n%s' % (node.node_label(), str(node.cost))
                 shape = 'ellipse' if isinstance(node, BOS) or isinstance(node, EOS) else 'box'
                 color = 'lightblue' if isinstance(node, BOS) or isinstance(node, EOS) or node in path else 'lightgray'
-                f.write('  %s [label="%s",shape=%s,style=filled,fillcolor=%s];\n' % (id_str, label, shape, color))
+                f.write(u'  %s [label="%s",shape=%s,style=filled,fillcolor=%s];\n' % (id_str, label, shape, color))
             for edge in edges:
                 ((pos1, idx1), (pos2, idx2)) = edge
                 node1 = self.snodes[pos1][idx1]
@@ -208,8 +209,15 @@ class Lattice:
                 id_str2 = '%d.%d' % (pos2, idx2)
                 label = str(self.dic.get_trans_cost(node1.right_id, node2.left_id))
                 (color, style) = ('blue', 'bold') if node1 in path and node2 in path else ('black', 'solid')
-                f.write('  %s -> %s [label="%s",color=%s,style=%s,fontcolor=red];\n' % (id_str1, id_str2, label, color, style))
+                f.write(u'  %s -> %s [label="%s",color=%s,style=%s,fontcolor=red];\n' % (id_str1, id_str2, label, color, style))
             f.write('}\n')
+
+    def __open_file(self, filename, mode, encoding):
+        if PY3:
+            return open(filename, mode=mode, encoding=encoding)
+        else:
+            import codecs
+            return codecs.open(filename, mode, encoding)
 
     def __str__(self):
         return '\n'.join(','.join(str(node) for node in nodes) for nodes in self.snodes)
