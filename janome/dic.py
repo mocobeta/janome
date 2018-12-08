@@ -29,6 +29,13 @@ import itertools
 import pkgutil
 import zlib
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 try:
     from functools import lru_cache
@@ -227,9 +234,9 @@ class Dictionary(object):
                 res.append((num,) + self.entries[num][:4])
             return res
         except Exception as e:
-            logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logging.error('input=%s' % s)
-            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logger.error('input=%s' % s)
+            logger.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -237,9 +244,9 @@ class Dictionary(object):
         try:
             return self.entries[num][4:]
         except Exception as e:
-            logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logging.error('input=%s' % s)
-            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logger.error('input=%s' % s)
+            logger.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -282,9 +289,9 @@ class MMapDictionary(object):
                 matched_entries.append((idx,) + _entry)
             return matched_entries
         except Exception as e:
-            logging.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logging.error('input=%s' % s)
-            logging.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logger.error('input=%s' % s)
+            logger.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -310,8 +317,8 @@ class MMapDictionary(object):
                 mm[_pos4s:_pos4e].decode('unicode_escape'), mm[_pos5s:_pos5e].decode('unicode_escape'), mm[_pos6s:_pos6e].decode('unicode_escape')
             )
         except Exception as e:
-            logging.error('Cannot load extra info. The dictionary may be corrupted?')
-            logging.error('idx=%d' % idx)
+            logger.error('Cannot load extra info. The dictionary may be corrupted?')
+            logger.error('idx=%d' % idx)
             traceback.format_exc()
             sys.exit(1)
 
