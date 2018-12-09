@@ -34,3 +34,9 @@ print(u'Tokenize with simplified user dictionary')
 t = Tokenizer("user_simpledic.csv", udic_type="simpledic", udic_enc="utf8")
 for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   print(token)
+
+print('')
+print(u'Tokenize and output graphviz dot file')
+t = Tokenizer()
+for token in t.tokenize(u'すもももももももものうち', dotfile='/tmp/lattice.gv'):
+  print(token)
