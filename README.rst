@@ -14,6 +14,9 @@ Janome
 .. image:: https://badges.gitter.im/org.png
     :target: https://gitter.im/janome-python/ja
 
+.. image:: https://img.shields.io/pypi/dm/Janome.svg
+    :target: https://pypistats.org/packages/janome
+
 Janome is a Japanese morphological analysis engine written in pure Python.
 
 General documentation:
