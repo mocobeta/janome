@@ -48,7 +48,7 @@ setup(
     packages=['janome','sysdic'],
     package_data={'sysdic': fst_data},
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer','janome.analyzer','janome.charfilter','janome.tokenfilter'],
-    scripts=['bin/janome'],
+    scripts=['bin/janome', 'bin/janome.bat'],
     test_suite = 'suite'
 )
 

@@ -53,7 +53,10 @@ def main():
         try:
             line = input() if PY3 else raw_input().decode(args.enc)
             for token in t.tokenize(line, dotfile=dotfile):
-                print(token)
+                if PY3:
+                    print(token)
+                else:
+                    print(str(token).decode('utf8'))
         except EOFError:
             break
 
@@ -61,16 +64,12 @@ def main():
         generate_graph(dotfile, args.gv_format)
 
 def generate_graph(dotfile, gv_format):
-    check_rc = subprocess.call(['type', '-p', 'dot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if check_rc != 0:
-        sys.stderr.write('Cannot find dot command. Maybe Graphviz is not installed?\n')
-        sys.exit(1)
     format_opt = '-T%s' % gv_format
     output = '%s.%s' % (dotfile, gv_format)
     output_opt = '-o%s' % output
     gv_rc = subprocess.call(['dot', format_opt, output_opt, dotfile])
     if gv_rc != 0:
-        sys.stderror.write('Something wrong with executing dot command.\n')
+        sys.stderror.write('Something wrong with executing dot command. Maybe Graphviz is not installed?\n')
         sys.exit(1)
     print('Graph was successfully output to %s' % output)
 
