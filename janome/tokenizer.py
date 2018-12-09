@@ -144,7 +144,7 @@ class Tokenizer:
     MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
 
-    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False, mmap=False):
+    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False, mmap=False, dotfile=''):
         """
         Initialize Tokenizer object with optional arguments.
 
@@ -175,7 +175,7 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, stream=False, wakati=False, baseform_unk=True):
+    def tokenize(self, text, stream=False, wakati=False, baseform_unk=True, dotfile=''):
         u"""
         Tokenize the input text.
 
@@ -183,28 +183,31 @@ class Tokenizer:
         :param stream: (Optional) if given True use stream mode. default is False.
         :param wakati: (Optinal) if given True returns surface forms only. default is False.
         :param baseform_unk: (Optional) if given True sets base_form attribute for unknown tokens. default is True.
+        :param dotfile: (Optional) if specified, graphviz dot file is output to the path for later visualizing of the lattice graph. This option is ignored when the input length is larger than MAX_CHUNK_SIZE or running on stream mode.
 
         :return: list of tokens (stream=False, wakati=False) or token generator (stream=True, wakati=False) or list of string (stream=False, wakati=True) or string generator (stream=True, wakati=True)
         """
         if self.wakati:
             wakati = True
         if stream:
-            return self.__tokenize_stream(text, wakati, baseform_unk)
+            return self.__tokenize_stream(text, wakati, baseform_unk, '')
+        elif dotfile and len(text) < Tokenizer.MAX_CHUNK_SIZE:
+            return list(self.__tokenize_stream(text, wakati, baseform_unk, dotfile))
         else:
-            return list(self.__tokenize_stream(text, wakati, baseform_unk))
+            return list(self.__tokenize_stream(text, wakati, baseform_unk, ''))
 
-    def __tokenize_stream(self, text, wakati, baseform_unk):
+    def __tokenize_stream(self, text, wakati, baseform_unk, dotfile):
         text = text.strip()
         text_length = len(text)
         processed = 0
         while processed < text_length:
-            tokens, pos = self.__tokenize_partial(text[processed:], wakati, baseform_unk)
+            tokens, pos = self.__tokenize_partial(text[processed:], wakati, baseform_unk, dotfile)
             for token in tokens:
                 yield token
             processed += pos
 
 
-    def __tokenize_partial(self, text, wakati, baseform_unk):
+    def __tokenize_partial(self, text, wakati, baseform_unk, dotfile):
         if self.wakati and not wakati:
             raise WakatiModeOnlyException
 
@@ -268,6 +271,8 @@ class Tokenizer:
                     tokens.append(Token(node, self.user_dic.lookup_extra(node.num)))
                 else:
                     tokens.append(Token(node))
+        if dotfile:
+            lattice.generate_dotfile(filename=dotfile)
         return (tokens, pos)
 
     def __should_split(self, text, pos):

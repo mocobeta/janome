@@ -246,6 +246,35 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(tokens[5], u'の')
         self.assertEqual(tokens[6], u'うち')
 
+    def test_tokenize_dotfile(self):
+        text = u'すもももももももものうち'
+        dotfile = os.path.join(parent_dir, 'tests/lattice.gv')
+        if os.path.exists(dotfile):
+            os.remove(dotfile)
+
+        Tokenizer().tokenize(text, dotfile=dotfile)
+        self.assertTrue(os.path.exists(dotfile))
+
+    def test_tokenize_dotfile_stream(self):
+        text = u'すもももももももものうち'
+        dotfile = os.path.join(parent_dir, 'tests/lattice_must_not_exist.gv')
+        if os.path.exists(dotfile):
+            os.remove(dotfile)
+
+        Tokenizer().tokenize(text, dotfile=dotfile, stream=True)
+        self.assertFalse(os.path.exists(dotfile))
+
+    def test_tokenize_dotfile_large_text(self):
+        dotfile = os.path.join(parent_dir, 'tests/lattice_must_not_exist.gv')
+        if os.path.exists(dotfile):
+            os.remove(dotfile)
+
+        with open('tests/text_lemon.txt', encoding='utf-8') as f:
+            text = f.read()
+            if not PY3:
+                text = unicode(text)
+            tokens = Tokenizer().tokenize(text, dotfile=dotfile)
+        self.assertFalse(os.path.exists(dotfile))
 
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
