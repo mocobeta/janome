@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
+import sys, os
 PY3 = sys.version_info[0] == 3
 
 class NodeType:
@@ -200,7 +200,8 @@ class Lattice:
                 label = '%s\\n%s' % (node.node_label(), str(node.cost))
                 shape = 'ellipse' if isinstance(node, BOS) or isinstance(node, EOS) else 'box'
                 color = 'lightblue' if isinstance(node, BOS) or isinstance(node, EOS) or node in path else 'lightgray'
-                f.write(u'  %s [label="%s",shape=%s,style=filled,fillcolor=%s];\n' % (id_str, label, shape, color))
+                font = 'MS UI Gothic' if os.name == 'nt' else ''
+                f.write(u'  %s [label="%s",shape=%s,style=filled,fillcolor=%s,fontname="%s"];\n' % (id_str, label, shape, color, font))
             for edge in edges:
                 ((pos1, idx1), (pos2, idx2)) = edge
                 node1 = self.snodes[pos1][idx1]
