@@ -1,3 +1,14 @@
+* 0.3.7 (2018.12.11)
+  - Visualize lattice graph by Graphviz. #2
+  - Janome CLI should support mmap option. #44
+  - Fix mmap file open mode. #45
+  - Add --version option to janome CLI. #51
+    (thanks @takahi-i)
+  - Support zip import and add the usage example. #54
+    (thanks @roy-freee)
+  - Use module-level named loggers. #55
+  - Add janome CLI for windows. #58
+
 * 0.3.6 (2017.12.07)
   - Optimize tokenize() method. #43
     (thanks @nakagami)

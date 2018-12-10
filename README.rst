@@ -96,4 +96,4 @@ Special thanks to @ikawaha, @takuyaa and @nakagami.
 Copyright
 ==========
 
-Copyright(C) 2015, moco_beta. All rights reserved.
+Copyright(C) 2015, Tomoko Uchida. All rights reserved.
