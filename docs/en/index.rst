@@ -349,7 +349,7 @@ Use ``-e sjis`` option if the output is garbled.
 Visualize lattice graph
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note:: You need Graphviz before using this functionality. Please install Graphviz from `here <https://graphviz.gitlab.io/download/>`_.
+.. note:: You need Graphviz to use this functionality. Please install Graphviz from `here <https://graphviz.gitlab.io/download/>`_.
 
 If given ``-g`` option, janome command outputs the visualized lattice image to the current directory after analyzing the text. Default output format is PNG.
 
@@ -361,12 +361,12 @@ If given ``-g`` option, janome command outputs the visualized lattice image to t
     飲み物	名詞,一般,*,*,*,*,飲み物,ノミモノ,ノミモノ
     Graph was successfully output to lattice.gv.png
 
-lattice.gv.png (Click to show full size image)
+lattice.gv.png (Click to show the full size image.)
 
 .. image:: ../img/lattice.gv.png
    :scale: 20
 
-You can change output file path by using ``--gv-out`` option. Also you can specify output file format by ``--gv-format`` option. See `Graphviz documentation <https://graphviz.gitlab.io/_pages/doc/info/output.html>`_ for all supported output formats.
+You can change the output file location by using ``--gv-out`` option. Also you can specify the output file format by ``--gv-format`` option. See `Graphviz documentation <https://graphviz.gitlab.io/_pages/doc/info/output.html>`_ for all supported output formats.
 
 :: 
 

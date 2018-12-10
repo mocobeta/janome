@@ -123,7 +123,7 @@ html_theme = 'haiku'
 # "<project> v<release> documentation".
 html_title = "%s v%s documentation (ja)" % (project, version)
 
-html_favicon = 'bronze-25C9.png'
+html_favicon = '../img/bronze-25C9.png'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
