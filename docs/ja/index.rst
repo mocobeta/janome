@@ -40,7 +40,7 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-* janome: 0.3.6
+* janome: 0.3.7
 
 インストール
 ---------------
@@ -345,21 +345,37 @@ NEologd 辞書を内包した janome パッケージを作成する手順を以�
 
 `NEologd 辞書を内包した janome をビルドする方法 <https://github.com/mocobeta/janome/wiki/(very-experimental)-NEologd-%E8%BE%9E%E6%9B%B8%E3%82%92%E5%86%85%E5%8C%85%E3%81%97%E3%81%9F-janome-%E3%82%92%E3%83%93%E3%83%AB%E3%83%89%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95>`_
 
+v0.3.7 より，janome コマンド (後述) が NEologd 辞書内包版にも対応しました。NEologd 内包版は mmap モード (後述) のみで動作するため， ``-m`` オプションをつけて実行してください。
+
+::
+
+    $ echo "渋谷ヒカリエで待ち合わせ" | janome -m
+
 Memory-mapped file サポート (v0.3.3 以上)
---------------------------------------------------------
+-------------------------------------------------------------------
 
 Tokenizer オブジェクトの初期化時に ``mmap=True`` オプションを与えると，辞書エントリは Memory-mapped file としてアクセスされるようになります。
 
 Tokenizer の初期化時，プロセス空間に辞書エントリをロードしないため，初期化が高速になります。
 
-コマンドラインから使う (v0.2.6 以上，Lunux/Mac only)
---------------------------------------------------------
+Graphviz ファイル (DOT ファイル) 出力 (v0.3.7 以上)
+-------------------------------------------------------------------
 
-コマンドラインから実行可能なスクリプト janome がついています。(Linux/Mac のみ。Windows 版 (bat) はもう少しお待ちください。PR 歓迎！)
+Tokenizer.tokenize() メソッドに ``dotfile=<dotfile output path>`` オプションを与えると，解析時のラティスグラフを `Graphviz <https://graphviz.gitlab.io/>`_ の DOT ファイルに変換して指定のパスに出力します。パフォーマンス上の理由により，ストリーミングモードで実行時，またはとても長いテキストを与えた場合は，このオプションは無視されます。
+
+この機能は，janome コマンド（後述）から利用するのが便利です。
+
+コマンドラインから使う (Linux/Mac v0.2.6 以上，Windows v0.3.7 以上)
+-------------------------------------------------------------------
+
+コマンドラインから実行可能なスクリプト ``janome`` がついています。
 
 簡単に動作を確認したいときにお使いください。
 
-標準入力から文字列を受け取り，形態素解析を実行します。指定できるオプションを見るには "janome -h" とタイプしてください。
+標準入力から文字列を受け取り，形態素解析を実行します。指定できるオプションを見るには "janome -h" とタイプしてください。また，"janome --version" でインストールされているバージョンが確認できます(v0.3.7 以上)。
+
+Linux/Mac
+^^^^^^^^^
 
 ::
 
@@ -371,6 +387,50 @@ Tokenizer の初期化時，プロセス空間に辞書エントリをロード�
     で    助動詞,*,*,*,特殊・ダ,連用形,だ,デ,デ
     ある  助動詞,*,*,*,五段・ラ行アル,基本形,ある,アル,アル
     (Ctrl-C で終了)
+
+Windows
+^^^^^^^
+
+文字化けする場合， ``-e sjis`` オプションをつけるといいでしょう。
+
+::
+
+    >janome -e sjis
+    ウィンドウズでも簡単インストール
+    ウィンドウズ    名詞,固有名詞,一般,*,*,*,ウィンドウズ,ウィンドウズ,ウィンドウズ
+    で      助詞,格助詞,一般,*,*,*,で,デ,デ
+    も      助詞,係助詞,*,*,*,*,も,モ,モ
+    簡単    名詞,形容動詞語幹,*,*,*,*,簡単,カンタン,カンタン
+    インストール    名詞,一般,*,*,*,*,インストール,インストール,インストール
+    (Type Ctrl-Z to quit.)
+
+ラティス可視化
+^^^^^^^^^^^^^^^^^
+
+.. note:: この機能を実行するには，Graphviz が必要です。 `こちら <https://graphviz.gitlab.io/download/>`_ の手順で事前にインストールしてください。
+
+``-g`` オプションをつけると，解析後にラティスグラフがファイルに出力されます。デフォルトの出力先はカレントディレクトリ，フォーマットは PNG です。
+
+:: 
+
+    $ echo "カレーは飲み物" | janome -g
+    カレー	名詞,一般,*,*,*,*,カレー,カレー,カレー
+    は	助詞,係助詞,*,*,*,*,は,ハ,ワ
+    飲み物	名詞,一般,*,*,*,*,飲み物,ノミモノ,ノミモノ
+    Graph was successfully output to lattice.gv.png
+
+lattice.gv.png (クリックで拡大)
+
+.. image:: ../img/lattice.gv.png
+   :scale: 20
+
+ファイルの出力先を指定したい場合は ``--gv-out`` オプションを，Graphviz のフォーマットを指定する場合は ``--gv-format`` オプションをつけてください。サポートされるフォーマットは `Graphviz のドキュメント <https://graphviz.gitlab.io/_pages/doc/info/output.html>`_ を参照してください。
+
+:: 
+
+    $ echo "カレーは飲み物" | janome -g --gv-out /tmp/a.gv --gv-format svg
+    ...
+    Graph was successfully output to /tmp/a.gv.svg
 
 
 大きな文書を解析する際の注意 (v0.2.8 以下)
@@ -459,6 +519,7 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2018.12.11 janome Version 0.3.7 リリース
 * 2017.12.07 janome Version 0.3.6 リリース
 * 2017.08.06 `janome Version 0.3.5 リリース <https://medium.com/@mocobeta/janome-0-3-5-release-ee5de2196330>`_
 * 2017.07.29 `janome Version 0.3.4 リリース <https://medium.com/@mocobeta/janome-0-3-4-release-63ed21f4fda9>`_
@@ -479,7 +540,7 @@ History
 
 詳細: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
-.. image:: bronze-25C9.png
+.. image:: ../img/bronze-25C9.png
    :alt: Badge(FISHEYE)
    :target: http://www.unicode.org/consortium/adopt-a-character.html
 

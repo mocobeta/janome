@@ -40,7 +40,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Current version
 ---------------
 
-* janome: 0.3.6
+* janome: 0.3.7
 
 Install
 -------
@@ -81,7 +81,7 @@ The return value is a list of Token objects. Token includes morphologic informat
 for Windows users
 ^^^^^^^^^^^^^^^^^
 
-Use ``decode('utf8')`` if output is garbled.
+Use ``decode('utf8')`` if the output is garbled.
 
 ::
 
@@ -302,12 +302,22 @@ Memory-mapped file support (v0.3.3+)
 
 If ``mmap=True`` option is given to Tokenizer.__init__(), dictionary entries are not loaded to process space but searched through memory-mapped file.
 
-Command-line interface (v0.2.6+, Lunux/Mac only)
---------------------------------------------------
+Graphviz file (DOT file) support (v0.3.7+)
+-------------------------------------------------------------------
 
-Janome has executable built-in script "janome" for command-line usage. (currently for Lunux/Mac only... patches are welcome!)
+When ``dotfile=<dotfile output path>`` option is given, Tokenizer.tokenize() method converts the lattice graph to `Graphviz <https://graphviz.gitlab.io/>`_ DOT file. For performance reasons, this option is ignored when running on streaming mode or analyzing very long text.
+
+``janome`` command (the details are mentioned later) has options to visualize the lattice graph easily.
+
+Command-line interface (Linux/Mac v0.2.6+, Windows v0.3.7+)
+------------------------------------------------------------
+
+Janome has executable built-in script "janome" for command-line usage.
 
 It reads a sentence at a time from standard input and outputs the analyzed results. To see supported options, type "janome -h".
+
+Linux/Mac
+^^^^^^^^^
 
 ::
 
@@ -319,6 +329,50 @@ It reads a sentence at a time from standard input and outputs the analyzed resul
     で    助動詞,*,*,*,特殊・ダ,連用形,だ,デ,デ
     ある  助動詞,*,*,*,五段・ラ行アル,基本形,ある,アル,アル
     (Type Ctrl-C to quit.)
+
+Windows
+^^^^^^^
+
+Use ``-e sjis`` option if the output is garbled.
+
+::
+
+    >janome -e sjis
+    ウィンドウズでも簡単インストール
+    ウィンドウズ    名詞,固有名詞,一般,*,*,*,ウィンドウズ,ウィンドウズ,ウィンドウズ
+    で      助詞,格助詞,一般,*,*,*,で,デ,デ
+    も      助詞,係助詞,*,*,*,*,も,モ,モ
+    簡単    名詞,形容動詞語幹,*,*,*,*,簡単,カンタン,カンタン
+    インストール    名詞,一般,*,*,*,*,インストール,インストール,インストール
+    (Type Ctrl-Z to quit.)
+
+Visualize lattice graph
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note:: You need Graphviz before using this functionality. Please install Graphviz from `here <https://graphviz.gitlab.io/download/>`_.
+
+If given ``-g`` option, janome command outputs the visualized lattice image to the current directory after analyzing the text. Default output format is PNG.
+
+:: 
+
+    $ echo "カレーは飲み物" | janome -g
+    カレー	名詞,一般,*,*,*,*,カレー,カレー,カレー
+    は	助詞,係助詞,*,*,*,*,は,ハ,ワ
+    飲み物	名詞,一般,*,*,*,*,飲み物,ノミモノ,ノミモノ
+    Graph was successfully output to lattice.gv.png
+
+lattice.gv.png (Click to show full size image)
+
+.. image:: ../img/lattice.gv.png
+   :scale: 20
+
+You can change output file path by using ``--gv-out`` option. Also you can specify output file format by ``--gv-format`` option. See `Graphviz documentation <https://graphviz.gitlab.io/_pages/doc/info/output.html>`_ for all supported output formats.
+
+:: 
+
+    $ echo "カレーは飲み物" | janome -g --gv-out /tmp/a.gv --gv-format svg
+    ...
+    Graph was successfully output to /tmp/a.gv.svg
 
 
 Note for analyzing large document set
@@ -373,6 +427,7 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2018.12.11 janome Version 0.3.7 was released
 * 2017.12.07 janome Version 0.3.6 was released
 * 2017.08.06 janome Version 0.3.5 was released
 * 2017.07.29 janome Version 0.3.4 was released
@@ -393,7 +448,7 @@ History
 
 Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
-.. image:: bronze-25C9.png
+.. image:: ../img/bronze-25C9.png
    :alt: Badge(FISHEYE)
    :target: http://www.unicode.org/consortium/adopt-a-character.html	 
 
