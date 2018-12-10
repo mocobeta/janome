@@ -173,7 +173,7 @@ class Lattice:
         for pos in range(0, len(self.snodes) - 1):
             for i in range(0, len(self.snodes[pos])):
                 node1 = self.snodes[pos][i]
-                if is_unknown(node1):
+                if is_unknown(node1) and node1 not in path:
                     continue
                 node1_id = (pos, i)
                 if node1_id not in node_ids:
@@ -181,7 +181,7 @@ class Lattice:
                 node_len = len(node1.surface) if hasattr(node1, 'surface') else 1
                 for j in range(0, len(self.snodes[pos + node_len])):
                     node2 = self.snodes[pos + node_len][j]
-                    if is_unknown(node2):
+                    if is_unknown(node2) and node2 not in path:
                         continue
                     node2_id = (pos+node_len, j)
                     if node2_id not in node_ids:
