@@ -38,6 +38,8 @@ formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+set_fst_log_level(logging.DEBUG)
+
 PY3 = sys.version_info[0] == 3
 
 FILE_CHAR_DEF = 'char.def'

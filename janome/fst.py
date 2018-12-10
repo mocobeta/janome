@@ -36,9 +36,9 @@ except ImportError:
         return _dummy
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 handler = logging.StreamHandler()
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.WARN)
 formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -57,6 +57,9 @@ FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
 # all characters
 CHARS = set()
 
+def set_fst_log_level(level):
+    logger.setLevel(level)
+    handler.setLevel(level)
 
 def unpack_uint(n):
     if PY3:

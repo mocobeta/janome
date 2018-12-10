@@ -30,9 +30,9 @@ import pkgutil
 import zlib
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 handler = logging.StreamHandler()
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.WARN)
 formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
