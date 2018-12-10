@@ -106,7 +106,7 @@ htmlhelp_basename = 'janome_apidoc'
 
 html_title = 'Janome API reference v%s' % version
 
-html_favicon = 'bronze-25C9.png'
+html_favicon = '../img/bronze-25C9.png'
 
 # -- Options for LaTeX output ---------------------------------------------
 
