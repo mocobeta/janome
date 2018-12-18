@@ -153,6 +153,14 @@ userdic.csv ::
   です      助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
   。        記号,句点,*,*,*,*,。,。,。
 
+**[参考リンク]**
+
+* `データ解析、プログラミング学習中: Janomeのユーザー辞書を作る <http://eneprog.blogspot.com/2018/08/janomepython.html>`_ (ユーザー辞書ファイルの作成方法)
+  
+  * 補足: こちらの記事では左/右文脈ID に -1 を指定していますが，`MeCab: 単語の追加方法 <http://taku910.github.io/mecab/dic.html>`_ に記載のように，MeCab IPADIC に含まれる ``left-id.def`` (または ``right-id.def``) から該当する品詞IDを選ぶ (例：「名詞,固有名詞,一般」なら 1288) とコスト計算がより適切になるでしょう。
+
+* `データ解析、プログラミング学習中: エネルギー基本計画の特徴を見てみる。その4 複合語を考慮してwordcloud <http://eneprog.blogspot.com/2018/09/4-wordcloudpythonjanome.html>`_ (ユーザー辞書の活用例)
+
 簡略辞書フォーマット (v0.2.7 以上)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -292,6 +300,7 @@ TokenCountFilter を使うと，入力文字列中の単語出現頻度を数え
 **[参考リンク]**
 
 * `け日記：Python janomeのanalyzerが便利 <http://ohke.hateblo.jp/entry/2017/11/02/230000>`_ (Analyzer 活用，独自フィルターの作成について詳しく解説されています。)
+* `データ解析、プログラミング学習中: janome Analayzerで複合語（複合名詞）を考慮して形態素解析を行う。 <http://eneprog.blogspot.com/2018/07/janome-analayzerpython.html>`_ (CompoundNounFilter の活用例があります。)
 
 ストリーミングモード (v0.3.1 以上)
 -------------------------------------------------------
@@ -519,7 +528,7 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
-* 2018.12.11 janome Version 0.3.7 リリース
+* 2018.12.11 `janome Version 0.3.7 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E3%83%A9%E3%83%86%E3%82%A3%E3%82%B9%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%AA%E3%81%A9%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F-janome-0-3-7-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-bbce681f7612>`_
 * 2017.12.07 janome Version 0.3.6 リリース
 * 2017.08.06 `janome Version 0.3.5 リリース <https://medium.com/@mocobeta/janome-0-3-5-release-ee5de2196330>`_
 * 2017.07.29 `janome Version 0.3.4 リリース <https://medium.com/@mocobeta/janome-0-3-4-release-63ed21f4fda9>`_
