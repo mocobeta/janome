@@ -246,8 +246,8 @@ You can count word frequencies in the input text by using TokenCountFilter.
   >>> for k, v in a.analyze(text):
   ...   print('%s: %d' % (k, v))
   ...
-  もも: 2
   すもも: 1
+  もも: 2
   うち: 1
 
 See API reference for other built-in CharFilters and TokenFilters. You can implement custom filters by extending CharFilter or TokenFilter.
@@ -346,7 +346,7 @@ Use ``-e sjis`` option if the output is garbled.
     インストール    名詞,一般,*,*,*,*,インストール,インストール,インストール
     (Type Ctrl-Z to quit.)
 
-Visualize lattice graph
+Visualizing lattice graph
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note:: You need Graphviz to use this functionality. Please install Graphviz from `here <https://graphviz.gitlab.io/download/>`_.
