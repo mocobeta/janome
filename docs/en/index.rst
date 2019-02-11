@@ -14,6 +14,12 @@ Welcome to janome's documentation! (English)
 What's Janome?
 --------------
 
+.. figure:: ../img/janome_small.jpg
+  :scale: 20
+  :align: right
+
+  Illustration by `janome <https://janomeekaki.wixsite.com/janome>`_. All rights reserved.
+
 Janome (蛇の目) is a Japanese morphological analysis engine (or tokenizer, pos-tagger) written in pure Python including the built-in dictionary and the language model.
 
 We aim to build a library which is easy to install, provides well-designed APIs for various python applications.
