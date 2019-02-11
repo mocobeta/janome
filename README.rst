@@ -91,7 +91,7 @@ See LICENSE.txt and NOTICE.txt for license details.
 Acknowledgement
 ================
 
-Special thanks to @ikawaha, @takuyaa and @nakagami.
+Special thanks to @ikawaha, @takuyaa, @nakagami and @janome_oekaki.
 
 Copyright
 ==========
