@@ -80,12 +80,12 @@ Run
   形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
   です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
-Run tests
-==========
+Contributing
+=============
 
-.. code:: bash
+Check out wiki page:
 
-  (venv) $ python setup.py test
+https://github.com/mocobeta/janome/wiki#for-contributors
 
 License
 ========
