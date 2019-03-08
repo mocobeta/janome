@@ -35,7 +35,7 @@ Janome (蛇の目) は，Pure Python で書かれた，辞書内包の形態素�
 API リファレンス
 --------------------------
 
-`http://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
+`https://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
 
 
 動作に必要なソフトウェア
@@ -119,6 +119,14 @@ for Windows users
   >>> for token in t.tokenize(u'すもももももももものうち'):
   ...     print(str(token).decode('utf8'))
 
+
+チュートリアル
+^^^^^^^^^^^^^^^^^^
+
+ハンズオン教材つきの，初心者向けチュートリアル「Janome ではじめるテキストマイニング」を公開しました。(`ブログ <https://medium.com/@mocobeta/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB-janome-%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%9E%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0-%E3%82%92-github-google-colab-%E3%81%A7%E5%85%AC%E9%96%8B%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-28c1bf0008b9>`_)
+
+* `GitHub リポジトリ <https://github.com/mocobeta/janome-tutorial>`_
+* `チュートリアル資料(HTML) <http://mocobeta.github.io/slides-html/janome-tutorial/tutorial-slides.html>`_
 
 ユーザー定義辞書を使う
 -------------------------

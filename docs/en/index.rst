@@ -36,7 +36,7 @@ If you like janome, please star the repository! :)
 API reference
 -------------
 
-`http://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
+`https://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
 
 Requirements
 ------------
