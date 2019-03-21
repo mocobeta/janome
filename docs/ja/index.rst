@@ -62,6 +62,17 @@ PyPI
 
 .. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします。利用可能なメモリ容量にご注意ください。（バージョン 0.2.6 より，RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました。）
 
+
+チュートリアル
+------------------
+
+初心者向けチュートリアル＆ハンズオン教材「Janome ではじめるテキストマイニング」を公開しました。(`ブログ <https://medium.com/@mocobeta/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB-janome-%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%9E%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0-%E3%82%92-github-google-colab-%E3%81%A7%E5%85%AC%E9%96%8B%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-28c1bf0008b9>`_)
+
+* `GitHub リポジトリ <https://github.com/mocobeta/janome-tutorial>`_
+* `チュートリアル資料(HTML) <http://mocobeta.github.io/slides-html/janome-tutorial/tutorial-slides.html>`_
+
+ハンズオンには Google Colab を使っており Web ブラウザがあれば実行できます。janome CLI / API の基本的な使い方，ユーザー辞書・ワードカウント・Analyzer など janome の少しだけ高度な使い方，日本語 WordCloud といった内容について，手を動かしながら身につけられます。
+
 使い方
 -----------
 
@@ -119,14 +130,6 @@ for Windows users
   >>> for token in t.tokenize(u'すもももももももものうち'):
   ...     print(str(token).decode('utf8'))
 
-
-チュートリアル
-^^^^^^^^^^^^^^^^^^
-
-ハンズオン教材つきの，初心者向けチュートリアル「Janome ではじめるテキストマイニング」を公開しました。(`ブログ <https://medium.com/@mocobeta/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB-janome-%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%9E%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0-%E3%82%92-github-google-colab-%E3%81%A7%E5%85%AC%E9%96%8B%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-28c1bf0008b9>`_)
-
-* `GitHub リポジトリ <https://github.com/mocobeta/janome-tutorial>`_
-* `チュートリアル資料(HTML) <http://mocobeta.github.io/slides-html/janome-tutorial/tutorial-slides.html>`_
 
 ユーザー定義辞書を使う
 -------------------------
