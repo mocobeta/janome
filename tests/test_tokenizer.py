@@ -67,6 +67,13 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(1, len(tokens))
         self._check_token(tokens[0], u'한국어', u'記号,一般,*,*,*,*,한국어,*,*', NodeType.UNKNOWN)
 
+    def test_tokenize_patched_dic(self):
+        text = u'令和元年'
+        tokens = Tokenizer().tokenize(text)
+        self.assertEqual(2, len(tokens))
+        self._check_token(tokens[0], u'令和', u'名詞,固有名詞,一般,*,*,*,令和,レイワ,レイワ', NodeType.SYS_DICT)
+        self._check_token(tokens[1], u'元年', u'名詞,一般,*,*,*,*,元年,ガンネン,ガンネン', NodeType.SYS_DICT)
+
     def test_tokenize_unknown(self):
         text = u'2009年10月16日'
         tokens = Tokenizer().tokenize(text)
