@@ -15,6 +15,11 @@ if [ ! -e ${IPADIC_DIR} ]; then
   exit 1
 fi
 
+if [[ "${IPADIC_DIR%%/}" =~ mecab-ipadic-2.7.0-20070801$ ]]; then
+  # apply patch to mecab-ipadic
+  patch -u -N ${IPADIC_DIR%%/}/Noun.proper.csv < Noun.proper.csv.patch
+fi
+
 ENC=$2
 if [ -z ${ENC} ]; then
   ENC=euc-jp
@@ -27,7 +32,6 @@ mkdir ${OUT_DIR}
 if [ -e "${OUT_DIR}.zip" ]; then
   rm "${OUT_DIR}.zip"
 fi
-
 
 if [ -e ${WORKING_DIR} ]; then
   rm -rf ${WORKING_DIR}
