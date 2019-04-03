@@ -24,7 +24,7 @@ Janome (蛇の目) is a Japanese morphological analysis engine (or tokenizer, po
 
 We aim to build a library which is easy to install and provides concise, well-designed APIs for various python applications.
 
-Janome uses mecab-ipadic-2.7.0-20070801 as the built-in dictionary.
+Janome uses mecab-ipadic-2.7.0-20070801 as the built-in dictionary. Also Japanese new era "令和" (Reiwa) has been added to the dictionary since v0.3.8.
 
 Source Code
 -----------
@@ -46,7 +46,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Latest version
 --------------
 
-* janome: 0.3.7
+* janome: 0.3.8
 
 Install
 -------
@@ -433,6 +433,7 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2018.04.03 janome Version 0.3.8 was released
 * 2018.12.11 janome Version 0.3.7 was released
 * 2017.12.07 janome Version 0.3.6 was released
 * 2017.08.06 janome Version 0.3.5 was released
