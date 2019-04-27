@@ -5,6 +5,11 @@
 
 .. role:: strike
 
+.. meta::
+  :description: Janome (蛇の目) は，Pure Python で書かれた，辞書内包の形態素解析器です。依存ライブラリなしで簡単にインストールでき，アプリケーションに組み込みやすいシンプルな API を備える形態素解析ライブラリを目指しています。
+  :keywords: python, janome, 形態素解析
+  :http-equiv=Content-Type: text/html; charset=UTF-8
+
 Welcome to janome's documentation! (Japanese)
 ==============================================
 
