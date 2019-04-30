@@ -45,7 +45,7 @@ setup(
     author_email='tomoko.uchida.1111@gmail.com',
     license='AL2',
     classifiers=classifiers,
-    url='http://mocobeta.github.io/janome/',
+    url='https://mocobeta.github.io/janome/en/',
     packages=['janome','sysdic'],
     package_data={'sysdic': fst_data},
     py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer','janome.analyzer','janome.charfilter','janome.tokenfilter'],
