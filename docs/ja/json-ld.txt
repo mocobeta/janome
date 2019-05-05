@@ -1,0 +1,17 @@
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "TechArticle",
+  "image": [
+    "https://mocobeta.github.io/janome/_images/janome_small.jpg"
+   ],
+  "headline": "Welcome to janome's documentation! (Japanese)",
+  "datePublished": "2015-04-08T00:00:00+09:00",
+  "dateModified": "2019-05-05T19:00:00+09:00",
+  "author": {
+    "@type": "Person",
+    "name": "Tomoko Uchida"
+  },
+  "description": "Janome (蛇の目; ◉) は，Pure Python で書かれた，辞書内包の形態素解析器です。依存ライブラリなしで簡単にインストールでき，アプリケーションに組み込みやすいシンプルな API を備える形態素解析ライブラリを目指しています。"
+}
+</script>
