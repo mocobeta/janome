@@ -5,19 +5,18 @@ from io import open
 sys.path.append('./janome')
 sys.path.append('./tests')
 
-import os
+import os, shutil
 from zipfile import ZipFile
 from janome.dic import *
 from janome.version import JANOME_VERSION
 
 dicdir = 'ipadic'
 
-if not os.path.exists('sysdic') and os.path.exists(os.path.join('ipadic', 'sysdic.zip')):
+if os.path.exists(os.path.join(dicdir, 'sysdic.zip')):
+    shutil.rmtree('sysdic')
     print('Unzip dictionary data...')
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
-
-fst_data = [data_file for data_file in os.listdir('sysdic') if data_file.startswith('fst.data')]
 
 name = 'janome'
 
@@ -46,9 +45,9 @@ setup(
     license='AL2',
     classifiers=classifiers,
     url='https://mocobeta.github.io/janome/en/',
-    packages=['janome','sysdic'],
-    package_data={'sysdic': fst_data},
-    py_modules=['janome.dic','janome.fst','janome.lattice','janome.tokenizer','janome.analyzer','janome.charfilter','janome.tokenfilter'],
+    packages=['janome', 'janome.sysdic'],
+    package_dir={'janome.sysdic': 'sysdic'},
+    package_data={'janome.sysdic': ['fst.data*']},
     scripts=['bin/janome', 'bin/janome.bat'],
     test_suite = 'suite'
 )

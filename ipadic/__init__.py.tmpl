@@ -20,7 +20,7 @@ def entries(compact = False):
     global __entries
     if not __entries:
         try:
-            from sysdic import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
+            from . import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
         except:
             raise LoadingDictionaryError()
         __entries = entries_compact0.DATA
