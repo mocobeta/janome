@@ -95,7 +95,14 @@ import sys
 import os
 from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType
 from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary
-from sysdic import entries, mmap_entries, connections, chardef, unknowns
+
+try:
+    from janome.sysdic import entries, mmap_entries, connections, chardef, unknowns
+except ImportError:
+    # hack for unit testing...
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, parent_dir)
+    from sysdic import entries, mmap_entries, connections, chardef, unknowns
 
 PY3 = sys.version_info[0] == 3
 

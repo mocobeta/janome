@@ -52,7 +52,7 @@ except ImportError:
 
 PY3 = sys.version_info[0] == 3
 
-SYSDIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sysdic")
+SYSDIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sysdic')
 
 FILE_FST_DATA = 'fst.data'
 

@@ -9,7 +9,7 @@ python:
 addons:
   apt:
     packages:
-      - oracle-java8-set-default
+      - oracle-java8-installer
 env:
   - REDPEN_VERSION=1.9.0
 install:
