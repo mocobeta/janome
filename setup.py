@@ -13,7 +13,8 @@ from janome.version import JANOME_VERSION
 dicdir = 'ipadic'
 
 if os.path.exists(os.path.join(dicdir, 'sysdic.zip')):
-    shutil.rmtree('sysdic')
+    if os.path.exists('sysdic'):
+        shutil.rmtree('sysdic')
     print('Unzip dictionary data...')
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
         zf.extractall()
