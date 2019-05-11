@@ -97,12 +97,12 @@ from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType
 from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary
 
 try:
-    from janome.sysdic import entries, mmap_entries, connections, chardef, unknowns
+    from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 except ImportError:
     # hack for unit testing...
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, parent_dir)
-    from sysdic import entries, mmap_entries, connections, chardef, unknowns
+    from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 
 PY3 = sys.version_info[0] == 3
 
@@ -166,9 +166,9 @@ class Tokenizer:
         """
         self.wakati = wakati
         if mmap:
-            self.sys_dic = MMapSystemDictionary(mmap_entries(wakati), connections, chardef.DATA, unknowns.DATA)
+            self.sys_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(wakati), connections, chardef.DATA, unknowns.DATA)
         else:
-            self.sys_dic = SystemDictionary(entries(wakati), connections, chardef.DATA, unknowns.DATA)
+            self.sys_dic = SystemDictionary(all_fstdata(), entries(wakati), connections, chardef.DATA, unknowns.DATA)
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV

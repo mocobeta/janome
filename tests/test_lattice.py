@@ -22,11 +22,11 @@ sys.path.insert(0, parent_dir)
 
 from janome.lattice import *
 from janome.dic import SystemDictionary, MMapSystemDictionary
-from sysdic import entries, mmap_entries, connections, chardef, unknowns
+from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 import unittest
 
-SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
-MMAP_SYS_DIC = MMapSystemDictionary(mmap_entries(), connections, chardef.DATA, unknowns.DATA)
+SYS_DIC = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
+MMAP_SYS_DIC = MMapSystemDictionary(all_fstdata(), mmap_entries(), connections, chardef.DATA, unknowns.DATA)
 
 class TestLattice(unittest.TestCase):
     def test_initialize_lattice(self):

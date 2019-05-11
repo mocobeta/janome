@@ -38,11 +38,13 @@ if [ -e ${WORKING_DIR} ]; then
 fi
 mkdir ${WORKING_DIR}
 
-cp "__init__.py.tmpl" "${OUT_DIR}/__init__.py"
-
 # build dictionary (saved as python module.)
 python build.py --collect ${IPADIC_DIR} ${ENC} ${OUT_DIR} ${WORKING_DIR}
 python build.py --build ${IPADIC_DIR} ${ENC} ${OUT_DIR} ${WORKING_DIR} ${WORKER_PROCESS}
+
+INIT_PY="${OUT_DIR}/__init__.py"
+cp "__init__.py.tmpl" ${INIT_PY}
+./_import_fstdata_method.sh ${OUT_DIR} >> ${INIT_PY}
 
 zip -r "${OUT_DIR}.zip" ${OUT_DIR}
 
