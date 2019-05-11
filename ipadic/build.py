@@ -111,7 +111,7 @@ def save_partial_fst(arg, outdir):
         _part = pickle.load(f)
         _processed, fst = create_minimum_transducer(_part)
         compiledFST = compileFST(fst)
-        save_fstdata(compiledFST, dir=outdir, suffix='.%d' % part_idx)
+        save_fstdata(compiledFST, dir=outdir, part=part_idx)
         logger.info('processed entries=%d' % _processed)
         return _processed
 

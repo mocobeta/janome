@@ -28,6 +28,7 @@ import re
 import itertools
 import pkgutil
 import zlib
+import base64
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
@@ -54,8 +55,7 @@ PY3 = sys.version_info[0] == 3
 
 SYSDIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sysdic')
 
-FILE_FST_DATA = 'fst.data'
-
+MODULE_FST_DATA = 'fst_data%d.py'
 MODULE_ENTRIES_EXTRA = 'entries_extra%d.py'
 MODULE_ENTRIES_COMPACT = 'entries_compact%d.py'
 MODULE_ENTRIES_BUCKETS = 'entries_buckets.py'
@@ -66,26 +66,8 @@ MODULE_UNKNOWNS = 'unknowns.py'
 FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
 
-def save_fstdata(data, dir, suffix=''):
-    _save(os.path.join(dir, FILE_FST_DATA + suffix), data, 9)
-
-
-def load_all_fstdata():
-    try:
-        return [_load(os.path.join(SYSDIC_DIR, data_file))
-                for data_file in os.listdir(SYSDIC_DIR) if data_file.startswith(FILE_FST_DATA)]
-    except OSError:
-        return load_all_fstdata_from_package()
-
-
-def load_all_fstdata_from_package():
-    fstdata = []
-    for suffix in itertools.count():
-        data = _load_package_data('sysdic', '{0}.{1}'.format(FILE_FST_DATA, suffix))
-        if data is None:
-            break
-        fstdata.append(data)
-    return fstdata
+def save_fstdata(data, dir, part=0):
+    _save_as_module(os.path.join(dir, MODULE_FST_DATA % part), data, binary=True)
 
 
 def start_save_entries(dir, bucket_num):
@@ -151,12 +133,17 @@ def _load_package_data(package, resource):
         return None
     return zlib.decompress(rawdata, zlib.MAX_WBITS | 16)
 
-def _save_as_module(file, data):
+def _save_as_module(file, data, binary=False):
     if not data:
         return
     with open(file, 'w') as f:
         f.write(u'DATA=')
-        f.write(str(data).replace('\\\\', '\\') if PY3 else unicode(data))
+        if binary:
+            f.write('"')
+            f.write(base64.b64encode(data))
+            f.write('"')
+        else:
+            f.write(str(data).replace('\\\\', '\\') if PY3 else unicode(data))
         f.flush()
 
 
@@ -373,8 +360,8 @@ class SystemDictionary(Dictionary, UnknownsDictionary):
     u"""
     System dictionary class
     """
-    def __init__(self, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, load_all_fstdata(), entries, connections)
+    def __init__(self, all_fstdata, entries, connections, chardefs, unknowns):
+        Dictionary.__init__(self, all_fstdata, entries, connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -382,8 +369,8 @@ class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
     u"""
     MMap System dictionary class
     """
-    def __init__(self, mmap_entries, connections, chardefs, unknowns):
-        MMapDictionary.__init__(self, load_all_fstdata(), mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
+    def __init__(self, all_fstdata, mmap_entries, connections, chardefs, unknowns):
+        MMapDictionary.__init__(self, all_fstdata, mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 

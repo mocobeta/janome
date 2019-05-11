@@ -24,14 +24,14 @@ sys.path.insert(0, parent_dir)
 
 import janome.dic
 from janome.dic import *
-from sysdic import entries, mmap_entries, connections, chardef, unknowns
+from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 
 import unittest
 
 
 class TestDictionary(unittest.TestCase):
     def test_system_dictionary_ipadic(self):
-        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
         self.assertEqual(7, len(sys_dic.lookup(u'形態素'.encode('utf-8'))))
         self.assertEqual(1, sys_dic.get_trans_cost(0, 1))
         self.assertEqual({'HIRAGANA': []}, sys_dic.get_char_categories(u'は'))
@@ -56,7 +56,7 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(2, sys_dic.unknown_length('HIRAGANA'))
 
     def test_property_types(self):
-        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
         # entry in the system dictionary
         entry = sys_dic.lookup(u'すもも'.encode('utf8'))[0]
         if PY3:
@@ -95,7 +95,7 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(type(entry[2]) is int)
 
         # mmap dict etnry
-        mmap_dic = MMapSystemDictionary(mmap_entries(), connections, chardef.DATA, unknowns.DATA)
+        mmap_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(), connections, chardef.DATA, unknowns.DATA)
         entry = mmap_dic.lookup(u'すもも'.encode('utf8'))[0]
         if PY3:
             self.assertTrue(type(entry[1]) is str)
@@ -136,7 +136,7 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(type(entry[4]) is int)
 
     def test_system_dictionary_cache(self):
-        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+        sys_dic = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
         self.assertEqual(11, len(sys_dic.lookup(u'小書き'.encode('utf8'))))
         self.assertEqual(11, len(sys_dic.lookup(u'小書き'.encode('utf8'))))
         self.assertEqual(11, len(sys_dic.lookup(u'小書きにしました'.encode('utf8'))))
@@ -146,18 +146,6 @@ class TestDictionary(unittest.TestCase):
 
         self.assertEqual(2, len(sys_dic.lookup(u'叩く'.encode('utf8'))))
         self.assertEqual(2, len(sys_dic.lookup(u'叩く'.encode('utf8'))))
-
-    def test_load_all_fst_data_from_package(self):
-        # Py2.7 doesn't have unittest.mock, so manually replaced the method
-        store = janome.dic.load_all_fstdata
-        janome.dic.load_all_fstdata = janome.dic.load_all_fstdata_from_package
-        try:
-            sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
-            self.assertEqual(11, len(sys_dic.lookup(u'小書き'.encode('utf8'))))
-        except Exception:
-            janome.dic.load_all_fstdata = store
-            raise
-
 
     def test_user_dictionary(self):
         # create user dictionary from csv
