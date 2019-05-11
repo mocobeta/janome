@@ -1,3 +1,7 @@
+* 0.3.9 (2019.05.12)
+  - #63: Move "sysdic" directory to under janome package directory.
+  - #64: Embed dictionary index data to the source code.
+
 * 0.3.8 (2019.04.03)
   - Apply patch to mecab-ipadic for Japanese new era '令和'. #62
 
