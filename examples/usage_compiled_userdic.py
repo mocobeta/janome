@@ -2,7 +2,7 @@
 
 from janome.tokenizer import Tokenizer
 from janome.dic import UserDictionary
-import sysdic
+from janome import sysdic
 
 print('Compile user dictionary (MeCab IPADIC format)')
 user_dict = UserDictionary("user_ipadic.csv", "utf8", "ipadic", sysdic.connections)
