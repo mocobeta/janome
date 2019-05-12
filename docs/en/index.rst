@@ -51,7 +51,7 @@ Python 2.7.x or Python 3.3+ interpreter
 Latest version
 --------------
 
-* janome: 0.3.8
+* janome: 0.3.9
 
 Install
 -------
@@ -386,6 +386,37 @@ You can change the output file location by using ``--gv-out`` option. Also you c
     Graph was successfully output to /tmp/a.gv.svg
 
 
+How to bundle janome with an application by PyInstaller (v0.3.9+)
+--------------------------------------------------------------------
+
+You can create (and distribute) stand-alone executables which bundle janome by `PyInstaller <https://www.pyinstaller.org/>`_.
+
+::
+
+    (venv) $ janome --version
+    janome 0.3.9
+    (venv) $ pyinstaller -v
+    3.4
+
+    (venv) $ cat test.py 
+    # -*- utf-8
+    from janome.tokenizer import Tokenizer
+    t = Tokenizer()
+        for token in t.tokenize('令和元年'):
+        print(token)
+
+    (venv) $ pyinstaller --onefile test.py 
+    44 INFO: PyInstaller: 3.4
+    44 INFO: Python: 3.6.6
+    ...
+
+    (venv) $ ls dist/
+    test
+    (venv) $ ./dist/test 
+    令和	名詞,固有名詞,一般,*,*,*,令和,レイワ,レイワ
+    元年	名詞,一般,*,*,*,*,元年,ガンネン,ガンネン
+
+
 Note for analyzing large document set
 -------------------------------------
 
@@ -438,25 +469,26 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
-* 2019.04.03 janome Version 0.3.8 was released
-* 2018.12.11 janome Version 0.3.7 was released
-* 2017.12.07 janome Version 0.3.6 was released
-* 2017.08.06 janome Version 0.3.5 was released
-* 2017.07.29 janome Version 0.3.4 was released
-* 2017.07.23 janome Version 0.3.3 was released
-* 2017.07.05 janome Version 0.3.2 was released 
-* 2017.07.02 janome Version 0.3.1 was released
-* 2017.06.30 janome Version 0.3.0 was released
-* 2016.05.07 janome Version 0.2.8 was released
-* 2016.03.05 janome Version 0.2.7 was released
-* 2015.10.26 janome Version 0.2.6 was released
-* 2015.05.11 janome Version 0.2.5 was released
-* 2015.05.03 janome Version 0.2.4 was released
-* 2015.05.03 janome Version 0.2.3 was released
-* 2015.04.24 janome Version 0.2.2 was released
-* 2015.04.24 janome Version 0.2.0 was released
-* 2015.04.11 janome Version 0.1.4 was released
-* 2015.04.08 janome Version 0.1.3 was released
+* 2019.05.12 janome Version 0.3.9 released
+* 2019.04.03 janome Version 0.3.8 released
+* 2018.12.11 janome Version 0.3.7 released
+* 2017.12.07 janome Version 0.3.6 released
+* 2017.08.06 janome Version 0.3.5 released
+* 2017.07.29 janome Version 0.3.4 released
+* 2017.07.23 janome Version 0.3.3 released
+* 2017.07.05 janome Version 0.3.2 released 
+* 2017.07.02 janome Version 0.3.1 released
+* 2017.06.30 janome Version 0.3.0 released
+* 2016.05.07 janome Version 0.2.8 released
+* 2016.03.05 janome Version 0.2.7 released
+* 2015.10.26 janome Version 0.2.6 released
+* 2015.05.11 janome Version 0.2.5 released
+* 2015.05.03 janome Version 0.2.4 released
+* 2015.05.03 janome Version 0.2.3 released
+* 2015.04.24 janome Version 0.2.2 released
+* 2015.04.24 janome Version 0.2.0 released
+* 2015.04.11 janome Version 0.1.4 released
+* 2015.04.08 janome Version 0.1.3 released
 
 Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 

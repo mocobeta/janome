@@ -51,7 +51,7 @@ Python 2.7.x または Python 3.3+ インタプリタ
 バージョン
 -----------------
 
-* janome: 0.3.8
+* janome: 0.3.9
 
 インストール
 ---------------
@@ -226,19 +226,19 @@ user_simpledic.csv ::
 
 現在のところ，コンパイルのためのツールはありませんが， `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。
 
-.. note:: v0.3.1 から，ユーザー辞書コンパイル時の API が少し変わっているため注意してください。
+.. note:: v0.3.9 で，ユーザー辞書コンパイル時の API が少し変わっているため注意してください。
 
 辞書のコンパイル(MeCab IPADIC format) ::
 
   >>> from janome.dic import UserDictionary
-  >>> import sysdic
+  >>> from janome import sysdic
   >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
 辞書のコンパイル(simplified format) ::
 
   >>> from janome.dic import UserDictionary
-  >>> import sysdic
+  >>> from janome import sysdic
   >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
   >>> user_dict.save("/tmp/userdic")
 
@@ -469,6 +469,36 @@ lattice.gv.png (クリックで拡大)
     ...
     Graph was successfully output to /tmp/a.gv.svg
 
+PyInstaller でアプリケーションにバンドルする (v0.3.9+)
+-------------------------------------------------------------
+
+`PyInstaller <https://www.pyinstaller.org/>`_ で janome をアプリケーションにバンドルして，実行可能ファイルとして配布できます。
+
+::
+
+    (venv) $ janome --version
+    janome 0.3.9
+    (venv) $ pyinstaller -v
+    3.4
+
+    (venv) $ cat test.py 
+    # -*- utf-8
+    from janome.tokenizer import Tokenizer
+    t = Tokenizer()
+        for token in t.tokenize('令和元年'):
+        print(token)
+
+    (venv) $ pyinstaller --onefile test.py 
+    44 INFO: PyInstaller: 3.4
+    44 INFO: Python: 3.6.6
+    ...
+
+    (venv) $ ls dist/
+    test
+    (venv) $ ./dist/test 
+    令和	名詞,固有名詞,一般,*,*,*,令和,レイワ,レイワ
+    元年	名詞,一般,*,*,*,*,元年,ガンネン,ガンネン
+
 
 大きな文書を解析する際の注意 (v0.2.8 以下)
 ---------------------------------------------------------
@@ -556,6 +586,7 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2019.05.12 `janome Version 0.3.9 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-pyinstaller-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-9-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-c603b43fe288>`_
 * 2019.04.03 `janome Version 0.3.8 リリース <https://medium.com/@mocobeta/janome%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E6%96%B0%E5%85%83%E5%8F%B7-%E4%BB%A4%E5%92%8C-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-8-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-fd55b611e86>`_
 * 2018.12.11 `janome Version 0.3.7 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E3%83%A9%E3%83%86%E3%82%A3%E3%82%B9%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%AA%E3%81%A9%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F-janome-0-3-7-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-bbce681f7612>`_
 * 2017.12.07 janome Version 0.3.6 リリース
