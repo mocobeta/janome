@@ -302,7 +302,7 @@ TokenCountFilter を使うと，入力文字列中の単語出現頻度を数え
   >>> from janome.analyzer import Analyzer
   >>> from janome.tokenfilter import *
   >>> text = u'すもももももももものうち'
-  >>> token_filters = [POSKeepFilter('名詞'), TokenCountFilter()]
+  >>> token_filters = [POSKeepFilter(['名詞']), TokenCountFilter()]
   >>> a = Analyzer(token_filters=token_filters)
   >>> for k, v in a.analyze(text):
   ...   print('%s: %d' % (k, v))
