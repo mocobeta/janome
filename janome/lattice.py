@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import sys, os
+import heapq
 PY3 = sys.version_info[0] == 3
 
 class NodeType:
@@ -28,7 +29,7 @@ class Node(object):
     Node class
     """
     __slots__ = [
-        'pos', 'index', 'surface', 'left_id', 'right_id', 'cost',
+        'pos', 'epos', 'index', 'surface', 'left_id', 'right_id', 'cost',
         'part_of_speech', 'infl_type', 'infl_form',
         'base_form', 'reading', 'phonetic', 'node_type',
         'min_cost', 'back_pos', 'back_index'
@@ -36,6 +37,7 @@ class Node(object):
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         self.pos = 0
+        self.epos = 0
         self.index = 0
         self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.back_pos = -1
@@ -59,10 +61,11 @@ class SurfaceNode(object):
     """
     Node class with surface form only.
     """
-    __slots__ = ['pos', 'index', 'num', 'surface', 'left_id', 'right_id', 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
+    __slots__ = ['pos', 'epos', 'index', 'num', 'surface', 'left_id', 'right_id', 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         self.pos = 0
+        self.epos = 0
         self.index = 0
         self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.back_pos = -1
@@ -81,6 +84,7 @@ class BOS(object):
     """
     def __init__(self):
         self.pos = 0
+        self.epos = 1
         self.index = 0
         self.right_id = 0
         self.cost = 0
@@ -102,6 +106,7 @@ class EOS(object):
     def __init__(self, pos):
         self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.pos = pos
+        self.epos = pos + 1
         self.cost = 0
         self.left_id = 0
 
@@ -111,11 +116,31 @@ class EOS(object):
     def node_label(self):
         return 'EOS'
 
+
+class BackwardPath(object):
+    def __init__(self, dic, node, right_path=None):
+        self.cost_from_bos = node.min_cost
+        if right_path is None:
+            assert isinstance(node, EOS)
+            self.cost_from_eos = 0
+            self.path = [node]
+        else:
+            neighbor_node = right_path.path[-1]
+            self.cost_from_eos = right_path.cost_from_eos + neighbor_node.cost + dic.get_trans_cost(node.right_id, neighbor_node.left_id)
+            self.path = right_path.path[:]
+            self.path.append(node)
+
+    def __lt__(self, other):
+        return self.cost_from_bos + self.cost_from_eos < other.cost_from_bos + other.cost_from_eos
+
+    def is_complete(self):
+        return isinstance(self.path[-1], BOS)
+
+
 class Lattice:
     def __init__(self, size, dic):
         self.snodes = [[BOS()]] + [[] for i in range(0, size + 1)]
         self.enodes = [[], [BOS()]] + [[] for i in range(0, size + 1)]
-        self.conn_costs = [[]]
         self.p = 1
         self.dic = dic
 
@@ -130,10 +155,10 @@ class Lattice:
         node.back_index = best_node.index
         node.back_pos = best_node.pos
         node.pos = self.p
+        node.epos = self.p + (len(node.surface) if hasattr(node, 'surface') else 1)
         node.index = len(self.snodes[self.p])
-        self.snodes[self.p].append(node)
-        node_len = len(node.surface) if hasattr(node, 'surface') else 1
-        self.enodes[self.p + node_len].append(node)
+        self.snodes[node.pos].append(node)
+        self.enodes[node.epos].append(node)
 
     def forward(self):
         old_p = self.p
@@ -145,8 +170,9 @@ class Lattice:
     def end(self):
         eos = EOS(self.p)
         self.add(eos)
-        # truncate snodes
+        # truncate snodes, enodes
         self.snodes = self.snodes[:self.p+1]
+        self.enodes = self.enodes[:self.p+2]
 
     def backward(self):
         assert isinstance(self.snodes[len(self.snodes)-1][0], EOS)
@@ -160,6 +186,30 @@ class Lattice:
             pos = node.back_pos
         path.reverse()
         return path
+
+    def backward_astar(self, n):
+        paths = []
+        epos = len(self.enodes) - 1
+        node = self.enodes[epos][0]
+        assert isinstance(node, EOS)
+        pq = []
+        bp = BackwardPath(self.dic, node)
+        heapq.heappush(pq, bp)
+
+        while pq and n:
+            bp = heapq.heappop(pq)
+            if bp.is_complete():
+                bp.path.reverse()
+                paths.append(bp.path)
+                n -= 1
+            else:
+                node = bp.path[-1]
+                node_len = len(node.surface) if hasattr(node, 'surface') else 1
+                epos = node.epos - node_len
+                for index in range(len(self.enodes[epos])):
+                    node = self.enodes[epos][index]
+                    heapq.heappush(pq, BackwardPath(self.dic, node, bp))
+        return paths
 
     # generate Graphviz dot file
     def generate_dotfile(self, filename='lattice.gv'):

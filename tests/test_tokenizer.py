@@ -283,6 +283,32 @@ class TestTokenizer(unittest.TestCase):
             tokens = Tokenizer().tokenize(text, dotfile=dotfile)
         self.assertFalse(os.path.exists(dotfile))
 
+    def test_tokenize_n_best(self):
+        text = u'すもももももももものうち'
+        tokens_list = Tokenizer().tokenize(text, n_best=3)
+        self.assertEqual(3, len(tokens_list))
+        self._check_token(tokens_list[0][0], u'すもも', u'名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[0][1], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[0][2], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[0][3], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[0][4], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[0][5], u'の', u'助詞,連体化,*,*,*,*,の,ノ,ノ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[0][6], u'うち', u'名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][0], u'すもも', u'名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][1], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][2], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][3], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][4], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][5], u'の', u'助詞,連体化,*,*,*,*,の,ノ,ノ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[1][6], u'うち', u'名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][0], u'すもも', u'名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][1], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][2], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][3], u'もも', u'名詞,一般,*,*,*,*,もも,モモ,モモ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][4], u'も', u'助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][5], u'の', u'助詞,連体化,*,*,*,*,の,ノ,ノ', NodeType.SYS_DICT)
+        self._check_token(tokens_list[2][6], u'うち', u'名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
+
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
         self.assertEqual(detail, ','.join([token.part_of_speech,token.infl_type,token.infl_form,token.base_form,token.reading,token.phonetic]))

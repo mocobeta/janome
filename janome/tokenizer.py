@@ -182,7 +182,7 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, stream=False, wakati=False, baseform_unk=True, dotfile=''):
+    def tokenize(self, text, stream=False, wakati=False, baseform_unk=True, dotfile='', n_best=1):
         u"""
         Tokenize the input text.
 
@@ -196,6 +196,8 @@ class Tokenizer:
         """
         if self.wakati:
             wakati = True
+        if n_best > 1 and len(text) < Tokenizer.MAX_CHUNK_SIZE:
+            return self.__tokenize_n_best(text, wakati, baseform_unk, n_best)
         if stream:
             return self.__tokenize_stream(text, wakati, baseform_unk, '')
         elif dotfile and len(text) < Tokenizer.MAX_CHUNK_SIZE:
@@ -217,7 +219,23 @@ class Tokenizer:
     def __tokenize_partial(self, text, wakati, baseform_unk, dotfile):
         if self.wakati and not wakati:
             raise WakatiModeOnlyException
+        lattice, next_pos = self.__build_lattice(text, baseform_unk)
 
+        min_cost_path = lattice.backward()
+        tokens = self.__nodes_to_tokens(min_cost_path, wakati)
+
+        if dotfile:
+            lattice.generate_dotfile(filename=dotfile)
+        return (tokens, next_pos)
+
+    def __tokenize_n_best(self, text, wakati, baseform_unk, n_best):
+        tokens_list = []
+        lattice, _ = self.__build_lattice(text, baseform_unk)
+        for path in lattice.backward_astar(n_best):
+            tokens_list.append(self.__nodes_to_tokens(path, wakati))
+        return tokens_list
+
+    def __build_lattice(self, text, baseform_unk):
         chunk_size = min(len(text), Tokenizer.MAX_CHUNK_SIZE)
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
@@ -264,23 +282,23 @@ class Tokenizer:
 
             pos += lattice.forward()
         lattice.end()
-        min_cost_path = lattice.backward()
-        assert isinstance(min_cost_path[0], BOS)
-        assert isinstance(min_cost_path[-1], EOS)
+        return lattice, pos
+
+    def __nodes_to_tokens(self, nodes, wakati):
+        assert isinstance(nodes[0], BOS)
+        assert isinstance(nodes[-1], EOS)
         if wakati:
-            tokens = [node.surface for node in min_cost_path[1:-1]]
+            tokens = [node.surface for node in nodes[1:-1]]
         else:
             tokens = []
-            for node in min_cost_path[1:-1]:
+            for node in nodes[1:-1]:
                 if type(node) == SurfaceNode and node.node_type == NodeType.SYS_DICT:
                     tokens.append(Token(node, self.sys_dic.lookup_extra(node.num)))
                 elif type(node) == SurfaceNode and node.node_type == NodeType.USER_DICT:
                     tokens.append(Token(node, self.user_dic.lookup_extra(node.num)))
                 else:
                     tokens.append(Token(node))
-        if dotfile:
-            lattice.generate_dotfile(filename=dotfile)
-        return (tokens, pos)
+        return tokens
 
     def __should_split(self, text, pos):
         return \
