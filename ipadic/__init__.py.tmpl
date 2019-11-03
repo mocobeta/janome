@@ -1,7 +1,5 @@
 import os, sys
 base_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(base_dir)
-sys.path.insert(0, parent_dir)
 
 from janome.dic import LoadingDictionaryError
 from . import connections1, connections2
