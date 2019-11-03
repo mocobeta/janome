@@ -46,12 +46,12 @@ API reference
 Requirements
 ------------
 
-Python 2.7.x or Python 3.3+ interpreter
+Python 2.7.x or Python 3.5+ interpreter
 
 Latest version
 --------------
 
-* janome: 0.3.9
+* janome: 0.3.10
 
 Install
 -------
@@ -469,6 +469,7 @@ Copyright(C) 2015, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2019.11.03 janome Version 0.3.10 released
 * 2019.05.12 janome Version 0.3.9 released
 * 2019.04.03 janome Version 0.3.8 released
 * 2018.12.11 janome Version 0.3.7 released
