@@ -1,15 +1,13 @@
 language: python
 python:
   - "2.7"
-  - "3.3"
-  - "3.4"
   - "3.5"
   - "3.6"
   - "3.7-dev"
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+#addons:
+#  apt:
+#    packages:
+#      - oracle-java8-installer
 env:
   - REDPEN_VERSION=1.9.0
 install:
@@ -20,8 +18,8 @@ script:
   - coverage run --source=janome setup.py test
 after_success:
   - coveralls
-  - wget -q https://github.com/redpen-cc/redpen/releases/download/redpen-${REDPEN_VERSION}/redpen-${REDPEN_VERSION}.tar.gz
-  - tar xzf redpen-${REDPEN_VERSION}.tar.gz
-  - cp docs/redpen/logback.xml redpen-distribution-${REDPEN_VERSION}/conf/logback.xml
-  - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/redpen/redpen-conf-ja.xml -f rest docs/ja/index.rst
-  - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/redpen/redpen-conf-en.xml -f rest docs/en/index.rst
+#  - wget -q https://github.com/redpen-cc/redpen/releases/download/redpen-${REDPEN_VERSION}/redpen-${REDPEN_VERSION}.tar.gz
+#  - tar xzf redpen-${REDPEN_VERSION}.tar.gz
+#  - cp docs/redpen/logback.xml redpen-distribution-${REDPEN_VERSION}/conf/logback.xml
+#  - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/redpen/redpen-conf-ja.xml -f rest docs/ja/index.rst
+#  - redpen-distribution-${REDPEN_VERSION}/bin/redpen -c docs/redpen/redpen-conf-en.xml -f rest docs/en/index.rst

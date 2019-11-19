@@ -1,3 +1,7 @@
+* 0.3.10 (2019.11.03)
+  - #69: Remove unnecessary sys.path change.
+  - #70: Remove python 3.3 and 3.4 support.
+
 * 0.3.9 (2019.05.12)
   - #63: Move "sysdic" directory to under janome package directory.
   - #64: Embed dictionary index data to the source code.

@@ -13,5 +13,5 @@ git checkout master
 git pull
 
 git add .
-git commit -m "Fix documentation"
+git commit -m "Update documentation"
 git push origin master
