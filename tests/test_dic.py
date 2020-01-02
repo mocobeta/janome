@@ -22,7 +22,7 @@ sys.path.insert(0, parent_dir)
 
 import janome.dic
 from janome.dic import *
-from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
+from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 
 import unittest
 

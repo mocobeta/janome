@@ -17,7 +17,7 @@ if os.path.exists(os.path.join(dicdir, 'sysdic.zip')):
         shutil.rmtree('sysdic')
     print('Unzip dictionary data...')
     with ZipFile(os.path.join(dicdir, 'sysdic.zip')) as zf:
-        zf.extractall()
+        zf.extractall("janome")
 
 name = 'janome'
 
@@ -45,7 +45,6 @@ setup(
     classifiers=classifiers,
     url='https://mocobeta.github.io/janome/en/',
     packages=['janome', 'janome.sysdic'],
-    package_dir={'janome.sysdic': 'sysdic'},
     package_data={'janome.sysdic': ['fst.data*']},
     scripts=['bin/janome', 'bin/janome.bat'],
     test_suite = 'suite'

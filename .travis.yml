@@ -12,8 +12,6 @@ env:
   - REDPEN_VERSION=1.9.0
 install:
   - pip install coveralls
-before_script:
-  - unzip ipadic/sysdic.zip
 script:
   - coverage run --source=janome setup.py test
 after_success:

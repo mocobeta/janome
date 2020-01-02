@@ -22,7 +22,7 @@ sys.path.insert(0, parent_dir)
 
 from janome.lattice import *
 from janome.dic import SystemDictionary, MMapSystemDictionary
-from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
+from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 import unittest
 
 SYS_DIC = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
