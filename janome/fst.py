@@ -18,22 +18,12 @@ from __future__ import division
 from __future__ import print_function
 import sys
 import copy
-from struct import pack
+from struct import pack, unpack
 from collections import OrderedDict
 import logging
 import time
 import threading
-try:
-    from functools import lru_cache
-except ImportError:
-    from functools import wraps
-    def lru_cache(**kwargs):
-        def _dummy(function):
-            @wraps(function)
-            def __dummy(*args, **kwargs):
-                return function(*args, **kwargs)
-            return __dummy
-        return _dummy
+from functools import lru_cache
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
@@ -42,8 +32,6 @@ handler.setLevel(logging.WARN)
 formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-PY3 = sys.version_info[0] == 3
 
 # bit flags to represent class of arcs
 # refer to Apache Lucene FST's implementation
@@ -60,13 +48,6 @@ CHARS = set()
 def set_fst_log_level(level):
     logger.setLevel(level)
     handler.setLevel(level)
-
-def unpack_uint(n):
-    if PY3:
-        return n[0] + (n[1] << 8) + (n[2] << 16) + (n[3] << 24)
-    else:
-        return ord(n[0]) + (ord(n[1]) << 8) + (ord(n[2]) << 16) + (ord(n[3]) << 24)
-
 
 class State(object):
     u"""
@@ -130,10 +111,7 @@ class State(object):
                 self.final_output == other.final_output
 
     def __hash__(self):
-        if PY3:
-            return hash(str(self.final) + str(self.trans_map) + str(self.final_output))
-        else:
-            return hash(unicode(self.final) + unicode(self.trans_map) + unicode(self.final_output))
+        return hash(str(self.final) + str(self.trans_map) + str(self.final_output))
 
 
 def copy_state(src, id):
@@ -248,10 +226,7 @@ def create_minimum_transducer(inputs):
             word_suffix = output[len(common_prefix):]
 
             # re-set (j-1)'th state's output to prefix
-            if PY3:
-                buffer[j - 1].set_output(current_word[j - 1], common_prefix)
-            else:
-                buffer[j - 1].set_output(current_word[j - 1], ''.join(common_prefix))
+            buffer[j - 1].set_output(current_word[j - 1], common_prefix)
 
             # re-set jth state's output to suffix or set final state output
             for c in CHARS:
@@ -308,10 +283,7 @@ def compileFST(fst):
                 output = v['output']
             # encode flag, label, output_size, output, relative target address
             bary += pack('b', flag)
-            if PY3:
-                bary += pack('B', c)
-            else:
-                bary += pack('c', c)
+            bary += pack('B', c)
             if output_size > 0:
                 bary += pack('I', output_size)
                 bary += output
@@ -321,10 +293,7 @@ def compileFST(fst):
             assert target > 0
             bary += pack('I', target)
             # add the arc represented in bytes
-            if PY3:
-                arcs.append(bytes(bary))
-            else:
-                arcs.append(b''.join(chr(b) for b in bary))
+            arcs.append(bytes(bary))
             # address count up
             pos += len(bary)
         if s.is_final():
@@ -348,10 +317,7 @@ def compileFST(fst):
                     if output_size:
                         bary += out
             # add the arc represented in bytes
-            if PY3:
-                arcs.append(bytes(bary))
-            else:
-                arcs.append(b''.join(chr(b) for b in bary))
+            arcs.append(bytes(bary))
             # address count up
             pos += len(bary)
         address[s.id] = pos
@@ -439,16 +405,16 @@ class Matcher(object):
         final_output = [b'']
         target = 0
         # read flag
-        flag = data[pos] if PY3 else ord(data[pos])
+        flag = data[pos]
         pos += 1
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
                 # read final outputs
-                final_output_count = unpack_uint(data[pos:pos+4])
+                final_output_count = unpack('I', data[pos:pos+4])[0]
                 pos += 4
                 buf = []
                 for _ in range(final_output_count):
-                    output_size = unpack_uint(data[pos:pos+4])
+                    output_size = unpack('I', data[pos:pos+4])[0]
                     pos += 4
                     if output_size:
                         buf.append(data[pos:pos+output_size])
@@ -460,12 +426,12 @@ class Matcher(object):
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
                 # read output
-                output_size = unpack_uint(data[pos:pos+4])
+                output_size = unpack('I', data[pos:pos+4])[0]
                 pos += 4
                 output = data[pos:pos+output_size]
                 pos += output_size
             # read target's (relative) address
-            target = unpack_uint(data[pos:pos+4])
+            target = unpack('I', data[pos:pos+4])[0]
             pos += 4
         return flag, label, output, final_output, target, pos - addr
 
@@ -485,5 +451,6 @@ if __name__ == '__main__':
     data = compileFST(fst)
 
     m = Matcher([data])
+    #print(m.run('apr'))
     print(m.run(u'apr'.encode(u'utf8')))
     print(m.run(u'aug'.encode(u'utf8')))

@@ -20,7 +20,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from janome.dic import SystemDictionary
-from sysdic import entries, connections, chardef, unknowns
+from sysdic import all_fstdata, entries, connections, chardef, unknowns
 from sysdic import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
 from sysdic import entries_extra0, entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9
 from sysdic import entries_buckets
@@ -39,8 +39,6 @@ handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-PY3 = sys.version_info[0] == 3
 
 if __name__ == '__main__':
     dicdir = sys.argv[1]
@@ -92,7 +90,7 @@ if __name__ == '__main__':
     logger.info('Extra entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
     
     # validate dictionary entries
-    SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)    
+    SYS_DIC = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
     print('Validate dictionary entries...')
     csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
     input_count = 0
@@ -105,10 +103,10 @@ if __name__ == '__main__':
                 input_count += 1
                 line = line.rstrip()
                 surface = line.split(',')[0]
-                logger.debug(u"check word id & entry for %s" % (surface if PY3 else unicode(surface)))
+                logger.debug(u"check word id & entry for %s" % (surface))
                 (matched, outputs) = SYS_DIC.matcher.run(surface.encode('utf8'), common_prefix_match=True)
                 if not matched:
-                    logger.debug('No match for %s' % (surface if PY3 else unicode(surface)))
+                    logger.debug('No match for %s' % (surface))
                     nomatch_count += 1
                 for o in outputs:
                     try:

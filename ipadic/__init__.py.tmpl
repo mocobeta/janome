@@ -81,7 +81,7 @@ def mmap_entries(compact = False):
         bucket = entries_buckets.DATA[i]
         fp = open(os.path.join(base_dir, 'entries_compact%d.py' % i), 'rb')
         mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
-        mm_idx = import_module('.entries_compact%d_idx' % i, 'sysdic')
+        mm_idx = import_module('.entries_compact%d_idx' % i, 'janome.sysdic')
         __open_files.append(fp)
         __mmap_entries_compact[bucket] = (mm, mm_idx.DATA)
     if not compact:
@@ -90,7 +90,7 @@ def mmap_entries(compact = False):
             bucket = entries_buckets.DATA[i]
             fp = open(os.path.join(base_dir, 'entries_extra%d.py' % i), 'rb')
             mm = mmap.mmap(fp.fileno(), 0, access=mmap.ACCESS_READ)
-            mm_idx = import_module('.entries_extra%d_idx' % i, 'sysdic')
+            mm_idx = import_module('.entries_extra%d_idx' % i, 'janome.sysdic')
             __open_files.append(fp)
             __mmap_entries_extra[bucket] = (mm, mm_idx.DATA)
     return (__mmap_entries_compact, __mmap_entries_extra, __open_files)

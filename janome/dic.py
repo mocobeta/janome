@@ -19,8 +19,8 @@ import os
 import io
 import pickle
 import gzip
-from struct import pack
-from .fst import Matcher, create_minimum_transducer, compileFST, unpack_uint
+from struct import pack, unpack
+from .fst import Matcher, create_minimum_transducer, compileFST
 import traceback
 import logging
 import sys
@@ -29,6 +29,7 @@ import itertools
 import pkgutil
 import zlib
 import base64
+from functools import lru_cache
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
@@ -37,23 +38,6 @@ handler.setLevel(logging.WARN)
 formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-try:
-    from functools import lru_cache
-except ImportError:
-    from functools import wraps
-    def lru_cache(**kwargs):
-        def _dummy(function):
-            @wraps(function)
-            def __dummy(*args, **kwargs):
-                return function(*args, **kwargs)
-            return __dummy
-        return _dummy
-
-
-PY3 = sys.version_info[0] == 3
-
-SYSDIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sysdic')
 
 MODULE_FST_DATA = 'fst_data%d.py'
 MODULE_ENTRIES_EXTRA = 'entries_extra%d.py'
@@ -140,10 +124,10 @@ def _save_as_module(file, data, binary=False):
         f.write(u'DATA=')
         if binary:
             f.write('"')
-            f.write(base64.b64encode(data))
+            f.write(base64.b64encode(data).decode('ascii'))
             f.write('"')
         else:
-            f.write(str(data).replace('\\\\', '\\') if PY3 else unicode(data))
+            f.write(str(data).replace('\\\\', '\\'))
         f.flush()
 
 
@@ -174,7 +158,7 @@ def _save_entry_as_module_compact(file, morph_id, entry):
             _pos1 = f.tell()
             f_idx.write('%d:%d,' % (morph_id, _pos1))
             s = u"u'%s',%s,%s,%d" % (
-                entry[0].encode('unicode_escape').decode('ascii') if PY3 else entry[0].encode('unicode_escape'),
+                entry[0].encode('unicode_escape').decode('ascii'),
                 entry[1],
                 entry[2],
                 entry[3])
@@ -190,12 +174,12 @@ def _save_entry_as_module_extra(file, morph_id, entry):
             _pos1 = f.tell()
             f_idx.write('%d:%d,' % (morph_id, _pos1))
             s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
-                entry[4].encode('unicode_escape').decode('ascii') if PY3 else entry[4].encode('unicode_escape'),
-                entry[5].encode('unicode_escape').decode('ascii') if PY3 else entry[5].encode('unicode_escape'),
-                entry[6].encode('unicode_escape').decode('ascii') if PY3 else entry[6].encode('unicode_escape'),
-                entry[7].encode('unicode_escape').decode('ascii') if PY3 else entry[7].encode('unicode_escape'),
-                entry[8].encode('unicode_escape').decode('ascii') if PY3 else entry[8].encode('unicode_escape'),
-                entry[9].encode('unicode_escape').decode('ascii') if PY3 else entry[9].encode('unicode_escape'))
+                entry[4].encode('unicode_escape').decode('ascii'),
+                entry[5].encode('unicode_escape').decode('ascii'),
+                entry[6].encode('unicode_escape').decode('ascii'),
+                entry[7].encode('unicode_escape').decode('ascii'),
+                entry[8].encode('unicode_escape').decode('ascii'),
+                entry[9].encode('unicode_escape').decode('ascii'))
             f.write(s)
             f.write('),')
 
@@ -217,13 +201,13 @@ class Dictionary(object):
         try:
             res = []
             for e in outputs:
-                num = unpack_uint(e)
+                num = unpack('I', e)[0]
                 res.append((num,) + self.entries[num][:4])
             return res
         except Exception as e:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logger.error('input=%s' % s)
-            logger.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            logger.error('outputs=%s' % str(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -233,7 +217,7 @@ class Dictionary(object):
         except Exception as e:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logger.error('input=%s' % s)
-            logger.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            logger.error('outputs=%s' % str(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -260,45 +244,43 @@ class MMapDictionary(object):
         try:
             matched_entries = []
             for e in outputs:
-                idx = unpack_uint(e)
-                bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys())) if PY3 \
-                    else filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys())[0]
+                idx = unpack('I', e)[0]
+                bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys()))
                 mm, mm_idx = self.entries_compact[bucket]
                 _pos1s = mm_idx[idx] + 2
-                _pos1e = mm.find(b"',", _pos1s) if PY3 else mm.find("',", _pos1s)
+                _pos1e = mm.find(b"',", _pos1s)
                 _pos2s = _pos1e + 2
-                _pos2e = mm.find(b",", _pos2s) if PY3 else mm.find(",", _pos2s)
+                _pos2e = mm.find(b",", _pos2s)
                 _pos3s = _pos2e + 1
-                _pos3e = mm.find(b",", _pos3s) if PY3 else mm.find(",", _pos3s)
+                _pos3e = mm.find(b",", _pos3s)
                 _pos4s = _pos3e + 1
-                _pos4e = mm.find(b")", _pos4s) if PY3 else mm.find(")", _pos4s)
+                _pos4e = mm.find(b")", _pos4s)
                 _entry = (mm[_pos1s:_pos1e].decode('unicode_escape'), int(mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
                 matched_entries.append((idx,) + _entry)
             return matched_entries
         except Exception as e:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logger.error('input=%s' % s)
-            logger.error('outputs=%s' % str(outputs) if PY3 else unicode(outputs))
+            logger.error('outputs=%s' % str(outputs))
             traceback.format_exc()
             sys.exit(1)
 
     def lookup_extra(self, idx):
         try:
-            bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_extra.keys())) if PY3 \
-               else filter(lambda b: idx >= b[0] and idx < b[1], self.entries_extra.keys())[0]
+            bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_extra.keys()))
             mm, mm_idx = self.entries_extra[bucket]
             _pos1s = mm_idx[idx] + 2
-            _pos1e = mm.find(b"',u'", _pos1s) if PY3 else mm.find("',u'", _pos1s)
+            _pos1e = mm.find(b"',u'", _pos1s)
             _pos2s = _pos1e + 4
-            _pos2e = mm.find(b"',u'", _pos2s) if PY3 else mm.find("',u'", _pos2s)
+            _pos2e = mm.find(b"',u'", _pos2s)
             _pos3s = _pos2e + 4
-            _pos3e = mm.find(b"',u'", _pos3s) if PY3 else mm.find("',u'", _pos3s)
+            _pos3e = mm.find(b"',u'", _pos3s)
             _pos4s = _pos3e + 4
-            _pos4e = mm.find(b"',u'", _pos4s) if PY3 else mm.find("',u'", _pos4s)
+            _pos4e = mm.find(b"',u'", _pos4s)
             _pos5s = _pos4e + 4
-            _pos5e = mm.find(b"',u'", _pos5s) if PY3 else mm.find("',u'", _pos5s)
+            _pos5e = mm.find(b"',u'", _pos5s)
             _pos6s = _pos5e + 4
-            _pos6e = mm.find(b"')", _pos6s) if PY3 else mm.find("')", _pos6s)
+            _pos6e = mm.find(b"')", _pos6s)
             return (
                 mm[_pos1s:_pos1e].decode('unicode_escape'), mm[_pos2s:_pos2e].decode('unicode_escape'), mm[_pos3s:_pos3e].decode('unicode_escape'),
                 mm[_pos4s:_pos4e].decode('unicode_escape'), mm[_pos5s:_pos5e].decode('unicode_escape'), mm[_pos6s:_pos6e].decode('unicode_escape')

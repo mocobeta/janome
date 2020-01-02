@@ -64,8 +64,6 @@ from .tokenizer import Tokenizer
 from .charfilter import *
 from .tokenfilter import *
 
-PY3 = sys.version_info[0] == 3
-
 class Analyzer(object):
     u"""
     An Analyzer analyzes Japanese texts with customized :class:`.CharFilter` chain, :class:`.Tokenizer` and :class:`.TokenFilter` chain.
