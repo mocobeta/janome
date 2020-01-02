@@ -3,7 +3,7 @@
 1. Make sure that all tests are OK.
 
 ```
-$ python -m unittest discover tests/ 
+$ python setup.py test
 ```
 
 2. Update CHANGES.txt.

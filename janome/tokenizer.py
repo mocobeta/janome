@@ -104,8 +104,6 @@ except ImportError:
     sys.path.insert(0, parent_dir)
     from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 
-PY3 = sys.version_info[0] == 3
-
 class Token:
     u"""
     A Token object contains all information for a token.
@@ -129,18 +127,8 @@ class Token:
         self.node_type = node.node_type
 
     def __str__(self):
-        if PY3:
-            return '%s\t%s,%s,%s,%s,%s,%s' % \
-               (self.surface, self.part_of_speech, self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic)
-        else:
-            return '%s\t%s,%s,%s,%s,%s,%s' % \
-               (self.surface.encode('utf-8'),
-                self.part_of_speech.encode('utf-8'),
-                self.infl_type.encode('utf-8'),
-                self.infl_form.encode('utf-8'),
-                self.base_form.encode('utf-8'),
-                self.reading.encode('utf-8'),
-                self.phonetic.encode('utf-8'))
+        return '%s\t%s,%s,%s,%s,%s,%s' % \
+           (self.surface, self.part_of_speech, self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic)
 
 
 class Tokenizer:

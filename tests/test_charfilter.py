@@ -16,8 +16,6 @@
 
 import os, sys
 
-PY3 = sys.version_info[0] == 3
-
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)

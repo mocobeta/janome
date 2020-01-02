@@ -26,8 +26,6 @@ from janome.lattice import NodeType
 
 import unittest
 
-PY3 = sys.version_info[0] == 3
-
 
 class TestTokenizer(unittest.TestCase):
     def test_tokenize(self):
@@ -169,43 +167,31 @@ class TestTokenizer(unittest.TestCase):
     def test_tokenize_large_text(self):
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = Tokenizer().tokenize(text)
 
     def test_tokenize_large_text2(self):
         with open('tests/text_large.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = Tokenizer().tokenize(text)
 
     def test_tokenize_large_text3(self):
         with open('tests/text_large_nonjp.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = Tokenizer().tokenize(text)
 
     def test_tokenize_large_text_stream(self):
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = list(Tokenizer().tokenize(text, stream = True))
 
     def test_tokenize_large_text_stream2(self):
         with open('tests/text_large.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = list(Tokenizer().tokenize(text, stream = True))
 
     def test_tokenize_large_text_stream3(self):
         with open('tests/text_large_nonjp.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = list(Tokenizer().tokenize(text, stream = True))
 
     def test_tokenize_wakati(self):
@@ -278,18 +264,13 @@ class TestTokenizer(unittest.TestCase):
 
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
-            if not PY3:
-                text = unicode(text)
             tokens = Tokenizer().tokenize(text, dotfile=dotfile)
         self.assertFalse(os.path.exists(dotfile))
 
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)
         self.assertEqual(detail, ','.join([token.part_of_speech,token.infl_type,token.infl_form,token.base_form,token.reading,token.phonetic]))
-        if PY3:
-            self.assertEqual(surface + '\t' + detail, str(token))
-        else:
-            self.assertEqual((surface + '\t' + detail).encode('utf-8'), str(token))
+        self.assertEqual(surface + '\t' + detail, str(token))
         self.assertEqual(node_type, token.node_type)
 
 if __name__ == '__main__':
