@@ -16,7 +16,6 @@
 
 import sys, os
 import heapq
-PY3 = sys.version_info[0] == 3
 
 class NodeType:
     SYS_DICT = "SYS_DICT"
@@ -264,11 +263,7 @@ class Lattice:
             f.write('}\n')
 
     def __open_file(self, filename, mode, encoding):
-        if PY3:
-            return open(filename, mode=mode, encoding=encoding)
-        else:
-            import codecs
-            return codecs.open(filename, mode, encoding)
+        return open(filename, mode=mode, encoding=encoding)
 
     def __str__(self):
         return '\n'.join(','.join(str(node) for node in nodes) for nodes in self.snodes)

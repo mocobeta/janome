@@ -23,8 +23,6 @@ from argparse import ArgumentParser
 import sys
 import subprocess
 
-PY3 = sys.version_info[0] == 3
-
 import signal
 def signal_handler(signal, frame):
     sys.exit(0)
@@ -51,12 +49,9 @@ def main():
     dotfile = args.gv_out if args.graphviz else ''
     while True:
         try:
-            line = input() if PY3 else raw_input().decode(args.enc)
+            line = input()
             for token in t.tokenize(line, dotfile=dotfile):
-                if PY3:
-                    print(token)
-                else:
-                    print(str(token).decode('utf8'))
+                print(token)
         except EOFError:
             break
 
