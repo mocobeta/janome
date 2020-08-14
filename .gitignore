@@ -2,13 +2,13 @@
 *.pyo
 *.egg
 *.DS_store
-Janome.egg-info
+*.egg-info
 docs/*/_build
 dist
 build/
 .idea/
 .vscode/
-venv*/
+.venv
 .python-version
 sysdic
 work

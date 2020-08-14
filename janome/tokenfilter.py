@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +14,9 @@
 
 from collections import defaultdict
 
+
 class TokenFilter(object):
-    u"""
+    """
     Base TokenFilter class.
 
     A TokenFilter modifies or transforms the input token sequence according to the rule described in apply() method.
@@ -25,6 +24,7 @@ class TokenFilter(object):
 
     Added in *version 0.3.4*
     """
+
     def filter(self, tokens):
         return self.apply(tokens)
 
@@ -33,11 +33,12 @@ class TokenFilter(object):
 
 
 class LowerCaseFilter(TokenFilter):
-    u"""
+    """
     A LowerCaseFilter converts the surface and base_form of tokens to lowercase.
 
     Added in *version 0.3.4*
     """
+
     def apply(self, tokens):
         for token in tokens:
             token.surface = token.surface.lower()
@@ -46,28 +47,32 @@ class LowerCaseFilter(TokenFilter):
 
 
 class UpperCaseFilter(TokenFilter):
-    u"""
+    """
     An UpperCaseFilter converts the surface and base_form of tokens to uppercase.
 
     Added in *version 0.3.4*
     """
+
     def apply(self, tokens):
         for token in tokens:
             token.surface = token.surface.upper()
             token.base_form = token.base_form.upper()
             yield token
-    
+
 
 class POSStopFilter(TokenFilter):
     u"""
-    A POSStopFilter removes tokens associated with part-of-speech tags listed in the stop tags list and keeps other tokens.
+    A POSStopFilter removes tokens associated with part-of-speech tags
+    listed in the stop tags list and keeps other tokens.
 
-    Tag matching rule is prefix-matching. e.g., if '動詞' is given as a stop tag, '動詞,自立,*,*' and '動詞,非自立,*,*' (or so) are removed.
+    Tag matching rule is prefix-matching. e.g., if '動詞' is given as a stop tag,
+    '動詞,自立,*,*' and '動詞,非自立,*,*' (or so) are removed.
 
     Added in *version 0.3.4*
     """
+
     def __init__(self, pos_list):
-        u"""
+        """
         Initialize POSStopFilter object.
 
         :param pos_list: stop part-of-speech tags list.
@@ -82,15 +87,18 @@ class POSStopFilter(TokenFilter):
 
 
 class POSKeepFilter(TokenFilter):
-    u"""
-    A POSKeepFilter keeps tokens associated with part-of-speech tags listed in the keep tags list and removes other tokens.
+    """
+    A POSKeepFilter keeps tokens associated with part-of-speech tags
+    listed in the keep tags list and removes other tokens.
 
-    Tag matching rule is prefix-matching. e.g., if '動詞' is given as a keep tag, '動詞,自立,*,*' and '動詞,非自立,*,*' (or so) are kept.
+    Tag matching rule is prefix-matching. e.g., if '動詞' is given as a keep tag,
+    '動詞,自立,*,*' and '動詞,非自立,*,*' (or so) are kept.
 
     Added in *version 0.3.4*
     """
+
     def __init__(self, pos_list):
-        u"""
+        """
         Initialize POSKeepFilter object.
 
         :param pos_list: keep part-of-speech tags list.
@@ -104,7 +112,7 @@ class POSKeepFilter(TokenFilter):
 
 
 class CompoundNounFilter(TokenFilter):
-    u"""
+    """
     A CompoundNounFilter generates compound nouns.
 
     This Filter joins contiguous nouns.
@@ -113,6 +121,7 @@ class CompoundNounFilter(TokenFilter):
 
     Added in *version 0.3.4*
     """
+
     def apply(self, tokens):
         _ret = None
         for token in tokens:
@@ -134,18 +143,20 @@ class CompoundNounFilter(TokenFilter):
 
 
 class ExtractAttributeFilter(TokenFilter):
-    u"""
+    """
     An ExtractAttributeFilter extracts a specified attribute of Token.
 
     **NOTES** This filter must placed the last of token filter chain because return values are not tokens but strings.
 
     Added in *version 0.3.4*
     """
+
     def __init__(self, att):
-        u"""
+        """
         Initialize ExtractAttributeFilter object.
 
-        :param att: attribute name should be extraced from a token. valid values for *att* are 'surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
+        :param att: attribute name should be extraced from a token. valid values for *att* are 'surface',
+                    'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
         """
         if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
             raise Exception('Unknown attribute name: %s' % att)
@@ -157,20 +168,23 @@ class ExtractAttributeFilter(TokenFilter):
 
 
 class TokenCountFilter(TokenFilter):
-    u"""
+    """
     An TokenCountFilter counts word frequencies in the input text. Here, 'word' means an attribute of Token.
 
     This filter generates word-frequency pairs sorted in descending order of frequency.
 
-    **NOTES** This filter must placed the last of token filter chain because return values are not tokens but string-integer tuples.
+    **NOTES** This filter must placed the last of token filter chain because return values are not tokens
+    but string-integer tuples.
 
     Added in *version 0.3.5*
     """
+
     def __init__(self, att='surface', sorted=False):
-        u"""
+        """
         Initialize TokenCountFilter object.
 
-        :param att: attribute name should be extraced from a token. valid values for *att* are 'surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
+        :param att: attribute name should be extraced from a token. valid values for *att* are 'surface',
+                    'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
         :param sorted: sort items by term frequency
         """
         if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:

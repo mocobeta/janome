@@ -1,0 +1,4 @@
+[flake8]
+ignore=W605
+exclude=.git,__pycache__,docs,sysdic,work,mecab-ipadic-2.7.0-20070801,benchmark
+max-line-length=120

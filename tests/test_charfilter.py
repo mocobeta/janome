@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,31 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os, sys
+import unittest
+from janome.charfilter import RegexReplaceCharFilter, UnicodeNormalizeCharFilter
+import os
+import sys
 
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from janome.charfilter import *
-
-import unittest
 
 class TestCharFilter(unittest.TestCase):
     def test_regex_replace_charfilter(self):
-        cf = RegexReplaceCharFilter(u'蛇の目', u'janome')
-        self.assertEqual(u'janomeは形態素解析器です。', cf.apply(u'蛇の目は形態素解析器です。'))
+        cf = RegexReplaceCharFilter('蛇の目', 'janome')
+        self.assertEqual('janomeは形態素解析器です。', cf.apply('蛇の目は形態素解析器です。'))
 
-        cf = RegexReplaceCharFilter(u'\s+', u'')
-        self.assertEqual(u'abcd', cf.apply(u' a  b c   d  '))
+        cf = RegexReplaceCharFilter('\s+', '')
+        self.assertEqual('abcd', cf.apply(' a  b c   d  '))
 
-        cf = RegexReplaceCharFilter(u'', u'')
-        self.assertEqual(u'abc あいうえお', u'abc あいうえお')
+        cf = RegexReplaceCharFilter('', '')
+        self.assertEqual('abc あいうえお', 'abc あいうえお')
 
     def test_unicode_normalize_charfilter(self):
         cf = UnicodeNormalizeCharFilter()
-        self.assertEqual(u'Python', cf.apply(u'Ｐｙｔｈｏｎ'))
-        self.assertEqual(u'メガバイト', cf.apply(u'ﾒｶﾞﾊﾞｲﾄ'))
+        self.assertEqual('Python', cf.apply('Ｐｙｔｈｏｎ'))
+        self.assertEqual('メガバイト', cf.apply('ﾒｶﾞﾊﾞｲﾄ'))
 
 
 if __name__ == '__main__':

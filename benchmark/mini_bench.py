@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +16,13 @@ setup = """
 from janome.tokenizer import Tokenizer
 t = Tokenizer()
 # janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
-s = u'janome (\u86c7\u306e\u76ee) \u306f, Pure Python \u3067\u66f8\u304b\u308c\u305f, \u8f9e\u66f8\u5185\u5305\u306e\u5f62\u614b\u7d20\u89e3\u6790\u5668\u3067\u3059.'
+s = 'janome (\u86c7\u306e\u76ee) \u306f, Pure Python \u3067\u66f8\u304b\u308c\u305f, \u8f9e\u66f8\u5185\u5305\u306e\u5f62\u614b\u7d20\u89e3\u6790\u5668\u3067\u3059.'
 """
 
 
 if __name__ == '__main__':
-    import timeit, sys
+    import timeit
+    import sys
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 100
 
     print("** initialize Tokenizer object **")

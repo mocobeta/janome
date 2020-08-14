@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
 import unicodedata
+import re
+
 
 class CharFilter(object):
-    u"""
-    Base CharFilter class. 
+    """
+    Base CharFilter class.
 
     A CharFilter modifies or transforms the input text according to the rule described in apply() method.
     Subclasses must implement apply() method.
 
     Added in *version 0.3.4*
     """
+
     def filter(self, text):
         return self.apply(text)
 
@@ -34,11 +34,12 @@ class CharFilter(object):
 
 
 class RegexReplaceCharFilter(CharFilter):
-    u"""
+    """
     RegexReplaceCharFilter replaces string matched with a regular expression pattern to replacement string.
 
     Added in *version 0.3.4*
     """
+
     def __init__(self, pat, repl):
         """
         Initialize RegexReplaceCharFilter with a regular expression pattern string and replacement.
@@ -54,18 +55,20 @@ class RegexReplaceCharFilter(CharFilter):
 
 
 class UnicodeNormalizeCharFilter(CharFilter):
-    u"""
+    """
     UnicodeNormalizeCharFilter normalizes Unicode string.
 
     Added in *version 0.3.4*
     """
+
     def __init__(self, form='NFKC'):
         """
         Initialize UnicodeNormalizeCharFilter with normalization form.
 
-        See also `unicodedata.normalize <https://docs.python.org/3.6/library/unicodedata.html#unicodedata.normalize>`_ for details.
+        See also `unicodedata.normalize <https://docs.python.org/3.6/library/unicodedata.html#unicodedata.normalize>`_
 
-        :param form: (Optional) normalization form. valid values for *form* are 'NFC', 'NFKC', 'NFD', and 'NFKD'. default is 'NFKC'
+        :param form: (Optional) normalization form. valid values for *form* are 'NFC', 'NFKC', 'NFD', and 'NFKD'.
+                     default is 'NFKC'
         """
         self.form = form
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +21,7 @@ from test_charfilter import TestCharFilter
 from test_tokenfilter import TestTokenFilter
 from test_analyzer import TestAnalyzer
 
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTests(unittest.makeSuite(TestFST))
@@ -33,6 +32,7 @@ def suite():
     suite.addTests(unittest.makeSuite(TestTokenFilter))
     suite.addTests(unittest.makeSuite(TestAnalyzer))
     return suite
+
 
 mySuite = suite()
 runner = unittest.TextTestRunner()

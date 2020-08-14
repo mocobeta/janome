@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +13,41 @@
 # limitations under the License.
 
 
-import os, sys
+import glob
+import io
+import logging
+import struct
+from sysdic import entries_buckets
+from sysdic import (
+    entries_extra0,
+    entries_extra1,
+    entries_extra2,
+    entries_extra3,
+    entries_extra4,
+    entries_extra5,
+    entries_extra6,
+    entries_extra7,
+    entries_extra8,
+    entries_extra9
+)
+from sysdic import (
+    entries_compact0,
+    entries_compact1,
+    entries_compact2,
+    entries_compact3,
+    entries_compact4,
+    entries_compact5,
+    entries_compact6,
+    entries_compact7,
+    entries_compact8,
+    entries_compact9
+)
+from sysdic import all_fstdata, entries, connections, chardef, unknowns
+from janome.dic import SystemDictionary
+import os
+import sys
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
-
-from janome.dic import SystemDictionary
-from sysdic import all_fstdata, entries, connections, chardef, unknowns
-from sysdic import entries_compact0, entries_compact1, entries_compact2, entries_compact3, entries_compact4, entries_compact5, entries_compact6, entries_compact7, entries_compact8, entries_compact9
-from sysdic import entries_extra0, entries_extra1, entries_extra2, entries_extra3, entries_extra4, entries_extra5, entries_extra6, entries_extra7, entries_extra8, entries_extra9
-from sysdic import entries_buckets
-
-import struct
-import logging
-import sys
-import io
-import glob
-import traceback
 
 logger = logging.getLogger('dic_validator')
 logger.setLevel(logging.INFO)
@@ -66,7 +83,8 @@ if __name__ == '__main__':
     _ok8 = _start == entries_buckets.DATA[8][0] and _end == entries_buckets.DATA[8][1]
     _start, _end = min(entries_compact9.DATA.keys()), max(entries_compact9.DATA.keys()) + 1
     _ok9 = _start == entries_buckets.DATA[9][0] and _end == entries_buckets.DATA[9][1]
-    logger.info('Compact entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
+    logger.info('Compact entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' %
+                (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
     _start, _end = min(entries_extra0.DATA.keys()), max(entries_extra0.DATA.keys()) + 1
     _ok0 = _start == entries_buckets.DATA[0][0] and _end == entries_buckets.DATA[0][1]
     _start, _end = min(entries_extra1.DATA.keys()), max(entries_extra1.DATA.keys()) + 1
@@ -87,8 +105,9 @@ if __name__ == '__main__':
     _ok8 = _start == entries_buckets.DATA[8][0] and _end == entries_buckets.DATA[8][1]
     _start, _end = min(entries_extra9.DATA.keys()), max(entries_extra9.DATA.keys()) + 1
     _ok9 = _start == entries_buckets.DATA[9][0] and _end == entries_buckets.DATA[9][1]
-    logger.info('Extra entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' % (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
-    
+    logger.info('Extra entries buckets check: %s, %s, %s, %s, %s, %s, %s, %s, %s, %s' %
+                (_ok0, _ok1, _ok2, _ok3, _ok4, _ok5, _ok6, _ok7, _ok8, _ok9))
+
     # validate dictionary entries
     SYS_DIC = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
     print('Validate dictionary entries...')
@@ -131,7 +150,6 @@ if __name__ == '__main__':
     print('invalid matches = %d' % invalid_match_count)
     print('invalid outputs = %d' % invalid_output_count)
 
-
     # validate connection costs
     print('Validate connection costs...')
     matrix_file = os.path.join(dicdir, 'matrix.def')
@@ -146,7 +164,7 @@ if __name__ == '__main__':
                     inv_cost = SYS_DIC.connections[int(id1)][int(id2)]
                     print('Invalid connection cost %d for (%s, %s)' % (inv_cost, id1, id2))
                     invalid_count += 1
-            except:
+            except Exception:
                 print('Cannot find connection cost for (%s, %s' % (id1, id2))
                 invalid_count += 1
     print('invalid counts = %d' % invalid_count)

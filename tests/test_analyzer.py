@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os, sys
+import unittest
+from janome.dic import MMapSystemDictionary
+from janome.tokenfilter import CompoundNounFilter, POSStopFilter, LowerCaseFilter, ExtractAttributeFilter
+from janome.charfilter import UnicodeNormalizeCharFilter, RegexReplaceCharFilter
+from janome.tokenizer import Tokenizer
+from janome.analyzer import Analyzer
+import os
+import sys
 
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from janome.analyzer import Analyzer
-from janome.tokenizer import Tokenizer
-from janome.charfilter import *
-from janome.tokenfilter import *
-from janome.dic import *
-
-import unittest
 
 class TestAnalyzer(unittest.TestCase):
     def test_analyzer_default(self):
@@ -41,7 +39,7 @@ class TestAnalyzer(unittest.TestCase):
     def test_analyzer_custom(self):
         char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'\s+', u'')]
         tokenizer = Tokenizer(mmap=True)
-        token_filters = [CompoundNounFilter(), POSStopFilter([u'記号',u'助詞']), LowerCaseFilter()]
+        token_filters = [CompoundNounFilter(), POSStopFilter([u'記号', u'助詞']), LowerCaseFilter()]
         a = Analyzer(char_filters, tokenizer, token_filters)
         self.assertTrue(len(a.char_filters) == 2)
         self.assertIsInstance(a.char_filters[0], UnicodeNormalizeCharFilter)
@@ -55,11 +53,12 @@ class TestAnalyzer(unittest.TestCase):
     def test_analyze(self):
         char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
         tokenizer = Tokenizer()
-        token_filters = [CompoundNounFilter(), POSStopFilter([u'記号', u'助詞']), LowerCaseFilter(), ExtractAttributeFilter('surface')]
+        token_filters = [CompoundNounFilter(), POSStopFilter([u'記号', u'助詞']), LowerCaseFilter(),
+                         ExtractAttributeFilter('surface')]
         a = Analyzer(char_filters, tokenizer, token_filters)
         tokens = a.analyze(u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。')
         self.assertEqual([u'janome', u'pure', u'python', u'な', u'形態素解析器', u'です'], list(tokens))
-        
+
 
 if __name__ == '__main__':
     unittest.main()
