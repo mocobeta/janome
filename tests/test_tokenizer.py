@@ -27,7 +27,7 @@ sys.path.insert(0, parent_dir)
 class TestTokenizer(unittest.TestCase):
     def test_tokenize(self):
         text = 'すもももももももものうち'
-        tokens = Tokenizer().tokenize(text)
+        tokens = list(Tokenizer().tokenize(text))
         self.assertEqual(7, len(tokens))
         self._check_token(tokens[0], 'すもも', '名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
         self._check_token(tokens[1], 'も', '助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
@@ -39,7 +39,7 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenize_mmap(self):
         text = 'すもももももももものうち'
-        tokens = Tokenizer(mmap=True).tokenize(text)
+        tokens = list(Tokenizer(mmap=True).tokenize(text))
         self.assertEqual(7, len(tokens))
         self._check_token(tokens[0], 'すもも', '名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
         self._check_token(tokens[1], 'も', '助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)
@@ -51,27 +51,27 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenize2(self):
         text = '𠮷野屋'
-        tokens = Tokenizer().tokenize(text)
+        tokens = list(Tokenizer().tokenize(text))
         self.assertEqual(3, len(tokens))
         self._check_token(tokens[0], '𠮷', '記号,一般,*,*,*,*,𠮷,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[1], '野', '名詞,一般,*,*,*,*,野,ノ,ノ', NodeType.SYS_DICT)
         self._check_token(tokens[2], '屋', '名詞,接尾,一般,*,*,*,屋,ヤ,ヤ', NodeType.SYS_DICT)
 
         text = '한국어'
-        tokens = Tokenizer().tokenize(text)
+        tokens = list(Tokenizer().tokenize(text))
         self.assertEqual(1, len(tokens))
         self._check_token(tokens[0], '한국어', '記号,一般,*,*,*,*,한국어,*,*', NodeType.UNKNOWN)
 
     def test_tokenize_patched_dic(self):
         text = '令和元年'
-        tokens = Tokenizer().tokenize(text)
+        tokens = list(Tokenizer().tokenize(text))
         self.assertEqual(2, len(tokens))
         self._check_token(tokens[0], '令和', '名詞,固有名詞,一般,*,*,*,令和,レイワ,レイワ', NodeType.SYS_DICT)
         self._check_token(tokens[1], '元年', '名詞,一般,*,*,*,*,元年,ガンネン,ガンネン', NodeType.SYS_DICT)
 
     def test_tokenize_unknown(self):
         text = '2009年10月16日'
-        tokens = Tokenizer().tokenize(text)
+        tokens = list(Tokenizer().tokenize(text))
         self.assertEqual(6, len(tokens))
         self._check_token(tokens[0], '2009', '名詞,数,*,*,*,*,2009,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[1], '年', '名詞,接尾,助数詞,*,*,*,年,ネン,ネン', NodeType.SYS_DICT)
@@ -81,7 +81,7 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[5], '日', '名詞,接尾,助数詞,*,*,*,日,ニチ,ニチ', NodeType.SYS_DICT)
 
         text = u'マルチメディア放送（VHF-HIGH帯）「モバキャス」'
-        tokens = Tokenizer().tokenize(text)
+        tokens = list(Tokenizer().tokenize(text))
         self.assertEqual(11, len(tokens))
         self._check_token(tokens[0], 'マルチメディア', '名詞,一般,*,*,*,*,マルチメディア,マルチメディア,マルチメディア', NodeType.SYS_DICT)
         self._check_token(tokens[1], '放送', '名詞,サ変接続,*,*,*,*,放送,ホウソウ,ホーソー', NodeType.SYS_DICT)
@@ -97,7 +97,7 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenize_unknown_no_baseform(self):
         text = '2009年10月16日'
-        tokens = Tokenizer().tokenize(text, baseform_unk=False)
+        tokens = list(Tokenizer().tokenize(text, baseform_unk=False))
         self.assertEqual(6, len(tokens))
         self._check_token(tokens[0], '2009', '名詞,数,*,*,*,*,*,*,*', NodeType.UNKNOWN)
         self._check_token(tokens[1], '年', '名詞,接尾,助数詞,*,*,*,年,ネン,ネン', NodeType.SYS_DICT)
@@ -107,7 +107,7 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[5], '日', '名詞,接尾,助数詞,*,*,*,日,ニチ,ニチ', NodeType.SYS_DICT)
 
         text = 'マルチメディア放送（VHF-HIGH帯）「モバキャス」'
-        tokens = Tokenizer().tokenize(text, baseform_unk=False)
+        tokens = list(Tokenizer().tokenize(text, baseform_unk=False))
         self.assertEqual(11, len(tokens))
         self._check_token(tokens[0], 'マルチメディア', '名詞,一般,*,*,*,*,マルチメディア,マルチメディア,マルチメディア', NodeType.SYS_DICT)
         self._check_token(tokens[1], '放送', '名詞,サ変接続,*,*,*,*,放送,ホウソウ,ホーソー', NodeType.SYS_DICT)
@@ -124,7 +124,7 @@ class TestTokenizer(unittest.TestCase):
     def test_tokenize_with_userdic(self):
         text = '東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
         udic_file = os.path.join(parent_dir, 'tests/user_ipadic.csv')
-        tokens = Tokenizer(udic_file).tokenize(text)
+        tokens = list(Tokenizer(udic_file).tokenize(text))
         self.assertEqual(14, len(tokens))
         self._check_token(tokens[0], '東京スカイツリー',
                           '名詞,固有名詞,一般,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー', NodeType.USER_DICT)
@@ -147,7 +147,7 @@ class TestTokenizer(unittest.TestCase):
     def test_tokenize_with_simplified_userdic(self):
         text = '東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
         udic_file = os.path.join(parent_dir, 'tests/user_simpledic.csv')
-        tokens = Tokenizer(udic_file, udic_type='simpledic').tokenize(text)
+        tokens = list(Tokenizer(udic_file, udic_type='simpledic').tokenize(text))
         self.assertEqual(14, len(tokens))
         self._check_token(tokens[0], '東京スカイツリー',
                           'カスタム名詞,*,*,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー', NodeType.USER_DICT)
@@ -182,24 +182,9 @@ class TestTokenizer(unittest.TestCase):
             text = f.read()
             Tokenizer().tokenize(text)
 
-    def test_tokenize_large_text_stream(self):
-        with open('tests/text_lemon.txt', encoding='utf-8') as f:
-            text = f.read()
-            list(Tokenizer().tokenize(text, stream=True))
-
-    def test_tokenize_large_text_stream2(self):
-        with open('tests/text_large.txt', encoding='utf-8') as f:
-            text = f.read()
-            list(Tokenizer().tokenize(text, stream=True))
-
-    def test_tokenize_large_text_stream3(self):
-        with open('tests/text_large_nonjp.txt', encoding='utf-8') as f:
-            text = f.read()
-            list(Tokenizer().tokenize(text, stream=True))
-
     def test_tokenize_wakati(self):
         text = 'すもももももももものうち'
-        tokens = Tokenizer(wakati=True).tokenize(text, wakati=True)
+        tokens = list(Tokenizer(wakati=True).tokenize(text, wakati=True))
         self.assertEqual(7, len(tokens))
         self.assertEqual(tokens[0], 'すもも')
         self.assertEqual(tokens[1], 'も')
@@ -212,7 +197,7 @@ class TestTokenizer(unittest.TestCase):
     def test_tokenize_with_userdic_wakati(self):
         text = '東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'
         udic_file = os.path.join(parent_dir, 'tests/user_ipadic.csv')
-        tokens = Tokenizer(udic_file, wakati=True).tokenize(text, wakati=True)
+        tokens = list(Tokenizer(udic_file, wakati=True).tokenize(text, wakati=True))
         self.assertEqual(14, len(tokens))
         self.assertEqual(tokens[0], '東京スカイツリー')
         self.assertEqual(tokens[1], 'へ')
@@ -231,7 +216,7 @@ class TestTokenizer(unittest.TestCase):
 
     def test_tokenize_wakati_mode_only(self):
         text = 'すもももももももものうち'
-        tokens = Tokenizer(wakati=True).tokenize(text, wakati=False)
+        tokens = list(Tokenizer(wakati=True).tokenize(text, wakati=False))
         # 'wakati = True' parameter is ignored.
         self.assertEqual(7, len(tokens))
         self.assertEqual(tokens[0], 'すもも')
@@ -248,17 +233,8 @@ class TestTokenizer(unittest.TestCase):
         if os.path.exists(dotfile):
             os.remove(dotfile)
 
-        Tokenizer().tokenize(text, dotfile=dotfile)
+        list(Tokenizer().tokenize(text, dotfile=dotfile))
         self.assertTrue(os.path.exists(dotfile))
-
-    def test_tokenize_dotfile_stream(self):
-        text = 'すもももももももものうち'
-        dotfile = os.path.join(parent_dir, 'tests/lattice_must_not_exist.gv')
-        if os.path.exists(dotfile):
-            os.remove(dotfile)
-
-        Tokenizer().tokenize(text, dotfile=dotfile, stream=True)
-        self.assertFalse(os.path.exists(dotfile))
 
     def test_tokenize_dotfile_large_text(self):
         dotfile = os.path.join(parent_dir, 'tests/lattice_must_not_exist.gv')
@@ -267,7 +243,7 @@ class TestTokenizer(unittest.TestCase):
 
         with open('tests/text_lemon.txt', encoding='utf-8') as f:
             text = f.read()
-            Tokenizer().tokenize(text, dotfile=dotfile)
+            list(Tokenizer().tokenize(text, dotfile=dotfile))
         self.assertFalse(os.path.exists(dotfile))
 
     def _check_token(self, token, surface, detail, node_type):
