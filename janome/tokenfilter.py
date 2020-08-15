@@ -13,6 +13,9 @@
 # limitations under the License.
 
 from collections import defaultdict
+from typing import Iterator, List, Dict, Tuple, Any
+
+from .tokenizer import Token
 
 
 class TokenFilter(object):
@@ -25,10 +28,10 @@ class TokenFilter(object):
     Added in *version 0.3.4*
     """
 
-    def filter(self, tokens):
+    def filter(self, tokens: Iterator[Token]) -> Iterator[Any]:
         return self.apply(tokens)
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Any]:
         raise NotImplementedError
 
 
@@ -39,7 +42,7 @@ class LowerCaseFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
         for token in tokens:
             token.surface = token.surface.lower()
             token.base_form = token.base_form.lower()
@@ -53,7 +56,7 @@ class UpperCaseFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
         for token in tokens:
             token.surface = token.surface.upper()
             token.base_form = token.base_form.upper()
@@ -71,7 +74,7 @@ class POSStopFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, pos_list):
+    def __init__(self, pos_list: List[str]):
         """
         Initialize POSStopFilter object.
 
@@ -79,7 +82,7 @@ class POSStopFilter(TokenFilter):
         """
         self.pos_list = pos_list
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
         for token in tokens:
             if any(token.part_of_speech.startswith(pos) for pos in self.pos_list):
                 continue
@@ -97,7 +100,7 @@ class POSKeepFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, pos_list):
+    def __init__(self, pos_list: List[str]):
         """
         Initialize POSKeepFilter object.
 
@@ -105,7 +108,7 @@ class POSKeepFilter(TokenFilter):
         """
         self.pos_list = pos_list
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
         for token in tokens:
             if any(token.part_of_speech.startswith(pos) for pos in self.pos_list):
                 yield token
@@ -122,7 +125,7 @@ class CompoundNounFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
         _ret = None
         for token in tokens:
             if _ret:
@@ -151,7 +154,7 @@ class ExtractAttributeFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, att):
+    def __init__(self, att: str):
         """
         Initialize ExtractAttributeFilter object.
 
@@ -162,7 +165,7 @@ class ExtractAttributeFilter(TokenFilter):
             raise Exception('Unknown attribute name: %s' % att)
         self.att = att
 
-    def apply(self, tokens):
+    def apply(self, tokens: Iterator[Token]) -> Iterator[str]:
         for token in tokens:
             yield getattr(token, self.att)
 
@@ -171,7 +174,8 @@ class TokenCountFilter(TokenFilter):
     """
     An TokenCountFilter counts word frequencies in the input text. Here, 'word' means an attribute of Token.
 
-    This filter generates word-frequency pairs sorted in descending order of frequency.
+    This filter generates word-frequency pairs.
+    When `sorted` option is set to True, pairs are sorted in descending order of frequency.
 
     **NOTES** This filter must placed the last of token filter chain because return values are not tokens
     but string-integer tuples.
@@ -179,7 +183,7 @@ class TokenCountFilter(TokenFilter):
     Added in *version 0.3.5*
     """
 
-    def __init__(self, att='surface', sorted=False):
+    def __init__(self, att: str = 'surface', sorted: bool = False):
         """
         Initialize TokenCountFilter object.
 
@@ -192,8 +196,8 @@ class TokenCountFilter(TokenFilter):
         self.att = att
         self.sorted = sorted
 
-    def apply(self, tokens):
-        token_counts = defaultdict(int)
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Tuple[str, int]]:
+        token_counts: Dict[str, int] = defaultdict(int)
         for token in tokens:
             token_counts[getattr(token, self.att)] += 1
         if self.sorted:

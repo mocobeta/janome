@@ -57,6 +57,7 @@ Usage (word count with TokenCountFilter):
 うち: 1
 """
 
+from typing import List, Iterator, Any
 from .tokenizer import Tokenizer
 from .charfilter import CharFilter
 from .tokenfilter import TokenFilter
@@ -70,7 +71,8 @@ class Analyzer(object):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, char_filters=[], tokenizer=None, token_filters=[]):
+    def __init__(self, char_filters: List[CharFilter] = [], tokenizer: Tokenizer = None,
+                 token_filters: List[TokenFilter] = []):
         """
         Initialize Analyzer object with CharFilters, a Tokenizer and TokenFilters.
 
@@ -91,8 +93,8 @@ class Analyzer(object):
         self.char_filters = char_filters
         self.token_filters = token_filters
 
-    def analyze(self, text):
-        u"""
+    def analyze(self, text: str) -> Iterator[Any]:
+        """
         Analyze the input text with custom CharFilters, Tokenizer and TokenFilters.
 
         :param text: unicode string to be tokenized
@@ -104,5 +106,5 @@ class Analyzer(object):
             text = cfilter.filter(text)
         tokens = self.tokenizer.tokenize(text, wakati=False)
         for tfilter in self.token_filters:
-            tokens = tfilter.filter(tokens)
+            tokens = tfilter.filter(tokens)  # type: ignore
         return tokens

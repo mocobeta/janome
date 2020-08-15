@@ -26,10 +26,10 @@ class CharFilter(object):
     Added in *version 0.3.4*
     """
 
-    def filter(self, text):
+    def filter(self, text: str) -> str:
         return self.apply(text)
 
-    def apply(self, text):
+    def apply(self, text: str) -> str:
         raise NotImplementedError
 
 
@@ -40,7 +40,7 @@ class RegexReplaceCharFilter(CharFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, pat, repl):
+    def __init__(self, pat: str, repl: str):
         """
         Initialize RegexReplaceCharFilter with a regular expression pattern string and replacement.
 
@@ -50,7 +50,7 @@ class RegexReplaceCharFilter(CharFilter):
         self.pattern = re.compile(pat)
         self.replacement = repl
 
-    def apply(self, text):
+    def apply(self, text: str) -> str:
         return re.sub(self.pattern, self.replacement, text)
 
 
@@ -61,7 +61,7 @@ class UnicodeNormalizeCharFilter(CharFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, form='NFKC'):
+    def __init__(self, form: str = 'NFKC'):
         """
         Initialize UnicodeNormalizeCharFilter with normalization form.
 
@@ -72,5 +72,5 @@ class UnicodeNormalizeCharFilter(CharFilter):
         """
         self.form = form
 
-    def apply(self, text):
+    def apply(self, text: str) -> str:
         return unicodedata.normalize(self.form, text)
