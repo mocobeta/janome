@@ -1,3 +1,8 @@
+import shutil
+import os
+from janome.version import JANOME_VERSION
+from janome.dic import *
+from zipfile import ZipFile
 from setuptools import setup
 import sys
 from io import open
@@ -5,10 +10,6 @@ from io import open
 sys.path.append('./janome')
 sys.path.append('./tests')
 
-import os, shutil
-from zipfile import ZipFile
-from janome.dic import *
-from janome.version import JANOME_VERSION
 
 dicdir = 'ipadic'
 
@@ -25,10 +26,9 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')
     long_description = f.read()
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: Japanese",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8"
@@ -47,6 +47,5 @@ setup(
     packages=['janome', 'janome.sysdic'],
     package_data={'janome.sysdic': ['fst.data*']},
     scripts=['bin/janome', 'bin/janome.bat'],
-    test_suite = 'suite'
+    test_suite='suite'
 )
-
