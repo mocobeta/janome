@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +13,7 @@
 # limitations under the License.
 
 
-u"""
+"""
 The tokenizer module supplies Token and Tokenizer classes.
 
 Usage:
@@ -24,7 +22,7 @@ Usage:
 >>> t = Tokenizer()
 >>> for token in t.tokenize(u'すもももももももものうち'):
 ...   print(token)
-... 
+...
 すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
 も	助詞,係助詞,*,*,*,*,も,モ,モ
 もも	名詞,一般,*,*,*,*,もも,モモ,モモ
@@ -52,15 +50,15 @@ with user dictionary (IPAdic format):
 
 .. code-block:: shell
 
-  $ cat examples/user_ipadic.csv 
+  $ cat examples/user_ipadic.csv
   東京スカイツリー,1288,1288,4569,名詞,固有名詞,一般,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
   東武スカイツリーライン,1288,1288,4700,名詞,固有名詞,一般,*,*,*,東武スカイツリーライン,トウブスカイツリーライン,トウブスカイツリーライン
   とうきょうスカイツリー駅,1288,1288,4143,名詞,固有名詞,一般,*,*,*,とうきょうスカイツリー駅,トウキョウスカイツリーエキ,トウキョウスカイツリーエキ
 
 >>> t = Tokenizer("user_ipadic.csv", udic_enc="utf8")
 >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
-...  print(token)... 
-... 
+...  print(token)...
+...
 東京スカイツリー	名詞,固有名詞,一般,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
 へ	助詞,格助詞,一般,*,*,*,へ,ヘ,エ
 の	助詞,連体化,*,*,*,*,の,ノ,ノ
@@ -80,7 +78,7 @@ with user dictionary (simplified format):
 
 .. code-block:: shell
 
-  $ cat examples/user_simpledic.csv 
+  $ cat examples/user_simpledic.csv
   東京スカイツリー,カスタム名詞,トウキョウスカイツリー
   東武スカイツリーライン,カスタム名詞,トウブスカイツリーライン
   とうきょうスカイツリー駅,カスタム名詞,トウキョウスカイツリーエキ
@@ -104,8 +102,9 @@ except ImportError:
     sys.path.insert(0, parent_dir)
     from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
 
+
 class Token:
-    u"""
+    """
     A Token object contains all information for a token.
     """
 
@@ -128,33 +127,37 @@ class Token:
 
     def __str__(self):
         return '%s\t%s,%s,%s,%s,%s,%s' % \
-           (self.surface, self.part_of_speech, self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic)
+            (self.surface, self.part_of_speech, self.infl_type, self.infl_form, self.base_form,
+                self.reading, self.phonetic)
 
 
 class Tokenizer:
-    u"""
+    """
     A Tokenizer tokenizes Japanese texts with system and optional user defined dictionary.
-    It is strongly recommended to re-use a Tokenizer object because object initialization cost is high. 
+    It is strongly recommended to re-use a Tokenizer object because object initialization cost is high.
     """
     MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
 
-    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False, mmap=False, dotfile=''):
+    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False,
+                 mmap=False, dotfile=''):
         """
         Initialize Tokenizer object with optional arguments.
 
         :param udic: (Optional) user dictionary file (CSV format) or directory path to compiled dictionary data
         :param udic_enc: (Optional) character encoding for user dictionary. default is 'utf-8'
-        :param udic_type: (Optional) user dictionray type. supported types are 'ipadic' and 'simpledic'. default is 'ipadic'
+        :param udic_type: (Optional) user dictionray type. supported types are 'ipadic' and 'simpledic'.
+                          default is 'ipadic'
         :param max_unknows_length: (Optional) max unknown word length. default is 1024.
         :param wakati: (Optional) if given True load minimum sysdic data for 'wakati' mode.
         :param mmap: (Optional) if given True use memory-mapped file for dictionary data.
 
-        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
+        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
         self.wakati = wakati
         if mmap:
-            self.sys_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(wakati), connections, chardef.DATA, unknowns.DATA)
+            self.sys_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(wakati),
+                                                connections, chardef.DATA, unknowns.DATA)
         else:
             self.sys_dic = SystemDictionary(all_fstdata(), entries(wakati), connections, chardef.DATA, unknowns.DATA)
         if udic:
@@ -171,16 +174,19 @@ class Tokenizer:
         self.max_unknown_length = max_unknown_length
 
     def tokenize(self, text, stream=False, wakati=False, baseform_unk=True, dotfile=''):
-        u"""
+        """
         Tokenize the input text.
 
         :param text: unicode string to be tokenized
         :param stream: (Optional) if given True use stream mode. default is False.
         :param wakati: (Optinal) if given True returns surface forms only. default is False.
         :param baseform_unk: (Optional) if given True sets base_form attribute for unknown tokens. default is True.
-        :param dotfile: (Optional) if specified, graphviz dot file is output to the path for later visualizing of the lattice graph. This option is ignored when the input length is larger than MAX_CHUNK_SIZE or running on stream mode.
+        :param dotfile: (Optional) if specified, graphviz dot file is output to the path for later visualizing
+                        of the lattice graph. This option is ignored when the input length is
+                        larger than MAX_CHUNK_SIZE or running on stream mode.
 
-        :return: list of tokens (stream=False, wakati=False) or token generator (stream=True, wakati=False) or list of string (stream=False, wakati=True) or string generator (stream=True, wakati=True)
+        :return: list of tokens (stream=False, wakati=False) or token generator (stream=True, wakati=False)
+                 or list of string (stream=False, wakati=True) or string generator (stream=True, wakati=True)
         """
         if self.wakati:
             wakati = True
@@ -201,7 +207,6 @@ class Tokenizer:
                 yield token
             processed += pos
 
-
     def __tokenize_partial(self, text, wakati, baseform_unk, dotfile):
         if self.wakati and not wakati:
             raise WakatiModeOnlyException
@@ -210,7 +215,7 @@ class Tokenizer:
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
         while not self.__should_split(text, pos):
-            encoded_partial_text = text[pos:pos+min(50, chunk_size-pos)].encode('utf-8')
+            encoded_partial_text = text[pos:pos + min(50, chunk_size - pos)].encode('utf-8')
             # user dictionary
             if self.user_dic:
                 entries = self.user_dic.lookup(encoded_partial_text)
@@ -237,7 +242,7 @@ class Tokenizer:
                     # buffer for unknown word
                     buf = text[pos]
                     for p in range(pos + 1, min(chunk_size, pos + length + 1)):
-                        _cates =  self.sys_dic.get_char_categories(text[p])
+                        _cates = self.sys_dic.get_char_categories(text[p])
                         if cate in _cates or any(cate in _compat_cates for _compat_cates in _cates.values()):
                             buf += text[p]
                         else:

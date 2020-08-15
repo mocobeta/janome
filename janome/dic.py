@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import with_statement
 import os
 import io
 import pickle
@@ -25,7 +22,6 @@ import traceback
 import logging
 import sys
 import re
-import itertools
 import pkgutil
 import zlib
 import base64
@@ -49,6 +45,7 @@ MODULE_UNKNOWNS = 'unknowns.py'
 
 FILE_USER_FST_DATA = 'user_fst.data'
 FILE_USER_ENTRIES_DATA = 'user_entries.data'
+
 
 def save_fstdata(data, dir, part=0):
     _save_as_module(os.path.join(dir, MODULE_FST_DATA % part), data, binary=True)
@@ -75,22 +72,22 @@ def save_entry_buckets(dir, buckets):
     _save_as_module(os.path.join(dir, MODULE_ENTRIES_BUCKETS), buckets)
 
 
-def save_connections(connections, dir=u'.'):
+def save_connections(connections, dir='.'):
     # split whole connections to 2 buckets to reduce memory usage while installing.
     # TODO: find better ways...
     bucket_size = (len(connections) // 2) + 1
     offset = 0
     for i in range(1, 3):
         _save_as_module(os.path.join(dir, MODULE_CONNECTIONS % i),
-                        connections[offset:offset+bucket_size])
+                        connections[offset:offset + bucket_size])
         offset += bucket_size
 
 
-def save_chardefs(chardefs, dir=u'.'):
+def save_chardefs(chardefs, dir='.'):
     _save_as_module(os.path.join(dir, MODULE_CHARDEFS), chardefs)
 
 
-def save_unknowns(unknowns, dir=u'.'):
+def save_unknowns(unknowns, dir='.'):
     _save_as_module(os.path.join(dir, MODULE_UNKNOWNS), unknowns)
 
 
@@ -117,11 +114,12 @@ def _load_package_data(package, resource):
         return None
     return zlib.decompress(rawdata, zlib.MAX_WBITS | 16)
 
+
 def _save_as_module(file, data, binary=False):
     if not data:
         return
     with open(file, 'w') as f:
-        f.write(u'DATA=')
+        f.write('DATA=')
         if binary:
             f.write('"')
             f.write(base64.b64encode(data).decode('ascii'))
@@ -135,7 +133,6 @@ def _start_entries_as_module(file):
     idx_file = re.sub(r'\.py$', '_idx.py', file)
     with open(file, 'w') as f:
         with open(idx_file, 'w') as f_idx:
-            f.write("# -*- coding: utf-8 -*-\n")
             f.write('DATA={')
             f_idx.write('DATA={')
 
@@ -185,9 +182,10 @@ def _save_entry_as_module_extra(file, morph_id, entry):
 
 
 class Dictionary(object):
-    u"""
+    """
     Base dictionary class
     """
+
     def __init__(self, compiledFST, entries, connections):
         self.compiledFST = compiledFST
         self.matcher = Matcher(compiledFST)
@@ -204,7 +202,7 @@ class Dictionary(object):
                 num = unpack('I', e)[0]
                 res.append((num,) + self.entries[num][:4])
             return res
-        except Exception as e:
+        except Exception:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logger.error('input=%s' % s)
             logger.error('outputs=%s' % str(outputs))
@@ -214,10 +212,8 @@ class Dictionary(object):
     def lookup_extra(self, num):
         try:
             return self.entries[num][4:]
-        except Exception as e:
+        except Exception:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logger.error('input=%s' % s)
-            logger.error('outputs=%s' % str(outputs))
             traceback.format_exc()
             sys.exit(1)
 
@@ -226,9 +222,10 @@ class Dictionary(object):
 
 
 class MMapDictionary(object):
-    u"""
+    """
     Base MMap dictionar class
     """
+
     def __init__(self, compiledFST, entries_compact, entries_extra, open_files, connections):
         self.compiledFST = compiledFST
         self.matcher = Matcher(compiledFST)
@@ -255,10 +252,11 @@ class MMapDictionary(object):
                 _pos3e = mm.find(b",", _pos3s)
                 _pos4s = _pos3e + 1
                 _pos4e = mm.find(b")", _pos4s)
-                _entry = (mm[_pos1s:_pos1e].decode('unicode_escape'), int(mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
+                _entry = (mm[_pos1s:_pos1e].decode('unicode_escape'), int(
+                    mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
                 matched_entries.append((idx,) + _entry)
             return matched_entries
-        except Exception as e:
+        except Exception:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
             logger.error('input=%s' % s)
             logger.error('outputs=%s' % str(outputs))
@@ -282,10 +280,12 @@ class MMapDictionary(object):
             _pos6s = _pos5e + 4
             _pos6e = mm.find(b"')", _pos6s)
             return (
-                mm[_pos1s:_pos1e].decode('unicode_escape'), mm[_pos2s:_pos2e].decode('unicode_escape'), mm[_pos3s:_pos3e].decode('unicode_escape'),
-                mm[_pos4s:_pos4e].decode('unicode_escape'), mm[_pos5s:_pos5e].decode('unicode_escape'), mm[_pos6s:_pos6e].decode('unicode_escape')
+                mm[_pos1s:_pos1e].decode('unicode_escape'), mm[_pos2s:_pos2e].decode(
+                    'unicode_escape'), mm[_pos3s:_pos3e].decode('unicode_escape'),
+                mm[_pos4s:_pos4e].decode('unicode_escape'), mm[_pos5s:_pos5e].decode(
+                    'unicode_escape'), mm[_pos6s:_pos6e].decode('unicode_escape')
             )
-        except Exception as e:
+        except Exception:
             logger.error('Cannot load extra info. The dictionary may be corrupted?')
             logger.error('idx=%d' % idx)
             traceback.format_exc()
@@ -339,27 +339,30 @@ class UnknownsDictionary(object):
 
 
 class SystemDictionary(Dictionary, UnknownsDictionary):
-    u"""
+    """
     System dictionary class
     """
+
     def __init__(self, all_fstdata, entries, connections, chardefs, unknowns):
         Dictionary.__init__(self, all_fstdata, entries, connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
 class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
-    u"""
+    """
     MMap System dictionary class
     """
+
     def __init__(self, all_fstdata, mmap_entries, connections, chardefs, unknowns):
         MMapDictionary.__init__(self, all_fstdata, mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
 class UserDictionary(Dictionary):
-    u"""
+    """
     User dictionary class (uncompiled)
     """
+
     def __init__(self, user_dict, enc, type, connections):
         """
         Initialize user defined dictionary object.
@@ -369,7 +372,7 @@ class UserDictionary(Dictionary):
         :param type: user dictionary type. supported types are 'ipadic' and 'simpledic'
         :param connections: connection cost matrix. expected value is SYS_DIC.connections
 
-        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary for details for user dictionary.
+        .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
         build_method = getattr(self, 'build' + type)
         compiledFST, entries = build_method(user_dict, enc)
@@ -382,13 +385,14 @@ class UserDictionary(Dictionary):
             for line in f:
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \
-                pos_major, pos_minor1, pos_minor2, pos_minor3, \
-                infl_type, infl_form, base_form, reading, phonetic = \
+                    pos_major, pos_minor1, pos_minor2, pos_minor3, \
+                    infl_type, infl_form, base_form, reading, phonetic = \
                     line.split(',')
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+                entries[morph_id] = (surface, int(left_id), int(right_id), int(
+                    cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
         processed, fst = create_minimum_transducer(inputs)
@@ -396,7 +400,6 @@ class UserDictionary(Dictionary):
         return compiledFST, entries
 
     def buildsimpledic(self, user_dict, enc):
-        import sys
         surfaces = []
         entries = {}
         with io.open(user_dict, encoding=enc) as f:
@@ -414,7 +417,7 @@ class UserDictionary(Dictionary):
         return compiledFST, entries
 
     def save(self, to_dir, compressionlevel=9):
-        u"""
+        """
         Save compressed compiled dictionary data.
 
         :param to_dir: directory to save dictionary data
@@ -429,9 +432,10 @@ class UserDictionary(Dictionary):
 
 
 class CompiledUserDictionary(Dictionary):
-    u"""
+    """
     User dictionary class (compiled)
     """
+
     def __init__(self, dic_dir, connections):
         data, entries = self.load_dict(dic_dir)
         Dictionary.__init__(self, [data], entries, connections)

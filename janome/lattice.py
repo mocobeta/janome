@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys, os
+import os
+
 
 class NodeType:
     SYS_DICT = "SYS_DICT"
@@ -40,7 +39,9 @@ class Node(object):
         self.back_pos = -1
         self.back_index = -1
 
-        self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech, self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic = dict_entry
+        self.surface, self.left_id, self.right_id, self.cost, \
+            self.part_of_speech, self.infl_type, self.infl_form, self.base_form, \
+            self.reading, self.phonetic = dict_entry
 
         self.node_type = node_type
 
@@ -58,7 +59,8 @@ class SurfaceNode(object):
     """
     Node class with surface form only.
     """
-    __slots__ = ['pos', 'index', 'num', 'surface', 'left_id', 'right_id', 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
+    __slots__ = ['pos', 'index', 'num', 'surface', 'left_id', 'right_id',
+                 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         self.pos = 0
@@ -78,6 +80,7 @@ class BOS(object):
     """
     BOS node
     """
+
     def __init__(self):
         self.pos = 0
         self.index = 0
@@ -98,6 +101,7 @@ class EOS(object):
     """
     EOS node
     """
+
     def __init__(self, pos):
         self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.pos = pos
@@ -109,6 +113,7 @@ class EOS(object):
 
     def node_label(self):
         return 'EOS'
+
 
 class Lattice:
     def __init__(self, size, dic):
@@ -122,7 +127,7 @@ class Lattice:
         min_cost, best_node, node_left_id = node.min_cost - node.cost, None, node.left_id
         dic = self.dic
         for enode in self.enodes[self.p]:
-            cost =  enode.min_cost + dic.get_trans_cost(enode.right_id, node_left_id)
+            cost = enode.min_cost + dic.get_trans_cost(enode.right_id, node_left_id)
             if cost < min_cost:
                 min_cost, best_node = cost, enode
         node.min_cost = min_cost + node.cost
@@ -145,10 +150,10 @@ class Lattice:
         eos = EOS(self.p)
         self.add(eos)
         # truncate snodes
-        self.snodes = self.snodes[:self.p+1]
+        self.snodes = self.snodes[:self.p + 1]
 
     def backward(self):
-        assert isinstance(self.snodes[len(self.snodes)-1][0], EOS)
+        assert isinstance(self.snodes[len(self.snodes) - 1][0], EOS)
         path = []
         pos = len(self.snodes) - 1
         index = 0
@@ -182,16 +187,16 @@ class Lattice:
                     node2 = self.snodes[pos + node_len][j]
                     if is_unknown(node2) and node2 not in path:
                         continue
-                    node2_id = (pos+node_len, j)
+                    node2_id = (pos + node_len, j)
                     if node2_id not in node_ids:
                         node_ids.append(node1_id)
                     edges.append((node1_id, node2_id))
 
         # output dot file
         with self.__open_file(filename, mode='w', encoding='utf-8') as f:
-            f.write(u'digraph G {\n')
-            f.write(u'  rankdir=LR;\n')
-            f.write(u'  ranksep=2.0;\n')
+            f.write('digraph G {\n')
+            f.write('  rankdir=LR;\n')
+            f.write('  ranksep=2.0;\n')
             for node_id in node_ids:
                 (pos, idx) = node_id
                 node = self.snodes[pos][idx]
@@ -200,7 +205,8 @@ class Lattice:
                 shape = 'ellipse' if isinstance(node, BOS) or isinstance(node, EOS) else 'box'
                 color = 'lightblue' if isinstance(node, BOS) or isinstance(node, EOS) or node in path else 'lightgray'
                 font = 'MS UI Gothic' if os.name == 'nt' else ''
-                f.write(u'  %s [label="%s",shape=%s,style=filled,fillcolor=%s,fontname="%s"];\n' % (id_str, label, shape, color, font))
+                f.write('  %s [label="%s",shape=%s,style=filled,fillcolor=%s,fontname="%s"];\n' %
+                        (id_str, label, shape, color, font))
             for edge in edges:
                 ((pos1, idx1), (pos2, idx2)) = edge
                 node1 = self.snodes[pos1][idx1]
@@ -209,7 +215,8 @@ class Lattice:
                 id_str2 = '%d.%d' % (pos2, idx2)
                 label = str(self.dic.get_trans_cost(node1.right_id, node2.left_id))
                 (color, style) = ('blue', 'bold') if node1 in path and node2 in path else ('black', 'solid')
-                f.write(u'  %s -> %s [label="%s",color=%s,style=%s,fontcolor=red];\n' % (id_str1, id_str2, label, color, style))
+                f.write('  %s -> %s [label="%s",color=%s,style=%s,fontcolor=red];\n' %
+                        (id_str1, id_str2, label, color, style))
             f.write('}\n')
 
     def __open_file(self, filename, mode, encoding):

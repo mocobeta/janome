@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import division
-from __future__ import print_function
-import sys
 import copy
 from struct import pack, unpack
 from collections import OrderedDict
 import logging
-import time
 import threading
 from functools import lru_cache
 
@@ -45,12 +39,14 @@ FLAG_ARC_HAS_FINAL_OUTPUT = 1 << 5  # 32
 # all characters
 CHARS = set()
 
+
 def set_fst_log_level(level):
     logger.setLevel(level)
     handler.setLevel(level)
 
+
 class State(object):
-    u"""
+    """
     State Class
     """
     __slots__ = ['id', 'final', 'trans_map', 'final_output']
@@ -125,7 +121,7 @@ def copy_state(src, id):
 
 
 class FST(object):
-    u"""
+    """
     FST (final dictionary) class
     """
     MAX_SIZE = 300000
@@ -160,14 +156,12 @@ class FST(object):
 # naive implementation for building fst
 # http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698
 def create_minimum_transducer(inputs):
-    #_start = time.time()
-    #_last_printed = 0
     inputs_size = len(inputs)
     logger.info('(partial) input size: %d' % inputs_size)
 
     fstDict = FST()
     buffer = []
-    #buffer.append(State())  # insert 'initial' state
+    # buffer.append(State())  # insert 'initial' state
 
     # previous word
     prev_word = bytes()
@@ -251,9 +245,9 @@ def create_minimum_transducer(inputs):
 
         # preserve current word for next loop
         prev_word = current_word
-        
+
         processed += 1
-    
+
     # minimize the last word
     for i in range(len(current_word), 0, -1):
         buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
@@ -264,7 +258,7 @@ def create_minimum_transducer(inputs):
 
 
 def compileFST(fst):
-    u"""
+    """
     convert FST to byte array representing arcs
     """
     arcs = []
@@ -336,7 +330,6 @@ class Matcher(object):
             self.max_cache_size = max_cache_size
             self.max_cached_word_len = max_cached_word_len
             self.lock = threading.Lock()
-
 
     def run(self, word, common_prefix_match=True):
         output = set()
@@ -410,14 +403,14 @@ class Matcher(object):
         if flag & FLAG_FINAL_ARC:
             if flag & FLAG_ARC_HAS_FINAL_OUTPUT:
                 # read final outputs
-                final_output_count = unpack('I', data[pos:pos+4])[0]
+                final_output_count = unpack('I', data[pos:pos + 4])[0]
                 pos += 4
                 buf = []
                 for _ in range(final_output_count):
-                    output_size = unpack('I', data[pos:pos+4])[0]
+                    output_size = unpack('I', data[pos:pos + 4])[0]
                     pos += 4
                     if output_size:
-                        buf.append(data[pos:pos+output_size])
+                        buf.append(data[pos:pos + output_size])
                         pos += output_size
                 final_output = buf
         else:
@@ -426,31 +419,31 @@ class Matcher(object):
             pos += 1
             if flag & FLAG_ARC_HAS_OUTPUT:
                 # read output
-                output_size = unpack('I', data[pos:pos+4])[0]
+                output_size = unpack('I', data[pos:pos + 4])[0]
                 pos += 4
-                output = data[pos:pos+output_size]
+                output = data[pos:pos + output_size]
                 pos += output_size
             # read target's (relative) address
-            target = unpack('I', data[pos:pos+4])[0]
+            target = unpack('I', data[pos:pos + 4])[0]
             pos += 4
         return flag, label, output, final_output, target, pos - addr
 
 
 if __name__ == '__main__':
     inputs1 = [
-        (u'apr'.encode(u'utf8'), u'30'),
-        (u'aug'.encode(u'utf8'), u'31'),
-        (u'dec'.encode(u'utf8'), u'31'.encode(u'utf8')),
-        (u'feb'.encode(u'utf8'), u'28'.encode(u'utf8')),
-        (u'feb'.encode(u'utf8'), u'29'.encode(u'utf8')),
-        (u'jan'.encode(u'utf8'), u'31'.encode(u'utf8')),
-        (u'jul'.encode(u'utf8'), u'31'.encode(u'utf8')),
-        (u'jun'.encode(u'utf8'), u'30'.encode(u'utf8'))
+        ('apr'.encode('utf8'), '30'),
+        ('aug'.encode('utf8'), '31'),
+        ('dec'.encode('utf8'), '31'.encode('utf8')),
+        ('feb'.encode('utf8'), '28'.encode('utf8')),
+        ('feb'.encode('utf8'), '29'.encode('utf8')),
+        ('jan'.encode('utf8'), '31'.encode('utf8')),
+        ('jul'.encode('utf8'), '31'.encode('utf8')),
+        ('jun'.encode('utf8'), '30'.encode('utf8'))
     ]
     processed, fst = create_minimum_transducer(inputs1)
     data = compileFST(fst)
 
     m = Matcher([data])
-    #print(m.run('apr'))
-    print(m.run(u'apr'.encode(u'utf8')))
-    print(m.run(u'aug'.encode(u'utf8')))
+    # print(m.run('apr'))
+    print(m.run('apr'.encode('utf8')))
+    print(m.run('aug'.encode('utf8')))

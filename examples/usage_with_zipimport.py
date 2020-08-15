@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-u"""
+"""
 This was contributed by @roy-freee.
 
 zipアーカイブから直接ロードする方法
@@ -23,6 +22,8 @@ You can also create a zip archived package by yourself.
 [Limitation] mmap=True option cannot be used with zip importing.
 """
 
+import janome.tokenizer
+from janome.tokenizer import Tokenizer
 import sys
 import glob
 
@@ -33,12 +34,9 @@ archive_path = glob.glob(ARCHIVE_NAME)[0]
 # avoiding conflict to existing package
 sys.path.insert(0, archive_path)
 
-from janome.tokenizer import Tokenizer
 t = Tokenizer()
-for token in t.tokenize(u'すもももももももものうち'):
-  print(token)
+for token in t.tokenize('すもももももももものうち'):
+    print(token)
 
-import janome.tokenizer
 print(janome.tokenizer.__file__)
 # => Like './Janome-xxx.whl/janome/tokenizer.py'
-

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +13,7 @@
 # limitations under the License.
 
 
-u"""
+"""
 The analyzer module supplies Analyzer framework for pre-processing and post-processing for morphological analysis.
 
 Added in *version 0.3.4*
@@ -35,7 +33,7 @@ Usage:
 >>> a = Analyzer(char_filters, tokenizer, token_filters)
 >>> for token in a.analyze(text):
 ...     print(token)
-... 
+...
 janome	名詞,固有名詞,組織,*,*,*,*,*,*
 pure	名詞,固有名詞,組織,*,*,*,*,*,*
 python	名詞,一般,*,*,*,*,*,*,*
@@ -59,25 +57,30 @@ Usage (word count with TokenCountFilter):
 うち: 1
 """
 
-import sys
 from .tokenizer import Tokenizer
-from .charfilter import *
-from .tokenfilter import *
+from .charfilter import CharFilter
+from .tokenfilter import TokenFilter
+
 
 class Analyzer(object):
-    u"""
-    An Analyzer analyzes Japanese texts with customized :class:`.CharFilter` chain, :class:`.Tokenizer` and :class:`.TokenFilter` chain.
+    """
+    An Analyzer analyzes Japanese texts with customized :class:`.CharFilter` chain,
+    :class:`.Tokenizer` and :class:`.TokenFilter` chain.
 
     Added in *version 0.3.4*
     """
 
     def __init__(self, char_filters=[], tokenizer=None, token_filters=[]):
-        u"""
+        """
         Initialize Analyzer object with CharFilters, a Tokenizer and TokenFilters.
 
-        :param char_filters: (Optional) CharFilters list. CharFilters are applied to the input text in the list order. default is the empty list.
-        :param tokenizer: (Optional) A Tokenizer object. Tokenizer tokenizes the text modified by *char_filters*. default is Tokenizer initialized with no extra options. **WARNING:** A Tokenizer initialized with *wakati=True* option is not accepted.
-        :param token_filters: (Optional) TokenFilters list. TokenFilters are applied to the Tokenizer's output in the list order. default is the empty list.
+        :param char_filters: (Optional) CharFilters list. CharFilters are applied to the input text
+                             in the list order. default is the empty list.
+        :param tokenizer: (Optional) A Tokenizer object. Tokenizer tokenizes the text modified by
+                          *char_filters*. default is Tokenizer initialized with no extra options.
+                          **WARNING:** A Tokenizer initialized with *wakati=True* option is not accepted.
+        :param token_filters: (Optional) TokenFilters list. TokenFilters are applied to the Tokenizer's
+                              output in the list order. default is the empty list.
         """
         if not tokenizer:
             self.tokenizer = Tokenizer()
@@ -94,7 +97,8 @@ class Analyzer(object):
 
         :param text: unicode string to be tokenized
 
-        :return: token generator. emitted element type depends on the output of the last TokenFilter. (e.g., ExtractAttributeFilter emits strings.)
+        :return: token generator. emitted element type depends on the output of the last TokenFilter.
+                 (e.g., ExtractAttributeFilter emits strings.)
         """
         for cfilter in self.char_filters:
             text = cfilter.filter(text)
@@ -102,4 +106,3 @@ class Analyzer(object):
         for tfilter in self.token_filters:
             tokens = tfilter.filter(tokens)
         return tokens
-

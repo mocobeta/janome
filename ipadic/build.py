@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2015 moco_beta
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +13,35 @@
 # limitations under the License.
 
 
-from __future__ import with_statement
-import os, sys
+from multiprocessing import Pool, cpu_count
+import signal
+import functools
+import pickle
+from struct import pack
+from janome.dic import (
+    start_save_entries,
+    save_entry,
+    save_entry_buckets,
+    save_fstdata,
+    end_save_entries,
+    save_chardefs,
+    save_connections,
+    save_unknowns
+)
+from janome.fst import (
+    set_fst_log_level,
+    create_minimum_transducer,
+    compileFST
+)
+import glob
+import time
+import logging
+import os
+import sys
 from io import open
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-import logging
-import time
-import glob
-from janome.fst import *
-from janome.dic import *
-from struct import pack
-import pickle
-from collections import OrderedDict
 
 logger = logging.getLogger('dic_builder')
 logger.setLevel(logging.DEBUG)
@@ -46,6 +59,7 @@ FILE_MATRIX_DEF = 'matrix.def'
 
 ENTRY_BUCKETS_NUM = 10
 
+
 def collect(dicdir, enc, outdir, workdir):
     surfaces = []  # inputs/outputs for FST. the FST maps string(surface form) to int(word id)
     csv_files = glob.glob(os.path.join(dicdir, '*.csv'))
@@ -62,7 +76,7 @@ def collect(dicdir, enc, outdir, workdir):
     logger.info('input size: %d' % inputs_size)
 
     # split inputs
-    _part =[]
+    _part = []
     _cnt = 0
     for surface, mid in inputs:
         if len(_part) >= 200000:
@@ -75,23 +89,23 @@ def collect(dicdir, enc, outdir, workdir):
         with open(os.path.join(workdir, 'input%d.pkl' % _cnt), 'wb') as f:
             pickle.dump(_part, f)
 
-    
     start_save_entries(outdir, ENTRY_BUCKETS_NUM)
     bucket_size = (inputs_size // ENTRY_BUCKETS_NUM) + 1
     bucket_idx = 0
     buckets = {}
     bucket_offset = 0
-    morph_id = 0 
+    morph_id = 0
     for path in csv_files:
         with open(path, encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \
-                pos_major, pos_minor1, pos_minor2, pos_minor3, \
-                infl_type, infl_form, base_form, reading, phonetic = \
+                    pos_major, pos_minor1, pos_minor2, pos_minor3, \
+                    infl_type, infl_form, base_form, reading, phonetic = \
                     line.split(',')
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
-                entry = (surface, int(left_id), int(right_id), int(cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+                entry = (surface, int(left_id), int(right_id), int(cost), part_of_speech,
+                         infl_type, infl_form, base_form, reading, phonetic)
                 save_entry(outdir, bucket_idx, morph_id, entry)
                 morph_id += 1
                 if morph_id % bucket_size == 0:
@@ -114,11 +128,9 @@ def save_partial_fst(arg, outdir):
         return _processed
 
 
-import functools
 def build_dict(dicdir, outdir, workdir, pool):
     _start = time.time()
-    _last_printed = 0
-    
+
     input_files = glob.glob(os.path.join(workdir, 'input*.pkl'))
     func = functools.partial(save_partial_fst, outdir=outdir)
     pool.map(func, enumerate(input_files))
@@ -156,7 +168,8 @@ def build_unknown_dict(dicdir, enc, outdir='.'):
                     continue
                 codepoints_range = cols[0].split('..')
                 codepoints_from = chr(int(codepoints_range[0], 16)).encode('unicode_escape').decode('ascii')
-                codepoints_to = chr(int(codepoints_range[1], 16)).encode('unicode_escape').decode('ascii') if len(codepoints_range) == 2 else codepoints_from
+                codepoints_to = chr(int(codepoints_range[1], 16)).encode('unicode_escape').decode(
+                    'ascii') if len(codepoints_range) == 2 else codepoints_from
                 cate = cols[1].strip()
                 assert cate in categories
                 _range = {'from': codepoints_from, 'to': codepoints_to, 'cate': cate}
@@ -188,9 +201,10 @@ def build_unknown_dict(dicdir, enc, outdir='.'):
         for line in f:
             line = line.strip()
             cate, left_id, right_id, cost, \
-            pos_major, pos_minor1, pos_minor2, pos_minor3, _1, _2, _3 = \
+                pos_major, pos_minor1, pos_minor2, pos_minor3, _1, _2, _3 = \
                 line.split(',')
-            part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3]).encode('unicode_escape').decode('ascii')
+            part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3]
+                                      ).encode('unicode_escape').decode('ascii')
             assert cate in categories
             if cate not in unknowns:
                 unknowns[cate] = []
@@ -199,20 +213,22 @@ def build_unknown_dict(dicdir, enc, outdir='.'):
     save_chardefs((categories, coderange), dir=outdir)
     save_unknowns(unknowns, dir=outdir)
 
-from multiprocessing import Pool, cpu_count
+
 pool = None
+
+
 def create_pool(processes):
     global pool
     pool = Pool(processes=processes)
 
-def terminate(*args,**kwargs):
+
+def terminate(*args, **kwargs):
     global pool
     sys.stderr.write('\nStopping...')
     pool.terminate()
     pool.join()
 
 
-import signal
 signal.signal(signal.SIGTERM, terminate)
 signal.signal(signal.SIGINT, terminate)
 signal.signal(signal.SIGQUIT, terminate)
