@@ -102,7 +102,7 @@ class Analyzer(object):
         """
         for cfilter in self.char_filters:
             text = cfilter.filter(text)
-        tokens = self.tokenizer.tokenize(text, stream=True, wakati=False)
+        tokens = self.tokenizer.tokenize(text, wakati=False)
         for tfilter in self.token_filters:
             tokens = tfilter.filter(tokens)
         return tokens

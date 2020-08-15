@@ -173,29 +173,25 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, stream=False, wakati=False, baseform_unk=True, dotfile=''):
+    def tokenize(self, text, wakati=False, baseform_unk=True, dotfile=''):
         """
         Tokenize the input text.
 
         :param text: unicode string to be tokenized
-        :param stream: (Optional) if given True use stream mode. default is False.
         :param wakati: (Optinal) if given True returns surface forms only. default is False.
         :param baseform_unk: (Optional) if given True sets base_form attribute for unknown tokens. default is True.
         :param dotfile: (Optional) if specified, graphviz dot file is output to the path for later visualizing
                         of the lattice graph. This option is ignored when the input length is
-                        larger than MAX_CHUNK_SIZE or running on stream mode.
+                        larger than MAX_CHUNK_SIZE.
 
-        :return: list of tokens (stream=False, wakati=False) or token generator (stream=True, wakati=False)
-                 or list of string (stream=False, wakati=True) or string generator (stream=True, wakati=True)
+        :return: generator yielding tokens (wakati=False) or generator yielding string (wakati=True)
         """
         if self.wakati:
             wakati = True
-        if stream:
-            return self.__tokenize_stream(text, wakati, baseform_unk, '')
-        elif dotfile and len(text) < Tokenizer.MAX_CHUNK_SIZE:
-            return list(self.__tokenize_stream(text, wakati, baseform_unk, dotfile))
+        if dotfile and len(text) < Tokenizer.MAX_CHUNK_SIZE:
+            return self.__tokenize_stream(text, wakati, baseform_unk, dotfile)
         else:
-            return list(self.__tokenize_stream(text, wakati, baseform_unk, ''))
+            return self.__tokenize_stream(text, wakati, baseform_unk, '')
 
     def __tokenize_stream(self, text, wakati, baseform_unk, dotfile):
         text = text.strip()
