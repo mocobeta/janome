@@ -91,24 +91,25 @@ with user dictionary (simplified format):
 
 import sys
 import os
-from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType
-from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary
+from typing import Iterator, Union, Tuple, Optional
+from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType  # type: ignore
+from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary  # type: ignore
 
 try:
-    from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
+    from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
 except ImportError:
     # hack for unit testing...
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, parent_dir)
-    from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
+    from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
 
 
-class Token:
+class Token(object):
     """
     A Token object contains all information for a token.
     """
 
-    def __init__(self, node, extra=None):
+    def __init__(self, node: Node, extra: Tuple = None):
         self.surface = node.surface
         """surface form (表層形)"""
         self.part_of_speech = extra[0] if extra else node.part_of_speech
@@ -131,7 +132,7 @@ class Token:
                 self.reading, self.phonetic)
 
 
-class Tokenizer:
+class Tokenizer(object):
     """
     A Tokenizer tokenizes Japanese texts with system and optional user defined dictionary.
     It is strongly recommended to re-use a Tokenizer object because object initialization cost is high.
@@ -139,8 +140,13 @@ class Tokenizer:
     MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
 
-    def __init__(self, udic='', udic_enc='utf8', udic_type='ipadic', max_unknown_length=1024, wakati=False,
-                 mmap=False, dotfile=''):
+    def __init__(self, udic: str = '',
+                 udic_enc: str = 'utf8',
+                 udic_type: str = 'ipadic',
+                 max_unknown_length: int = 1024,
+                 wakati: bool = False,
+                 mmap: bool = False,
+                 dotfile: str = ''):
         """
         Initialize Tokenizer object with optional arguments.
 
@@ -152,14 +158,17 @@ class Tokenizer:
         :param wakati: (Optional) if given True load minimum sysdic data for 'wakati' mode.
         :param mmap: (Optional) if given True use memory-mapped file for dictionary data.
 
-        .. seealso:: See http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
+        .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
+        self.sys_dic: Union[SystemDictionary, MMapSystemDictionary]
+        self.user_dic: Optional[Union[UserDictionary, CompiledUserDictionary]]
         self.wakati = wakati
         if mmap:
             self.sys_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(wakati),
                                                 connections, chardef.DATA, unknowns.DATA)
         else:
-            self.sys_dic = SystemDictionary(all_fstdata(), entries(wakati), connections, chardef.DATA, unknowns.DATA)
+            self.sys_dic = SystemDictionary(all_fstdata(), entries(wakati), connections,
+                                            chardef.DATA, unknowns.DATA)
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
@@ -173,7 +182,8 @@ class Tokenizer:
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text, wakati=False, baseform_unk=True, dotfile=''):
+    def tokenize(self, text: str, wakati: bool = False, baseform_unk: bool = True, dotfile: str = '') \
+            -> Iterator[Union[Token, str]]:
         """
         Tokenize the input text.
 

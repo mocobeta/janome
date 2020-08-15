@@ -28,7 +28,7 @@ https://mocobeta.github.io/janome/ (Japanese)
 Requirements
 =============
 
-Python 2.7.x or 3.5+ is required.
+Python 3.6+ is required.
 
 Install
 ========
@@ -85,10 +85,10 @@ Twitter
 
 `@janome_py <https://twitter.com/janome_py>`_
 
-For contributors
-=================
+Developmet information for contributors
+=======================================
 
-Please see this wiki page:
+See this Wiki:
 
 https://github.com/mocobeta/janome/wiki#for-contributors
 
