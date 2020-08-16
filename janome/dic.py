@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from abc import ABC, abstractmethod
 import os
 import io
 import pickle
 import gzip
 from struct import pack, unpack
-from .fst import Matcher, create_minimum_transducer, compileFST
 import traceback
 import logging
 import sys
@@ -26,6 +26,7 @@ import pkgutil
 import zlib
 import base64
 from functools import lru_cache
+from .fst import Matcher, create_minimum_transducer, compileFST
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
@@ -181,9 +182,27 @@ def _save_entry_as_module_extra(file, morph_id, entry):
             f.write('),')
 
 
-class Dictionary(object):
+class Dictionary(ABC):
     """
     Base dictionary class
+    """
+
+    @abstractmethod
+    def lookup(self, s):
+        pass
+
+    @abstractmethod
+    def lookup_extra(self, num):
+        pass
+
+    @abstractmethod
+    def get_trans_cost(self, id1, id2):
+        pass
+
+
+class RAMDictionary(Dictionary):
+    """
+    RAM dictionary class
     """
 
     def __init__(self, compiledFST, entries, connections):
@@ -221,9 +240,9 @@ class Dictionary(object):
         return self.connections[id1][id2]
 
 
-class MMapDictionary(object):
+class MMapDictionary(Dictionary):
     """
-    Base MMap dictionar class
+    MMap dictionary class
     """
 
     def __init__(self, compiledFST, entries_compact, entries_extra, open_files, connections):
@@ -305,6 +324,10 @@ class MMapDictionary(object):
 
 
 class UnknownsDictionary(object):
+    """
+    Dictionary class for handling unknown words
+    """
+
     def __init__(self, chardefs, unknowns):
         self.char_categories = chardefs[0]
         self.char_ranges = chardefs[1]
@@ -319,7 +342,7 @@ class UnknownsDictionary(object):
                 compate_cates = chr_range['compat_cates'] if 'compat_cates' in chr_range else []
                 res[cate] = compate_cates
         if not res:
-            res = {u'DEFAULT': []}
+            res = {'DEFAULT': []}
         return res
 
     def unknown_invoked_always(self, cate):
@@ -338,13 +361,13 @@ class UnknownsDictionary(object):
         return -1
 
 
-class SystemDictionary(Dictionary, UnknownsDictionary):
+class SystemDictionary(RAMDictionary, UnknownsDictionary):
     """
     System dictionary class
     """
 
     def __init__(self, all_fstdata, entries, connections, chardefs, unknowns):
-        Dictionary.__init__(self, all_fstdata, entries, connections)
+        RAMDictionary.__init__(self, all_fstdata, entries, connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -358,9 +381,9 @@ class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
-class UserDictionary(Dictionary):
+class UserDictionary(RAMDictionary):
     """
-    User dictionary class (uncompiled)
+    User dictionary class (on-the-fly)
     """
 
     def __init__(self, user_dict, enc, type, connections):
@@ -376,7 +399,7 @@ class UserDictionary(Dictionary):
         """
         build_method = getattr(self, 'build' + type)
         compiledFST, entries = build_method(user_dict, enc)
-        Dictionary.__init__(self, [compiledFST], entries, connections)
+        super().__init__([compiledFST], entries, connections)
 
     def buildipadic(self, user_dict, enc):
         surfaces = []
@@ -431,14 +454,14 @@ class UserDictionary(Dictionary):
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
 
-class CompiledUserDictionary(Dictionary):
+class CompiledUserDictionary(RAMDictionary):
     """
     User dictionary class (compiled)
     """
 
     def __init__(self, dic_dir, connections):
         data, entries = self.load_dict(dic_dir)
-        Dictionary.__init__(self, [data], entries, connections)
+        super().__init__([data], entries, connections)
 
     def load_dict(self, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):

@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from abc import ABC, abstractmethod
 import unicodedata
 import re
 
 
-class CharFilter(object):
+class CharFilter(ABC):
     """
     Base CharFilter class.
 
@@ -26,11 +27,12 @@ class CharFilter(object):
     Added in *version 0.3.4*
     """
 
-    def filter(self, text: str) -> str:
-        return self.apply(text)
-
+    @abstractmethod
     def apply(self, text: str) -> str:
-        raise NotImplementedError
+        pass
+
+    def __call__(self, text: str) -> str:
+        return self.apply(text)
 
 
 class RegexReplaceCharFilter(CharFilter):

@@ -105,8 +105,8 @@ class Analyzer(object):
                  (e.g., ExtractAttributeFilter emits strings.)
         """
         for cfilter in self.char_filters:
-            text = cfilter.filter(text)
+            text = cfilter(text)
         tokens = self.tokenizer.tokenize(text, wakati=False)
         for tfilter in self.token_filters:
-            tokens = tfilter.filter(tokens)  # type: ignore
+            tokens = tfilter(tokens)  # type: ignore
         return tokens
