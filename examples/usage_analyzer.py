@@ -11,7 +11,7 @@ text = '蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
 char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('蛇の目', 'janome')]
 tokenizer = Tokenizer()
 token_filters = [CompoundNounFilter(), LowerCaseFilter()]
-a = Analyzer(char_filters, tokenizer, token_filters)
+a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
 for token in a.analyze(text):
     print(token)
 
