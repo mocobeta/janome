@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from abc import ABC
 import os
 
 
@@ -21,9 +22,9 @@ class NodeType:
     UNKNOWN = "UNKNOWN"
 
 
-class Node(object):
+class NodeBase(ABC):
     """
-    Node class
+    Abstract base node class
     """
     __slots__ = [
         'pos', 'index', 'surface', 'left_id', 'right_id', 'cost',
@@ -32,17 +33,24 @@ class Node(object):
         'min_cost', 'back_pos', 'back_index'
     ]
 
-    def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
+    def __init__(self):
         self.pos = 0
         self.index = 0
         self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.back_pos = -1
         self.back_index = -1
 
+
+class Node(NodeBase):
+    """
+    Standard Node class
+    """
+
+    def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
+        super().__init__()
         self.surface, self.left_id, self.right_id, self.cost, \
             self.part_of_speech, self.infl_type, self.infl_form, self.base_form, \
             self.reading, self.phonetic = dict_entry
-
         self.node_type = node_type
 
     def __str__(self):
@@ -55,20 +63,13 @@ class Node(object):
         return self.surface
 
 
-class SurfaceNode(object):
+class SurfaceNode(NodeBase):
     """
     Node class with surface form only.
     """
-    __slots__ = ['pos', 'index', 'num', 'surface', 'left_id', 'right_id',
-                 'cost', 'node_type', 'min_cost', 'back_pos', 'back_index']
 
     def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
-        self.pos = 0
-        self.index = 0
-        self.min_cost = 2147483647  # int(pow(2,31)-1)
-        self.back_pos = -1
-        self.back_index = -1
-
+        super().__init__()
         self.num, self.surface, self.left_id, self.right_id, self.cost = dict_entry
         self.node_type = node_type
 
@@ -76,19 +77,16 @@ class SurfaceNode(object):
         return self.surface
 
 
-class BOS(object):
+class BOS(NodeBase):
     """
     BOS node
     """
 
     def __init__(self):
-        self.pos = 0
-        self.index = 0
+        super().__init__()
         self.right_id = 0
         self.cost = 0
         self.min_cost = 0
-        self.back_pos = -1
-        self.back_index = -1
 
     def __str__(self):
         return '__BOS__'
@@ -97,13 +95,13 @@ class BOS(object):
         return 'BOS'
 
 
-class EOS(object):
+class EOS(NodeBase):
     """
     EOS node
     """
 
     def __init__(self, pos):
-        self.min_cost = 2147483647  # int(pow(2,31)-1)
+        super().__init__()
         self.pos = pos
         self.cost = 0
         self.left_id = 0
@@ -115,7 +113,7 @@ class EOS(object):
         return 'EOS'
 
 
-class Lattice:
+class Lattice(object):
     def __init__(self, size, dic):
         self.snodes = [[BOS()]] + [[] for i in range(0, size + 1)]
         self.enodes = [[], [BOS()]] + [[] for i in range(0, size + 1)]

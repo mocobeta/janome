@@ -12,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Iterator, List, Dict, Tuple, Any
 
 from .tokenizer import Token
 
 
-class TokenFilter(object):
+class TokenFilter(ABC):
     """
     Base TokenFilter class.
 
@@ -28,11 +29,12 @@ class TokenFilter(object):
     Added in *version 0.3.4*
     """
 
-    def filter(self, tokens: Iterator[Token]) -> Iterator[Any]:
-        return self.apply(tokens)
-
+    @abstractmethod
     def apply(self, tokens: Iterator[Token]) -> Iterator[Any]:
-        raise NotImplementedError
+        pass
+
+    def __call__(self, tokens: Iterator[Token]) -> Iterator[Any]:
+        return self.apply(tokens)
 
 
 class LowerCaseFilter(TokenFilter):
