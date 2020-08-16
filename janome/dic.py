@@ -223,8 +223,8 @@ class RAMDictionary(Dictionary):
             return res
         except Exception:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logger.error('input=%s' % s)
-            logger.error('outputs=%s' % str(outputs))
+            logger.error(f'input={s}')
+            logger.error(f'outputs={str(outputs)}')
             traceback.format_exc()
             sys.exit(1)
 
@@ -277,8 +277,8 @@ class MMapDictionary(Dictionary):
             return matched_entries
         except Exception:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logger.error('input=%s' % s)
-            logger.error('outputs=%s' % str(outputs))
+            logger.error(f'input={s}')
+            logger.error(f'outputs={str(outputs)}')
             traceback.format_exc()
             sys.exit(1)
 
@@ -306,7 +306,7 @@ class MMapDictionary(Dictionary):
             )
         except Exception:
             logger.error('Cannot load extra info. The dictionary may be corrupted?')
-            logger.error('idx=%d' % idx)
+            logger.error(f'idx={idx}')
             traceback.format_exc()
             sys.exit(1)
 
@@ -429,10 +429,10 @@ class UserDictionary(RAMDictionary):
             for line in f:
                 line = line.rstrip()
                 surface, pos_major, reading = line.split(',')
-                part_of_speech = ','.join([pos_major, u'*', u'*', u'*'])
+                part_of_speech = ','.join([pos_major, '*', '*', '*'])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, 0, 0, -100000, part_of_speech, u'*', u'*', surface, reading, reading)
+                entries[morph_id] = (surface, 0, 0, -100000, part_of_speech, '*', '*', surface, reading, reading)
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
         processed, fst = create_minimum_transducer(inputs)
@@ -447,7 +447,7 @@ class UserDictionary(RAMDictionary):
         :compressionlevel: (Optional) gzip compression level. default is 9
         """
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
-            raise Exception('Not a directory : %s' % to_dir)
+            raise Exception(f'Not a directory : {to_dir}')
         elif not os.path.exists(to_dir):
             os.makedirs(to_dir, mode=int('0755', 8))
         _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST[0], compressionlevel)
@@ -465,7 +465,7 @@ class CompiledUserDictionary(RAMDictionary):
 
     def load_dict(self, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
-            raise Exception('No such directory : ' % dic_dir)
+            raise Exception(f'No such directory : {dic_dir}')
         data = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
         return data, entries

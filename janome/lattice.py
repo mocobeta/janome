@@ -54,10 +54,9 @@ class Node(NodeBase):
         self.node_type = node_type
 
     def __str__(self):
-        return "(%s,%s,%s,%d,%s,%s,%s,%s,%s,%s) [back_pos=%d,back_index=%d]" % \
-               (self.surface, self.left_id, self.right_id, self.cost, self.part_of_speech,
-                self.infl_type, self.infl_form, self.base_form, self.reading, self.phonetic,
-                self.back_pos, self.back_index)
+        return f"({self.surface}, {self.left_id}, {self.right_id}, {self.cost}, {self.part_of_speech}, \
+                  {self.infl_type}, {self.infl_form}, {self.base_form}, {self.reading}, {self.phonetic}) \
+                      [back_pos = {self.back_pos}, back_index = {self.back_index}]"
 
     def node_label(self):
         return self.surface
@@ -107,7 +106,7 @@ class EOS(NodeBase):
         self.left_id = 0
 
     def __str__(self):
-        return '__EOS__' + ' [back_pos=%d]' % self.back_pos
+        return f'__EOS__ [back_pos={self.back_pos}]'
 
     def node_label(self):
         return 'EOS'
@@ -198,23 +197,22 @@ class Lattice(object):
             for node_id in node_ids:
                 (pos, idx) = node_id
                 node = self.snodes[pos][idx]
-                id_str = '%d.%d' % (pos, idx)
-                label = '%s\\n%s' % (node.node_label(), str(node.cost))
+                id_str = f'{pos}.{idx}'
+                label = f'{node.node_label()}\\n{str(node.cost)}'
                 shape = 'ellipse' if isinstance(node, BOS) or isinstance(node, EOS) else 'box'
                 color = 'lightblue' if isinstance(node, BOS) or isinstance(node, EOS) or node in path else 'lightgray'
                 font = 'MS UI Gothic' if os.name == 'nt' else ''
-                f.write('  %s [label="%s",shape=%s,style=filled,fillcolor=%s,fontname="%s"];\n' %
-                        (id_str, label, shape, color, font))
+                f.write(
+                    f'  {id_str} [label="{label}",shape={shape},style=filled,fillcolor={color},fontname="{font}"];\n')
             for edge in edges:
                 ((pos1, idx1), (pos2, idx2)) = edge
                 node1 = self.snodes[pos1][idx1]
                 node2 = self.snodes[pos2][idx2]
-                id_str1 = '%d.%d' % (pos1, idx1)
-                id_str2 = '%d.%d' % (pos2, idx2)
+                id_str1 = f'{pos1}.{idx1}'
+                id_str2 = f'{pos2}.{idx2}'
                 label = str(self.dic.get_trans_cost(node1.right_id, node2.left_id))
                 (color, style) = ('blue', 'bold') if node1 in path and node2 in path else ('black', 'solid')
-                f.write('  %s -> %s [label="%s",color=%s,style=%s,fontcolor=red];\n' %
-                        (id_str1, id_str2, label, color, style))
+                f.write(f'  {id_str1} -> {id_str2} [label="{label}",color={color},style={style},fontcolor=red];\n')
             f.write('}\n')
 
     def __open_file(self, filename, mode, encoding):

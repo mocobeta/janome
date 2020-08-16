@@ -127,9 +127,8 @@ class Token(object):
         self.node_type = node.node_type
 
     def __str__(self):
-        return '%s\t%s,%s,%s,%s,%s,%s' % \
-            (self.surface, self.part_of_speech, self.infl_type, self.infl_form, self.base_form,
-                self.reading, self.phonetic)
+        return f'{self.surface}\t' \
+            f'{self.part_of_speech},{self.infl_type},{self.infl_form},{self.base_form},{self.reading},{self.phonetic}'
 
 
 class Tokenizer(object):

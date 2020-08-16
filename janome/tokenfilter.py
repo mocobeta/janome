@@ -131,9 +131,9 @@ class CompoundNounFilter(TokenFilter):
         _ret = None
         for token in tokens:
             if _ret:
-                if token.part_of_speech.startswith(u'名詞') and _ret.part_of_speech.startswith(u'名詞'):
+                if token.part_of_speech.startswith('名詞') and _ret.part_of_speech.startswith('名詞'):
                     _ret.surface += token.surface
-                    _ret.part_of_speech = u'名詞,複合,*,*'
+                    _ret.part_of_speech = '名詞,複合,*,*'
                     _ret.base_form += token.base_form
                     _ret.reading += token.reading
                     _ret.phonetic += token.phonetic
@@ -164,7 +164,7 @@ class ExtractAttributeFilter(TokenFilter):
                     'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
         """
         if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
-            raise Exception('Unknown attribute name: %s' % att)
+            raise Exception(f'Unknown attribute name: {att}')
         self.att = att
 
     def apply(self, tokens: Iterator[Token]) -> Iterator[str]:
@@ -194,7 +194,7 @@ class TokenCountFilter(TokenFilter):
         :param sorted: sort items by term frequency
         """
         if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
-            raise Exception('Unknown attribute name: %s' % att)
+            raise Exception(f'Unknown attribute name: {att}')
         self.att = att
         self.sorted = sorted
 

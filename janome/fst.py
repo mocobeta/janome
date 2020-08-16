@@ -253,7 +253,7 @@ def create_minimum_transducer(inputs):
         buffer[i - 1].set_transition(prev_word[i - 1], find_minimized(buffer[i]))
     find_minimized(buffer[0])
 
-    logger.debug('num of state: %d' % fstDict.size())
+    logger.debug(f'num of state: {fstDict.size()}')
     return (processed, fstDict)
 
 
@@ -316,7 +316,7 @@ def compileFST(fst):
             pos += len(bary)
         address[s.id] = pos
 
-    logger.debug('compiled arcs size: %d' % len(arcs))
+    logger.debug(f'compiled arcs size: {len(arcs)}')
     arcs.reverse()
     return b''.join(arcs)
 
