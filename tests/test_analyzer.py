@@ -37,10 +37,10 @@ class TestAnalyzer(unittest.TestCase):
         self.assertTrue(len(a.token_filters) == 0)
 
     def test_analyzer_custom(self):
-        char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'\s+', u'')]
+        char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('\s+', '')]
         tokenizer = Tokenizer(mmap=True)
-        token_filters = [CompoundNounFilter(), POSStopFilter([u'記号', u'助詞']), LowerCaseFilter()]
-        a = Analyzer(char_filters, tokenizer, token_filters)
+        token_filters = [CompoundNounFilter(), POSStopFilter(['記号', '助詞']), LowerCaseFilter()]
+        a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
         self.assertTrue(len(a.char_filters) == 2)
         self.assertIsInstance(a.char_filters[0], UnicodeNormalizeCharFilter)
         self.assertIsInstance(a.char_filters[1], RegexReplaceCharFilter)
@@ -51,13 +51,13 @@ class TestAnalyzer(unittest.TestCase):
         self.assertIsInstance(a.token_filters[2], LowerCaseFilter)
 
     def test_analyze(self):
-        char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
+        char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('蛇の目', 'janome')]
         tokenizer = Tokenizer()
-        token_filters = [CompoundNounFilter(), POSStopFilter([u'記号', u'助詞']), LowerCaseFilter(),
+        token_filters = [CompoundNounFilter(), POSStopFilter(['記号', '助詞']), LowerCaseFilter(),
                          ExtractAttributeFilter('surface')]
-        a = Analyzer(char_filters, tokenizer, token_filters)
-        tokens = a.analyze(u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。')
-        self.assertEqual([u'janome', u'pure', u'python', u'な', u'形態素解析器', u'です'], list(tokens))
+        a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
+        tokens = a.analyze('蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。')
+        self.assertEqual(['janome', 'pure', 'python', 'な', '形態素解析器', 'です'], list(tokens))
 
 
 if __name__ == '__main__':

@@ -57,7 +57,7 @@ Usage (word count with TokenCountFilter):
 うち: 1
 """
 
-from typing import List, Iterator, Any
+from typing import List, Iterator, Any, Optional
 from .tokenizer import Tokenizer
 from .charfilter import CharFilter
 from .tokenfilter import TokenFilter
@@ -71,7 +71,9 @@ class Analyzer(object):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, char_filters: List[CharFilter] = [], tokenizer: Tokenizer = None,
+    def __init__(self, *,
+                 char_filters: List[CharFilter] = [],
+                 tokenizer: Optional[Tokenizer] = None,
                  token_filters: List[TokenFilter] = []):
         """
         Initialize Analyzer object with CharFilters, a Tokenizer and TokenFilters.

@@ -140,7 +140,7 @@ class Tokenizer(object):
     MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
 
-    def __init__(self, udic: str = '',
+    def __init__(self, udic: str = '', *,
                  udic_enc: str = 'utf8',
                  udic_type: str = 'ipadic',
                  max_unknown_length: int = 1024,
@@ -182,7 +182,7 @@ class Tokenizer(object):
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text: str, wakati: bool = False, baseform_unk: bool = True, dotfile: str = '') \
+    def tokenize(self, text: str, *, wakati: bool = False, baseform_unk: bool = True, dotfile: str = '') \
             -> Iterator[Union[Token, str]]:
         """
         Tokenize the input text.
