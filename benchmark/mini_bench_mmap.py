@@ -12,23 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+import timeit
+
+n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
+
+print("** initialize Tokenizer object **")
+print(timeit.timeit(stmt='Tokenizer(mmap=True)', setup='from janome.tokenizer import Tokenizer', number=1))
+
+print("** execute tokenize() %d times **" % n)
 setup = """
 from janome.tokenizer import Tokenizer
 t = Tokenizer(mmap=True)
 with open('text_lemon.txt') as f:
     s = f.read()
 """
-
-
-if __name__ == '__main__':
-    import timeit
-    import sys
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
-
-    print("** initialize Tokenizer object **")
-    print(timeit.timeit(stmt='Tokenizer(mmap=True)', setup='from janome.tokenizer import Tokenizer', number=1))
-
-    print("** execute tokenize() %d times **" % n)
-    res = timeit.repeat(stmt='list(t.tokenize(s))', setup=setup, repeat=5, number=n)
-    for i, x in enumerate(res):
-        print("repeat %d: %f" % (i, x))
+res = timeit.repeat(stmt='list(t.tokenize(s))', setup=setup, repeat=5, number=n)
+for i, x in enumerate(res):
+    print("repeat %d: %f" % (i, x))
