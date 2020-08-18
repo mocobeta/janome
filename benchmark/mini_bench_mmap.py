@@ -15,20 +15,20 @@
 setup = """
 from janome.tokenizer import Tokenizer
 t = Tokenizer(mmap=True)
-# janome (蛇の目) は, Pure Python で書かれた, 辞書内包の形態素解析器です.
-s = u'janome (\u86c7\u306e\u76ee) \u306f, Pure Python \u3067\u66f8\u304b\u308c\u305f, \u8f9e\u66f8\u5185\u5305\u306e\u5f62\u614b\u7d20\u89e3\u6790\u5668\u3067\u3059.'
+with open('text_lemon.txt') as f:
+    s = f.read()
 """
 
 
 if __name__ == '__main__':
     import timeit
     import sys
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 100
+    n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
 
     print("** initialize Tokenizer object **")
     print(timeit.timeit(stmt='Tokenizer(mmap=True)', setup='from janome.tokenizer import Tokenizer', number=1))
 
     print("** execute tokenize() %d times **" % n)
-    res = timeit.repeat(stmt='t.tokenize(s)', setup=setup, repeat=5, number=n)
+    res = timeit.repeat(stmt='list(t.tokenize(s))', setup=setup, repeat=5, number=n)
     for i, x in enumerate(res):
         print("repeat %d: %f" % (i, x))
