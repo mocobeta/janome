@@ -5,10 +5,10 @@ from janome.tokenizer import Tokenizer
 
 repeat = 10
 mmap = False
-dump_file = 'perf.txt'
+dump_file = 'tokenizer.profile'
 if len(sys.argv) > 1 and sys.argv[1] == '-m':
     mmap = True
-    dump_file = 'perf_mmap.txt'
+    dump_file = 'tokenizer_mmap.profile'
 
 t = Tokenizer(mmap=mmap)
 
@@ -21,5 +21,6 @@ profiler.runcall(lambda: [list(t.tokenize(s)) for i in range(repeat)])
 stats = Stats(profiler)
 stats.strip_dirs()
 stats.sort_stats('tottime')
+stats.print_stats()
 stats.dump_stats(dump_file)
 print(f'Result was dumped to {dump_file}.')
