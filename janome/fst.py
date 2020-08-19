@@ -344,7 +344,7 @@ class Matcher(object):
         data = self.dict_data[data_num]
         word_len, data_len = len(word), len(data)
 
-        # simple lru cache for python2 (python2 does not provide functools.lru_cache)
+        # simple lru cache
         # any prefix is in cache?
         for j in range(min(word_len, self.max_cached_word_len), 2, -1):
             if word[:j] in self.cache[data_num]:
@@ -358,14 +358,20 @@ class Matcher(object):
                 break
 
         while pos < data_len:
-            flag, label, output, final_output, target, incr = self.next_arc(data, pos)
-            if flag & FLAG_FINAL_ARC:
+            arc = self.next_arc(data, pos)
+            # arc[0]: flag
+            # arc[1]: label
+            # arc[2]: output
+            # arc[3]: final_output
+            # arc[4]: target
+            # arc[5]: incr
+            if arc[0] & FLAG_FINAL_ARC:
                 if common_prefix_match or i >= word_len:
-                    for out in final_output:
+                    for out in arc[3]:
                         outputs.add(buf + out)
-                if flag & FLAG_LAST_ARC or i > word_len:
+                if arc[0] & FLAG_LAST_ARC or i > word_len:
                     break
-                pos += incr
+                pos += arc[5]
                 if i < self.max_cached_word_len:
                     with self.lock:
                         # add to cache
@@ -374,14 +380,14 @@ class Matcher(object):
                         if len(self.cache[data_num]) >= self.max_cache_size:
                             self.cache[data_num].popitem(last=False)
             elif i < word_len:
-                if word[i] == label:
-                    buf += output
+                if word[i] == arc[1]:
+                    buf += arc[2]
                     i += 1
-                    pos += target
-                elif flag & FLAG_LAST_ARC:
+                    pos += arc[4]
+                elif arc[0] & FLAG_LAST_ARC:
                     break
                 else:
-                    pos += incr
+                    pos += arc[5]
             else:   # i >= word_len
                 break
 
