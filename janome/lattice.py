@@ -13,14 +13,13 @@
 # limitations under the License.
 
 from abc import ABC
-from enum import Enum, auto
 import os
 
 
-class NodeType(Enum):
-    SYS_DICT = auto()
-    USER_DICT = auto()
-    UNKNOWN = auto()
+class NodeType:
+    SYS_DICT = "SYS_DICT"
+    USER_DICT = "USER_DICT"
+    UNKNOWN = "UNKNOWN"
 
 
 class NodeBase(ABC):
