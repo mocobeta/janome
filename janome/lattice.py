@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC
 import os
 
 
@@ -22,9 +21,9 @@ class NodeType:
     UNKNOWN = "UNKNOWN"
 
 
-class NodeBase(ABC):
+class Node(object):
     """
-    Abstract base node class
+    Standard Node class
     """
     __slots__ = [
         'pos', 'index', 'surface', 'left_id', 'right_id', 'cost',
@@ -33,21 +32,12 @@ class NodeBase(ABC):
         'min_cost', 'back_pos', 'back_index'
     ]
 
-    def __init__(self):
+    def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
         self.pos = 0
         self.index = 0
         self.min_cost = 2147483647  # int(pow(2,31)-1)
         self.back_pos = -1
         self.back_index = -1
-
-
-class Node(NodeBase):
-    """
-    Standard Node class
-    """
-
-    def __init__(self, dict_entry, node_type=NodeType.SYS_DICT):
-        super().__init__()
         self.surface, self.left_id, self.right_id, self.cost, \
             self.part_of_speech, self.infl_type, self.infl_form, self.base_form, \
             self.reading, self.phonetic = dict_entry
