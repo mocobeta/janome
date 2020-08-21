@@ -110,21 +110,28 @@ class Token(object):
     """
 
     def __init__(self, node: Node, extra: Tuple = None):
-        self.surface = node.surface
-        """surface form (表層形)"""
-        self.part_of_speech = extra[0] if extra else node.part_of_speech
-        """part of speech (品詞)"""
-        self.infl_type = extra[1] if extra else node.infl_type
-        """terminal form (活用型)"""
-        self.infl_form = extra[2] if extra else node.infl_form
-        """stem form (活用形)"""
-        self.base_form = extra[3] if extra else node.base_form
-        """base form (基本形)"""
-        self.reading = extra[4] if extra else node.reading
-        """"reading (読み)"""
-        self.phonetic = extra[5] if extra else node.phonetic
-        """pronounce (発音)"""
-        self.node_type = node.node_type
+        self.node = node
+        self.extra = extra
+
+    def __getattr__(self, name):
+        if name == 'surface':
+            return self.node.surface
+        elif name == 'part_of_speech':
+            return self.extra[0] if self.extra else self.node.part_of_speech
+        elif name == 'infl_type':
+            return self.extra[1] if self.extra else self.node.infl_type
+        elif name == 'infl_form':
+            return self.extra[2] if self.extra else self.node.infl_form
+        elif name == 'base_form':
+            return self.extra[3] if self.extra else self.node.base_form
+        elif name == 'reading':
+            return self.extra[4] if self.extra else self.node.reading
+        elif name == 'phonetic':
+            return self.extra[5] if self.extra else self.node.phonetic
+        elif name == 'node_type':
+            return self.node.node_type
+        else:
+            None
 
     def __str__(self):
         return f'{self.surface}\t' \
