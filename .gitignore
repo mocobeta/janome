@@ -16,3 +16,5 @@ ipadic/mecab-ipadic*
 tests/userdic
 tests/userdic_simple
 tests/*.gv
+profiler/*.dump
+profiler/*.profile
