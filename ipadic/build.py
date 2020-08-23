@@ -89,12 +89,12 @@ def collect(dicdir, enc, outdir, workdir):
         with open(os.path.join(workdir, 'input%d.pkl' % _cnt), 'wb') as f:
             pickle.dump(_part, f)
 
-    start_save_entries(outdir, ENTRY_BUCKETS_NUM)
     bucket_size = (inputs_size // ENTRY_BUCKETS_NUM) + 1
     bucket_idx = 0
     buckets = {}
     bucket_offset = 0
     morph_id = 0
+    start_save_entries(outdir, 0, 0)
     for path in csv_files:
         with open(path, encoding=enc) as f:
             for line in f:
@@ -109,10 +109,12 @@ def collect(dicdir, enc, outdir, workdir):
                 save_entry(outdir, bucket_idx, morph_id, entry)
                 morph_id += 1
                 if morph_id % bucket_size == 0:
+                    end_save_entries(outdir, bucket_idx)
                     buckets[bucket_idx] = (bucket_offset, morph_id)
                     bucket_idx += 1
                     bucket_offset = morph_id
-    end_save_entries(outdir, ENTRY_BUCKETS_NUM)
+                    start_save_entries(outdir, bucket_idx, bucket_offset)
+    end_save_entries(outdir, bucket_idx)
     buckets[bucket_idx] = (bucket_offset, morph_id)
     save_entry_buckets(outdir, buckets)
 

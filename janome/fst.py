@@ -322,9 +322,10 @@ def compileFST(fst):
 
 
 class Matcher(object):
-    def __init__(self, dict_data, max_cache_size=5000, max_cached_word_len=15):
+    def __init__(self, dict_data, max_cache_size=1024, max_cached_word_len=8):
         if dict_data:
             self.dict_data = dict_data
+            self.dict_len = len(dict_data)
             # bytes -> (position, final_outputs, outputs)
             self.cache = [OrderedDict() for _ in range(len(dict_data))]
             self.max_cache_size = max_cache_size
@@ -333,7 +334,7 @@ class Matcher(object):
 
     def run(self, word, common_prefix_match=True):
         output = set()
-        for i in range(len(self.dict_data)):
+        for i in range(self.dict_len):
             output |= self._run(word, i, common_prefix_match)
         return bool(output), output  # accept if output is not empty
 
@@ -393,7 +394,7 @@ class Matcher(object):
 
         return outputs
 
-    @lru_cache(maxsize=8192)
+    @lru_cache(maxsize=4096)
     def next_arc(self, data, addr):
         assert addr >= 0
         # arc address
