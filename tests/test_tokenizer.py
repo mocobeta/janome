@@ -18,13 +18,24 @@ from io import open
 import unittest
 from janome.lattice import NodeType
 from janome.tokenizer import Tokenizer
+from janome.dic import SystemDictionary, MMapSystemDictionary
 
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
+IS_64BIT = sys.maxsize > 2**32
+
 
 class TestTokenizer(unittest.TestCase):
+
+    def test_initialize(self):
+        t = Tokenizer()
+        if IS_64BIT:
+            self.assertIsInstance(t.sys_dic, MMapSystemDictionary)
+        else:
+            self.assertIsInstance(t.sys_dic, SystemDictionary)
+
     def test_tokenize(self):
         text = 'すもももももももものうち'
         tokens = list(Tokenizer(mmap=False).tokenize(text))
@@ -38,6 +49,9 @@ class TestTokenizer(unittest.TestCase):
         self._check_token(tokens[6], 'うち', '名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ', NodeType.SYS_DICT)
 
     def test_tokenize_mmap(self):
+        if sys.maxsize <= 2**32:
+            # 32bit architecture
+            return
         text = 'すもももももももものうち'
         tokens = list(Tokenizer(mmap=True).tokenize(text))
         self.assertEqual(7, len(tokens))

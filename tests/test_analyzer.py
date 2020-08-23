@@ -44,7 +44,6 @@ class TestAnalyzer(unittest.TestCase):
         self.assertTrue(len(a.char_filters) == 2)
         self.assertIsInstance(a.char_filters[0], UnicodeNormalizeCharFilter)
         self.assertIsInstance(a.char_filters[1], RegexReplaceCharFilter)
-        self.assertIsInstance(a.tokenizer.sys_dic, MMapSystemDictionary)
         self.assertTrue(len(a.token_filters) == 3)
         self.assertIsInstance(a.token_filters[0], CompoundNounFilter)
         self.assertIsInstance(a.token_filters[1], POSStopFilter)

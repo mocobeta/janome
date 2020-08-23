@@ -104,7 +104,7 @@ except ImportError:
     from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
 
 
-DEFAULT_MMAP_MODE = True if sys.maxsize > 2**32 else False
+DEFAULT_MMAP_MODE = sys.maxsize > 2**32
 
 
 class Token(object):
