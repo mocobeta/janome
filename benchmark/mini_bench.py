@@ -15,10 +15,10 @@
 import timeit
 import sys
 
-mmap = False
+mmap = True
 n = 10
-if len(sys.argv) > 1 and sys.argv[1] == '-m':
-    mmap = True
+if len(sys.argv) > 1 and sys.argv[1] == '-nommap':
+    mmap = False
     if len(sys.argv) > 2:
         n = int(sys.argv[2])
 elif len(sys.argv) > 1:

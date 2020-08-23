@@ -3,11 +3,11 @@ import sys
 from janome.tokenizer import Tokenizer
 
 repeat = 10
-mmap = False
+mmap = True
 dump_file = 'memusage.dump'
-if len(sys.argv) > 1 and sys.argv[1] == '-m':
-    mmap = True
-    dump_file = 'memusage_mmap.dump'
+if len(sys.argv) > 1 and sys.argv[1] == '-nommap':
+    mmap = False
+    dump_file = 'memusage_nommap.dump'
 
 with open('text_lemon.txt') as f:
     s = f.read()
