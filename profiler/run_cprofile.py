@@ -4,11 +4,11 @@ import sys
 from janome.tokenizer import Tokenizer
 
 repeat = 10
-mmap = False
+mmap = True
 dump_file = 'tokenizer.profile'
-if len(sys.argv) > 1 and sys.argv[1] == '-m':
-    mmap = True
-    dump_file = 'tokenizer_mmap.profile'
+if len(sys.argv) > 1 and sys.argv[1] == '-nommap':
+    mmap = False
+    dump_file = 'tokenizer_nommap.profile'
 
 t = Tokenizer(mmap=mmap)
 
