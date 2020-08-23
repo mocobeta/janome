@@ -46,12 +46,14 @@ API リファレンス
 動作に必要なソフトウェア
 --------------------------
 
-Python 2.7.x または Python 3.5+ インタプリタ
+Python 3.6+ インタプリタ
+
+.. note:: v0.4.0 で Python 2.7 サポートは廃止されました。
 
 バージョン
 -----------------
 
-* janome: 0.3.10
+* janome: 0.4.0
 
 インストール
 ---------------
@@ -65,7 +67,9 @@ PyPI
 
   $ pip install janome
 
-.. note:: pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします。利用可能なメモリ容量にご注意ください。（バージョン 0.2.6 より，RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました。）
+.. note:: 
+
+  pip でのビルド時に 500 ~ 600 MB 程度のメモリを必要とします。利用可能なメモリ容量にご注意ください。（バージョン 0.2.6 より，RAM 2GB 程度のマシンや 32 bit 環境でもインストールできるようになりました。）
 
 
 チュートリアル
@@ -83,7 +87,7 @@ PyPI
 
 janome.tokenizer パッケージの Tokenizer オブジェクトを作り，tokenize() メソッドに解析したい文字列を渡します。
 
-戻り値は Token オブジェクトのリストです。Token は表層形や品詞といった形態素情報を含みます。詳しくは `リファレンス <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ を参照してください。
+戻り値は Token オブジェクトのイテレータ (generator) です。Token は表層形や品詞といった形態素情報を含みます。詳しくは `リファレンス <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ を参照してください。
 
 ::
 
@@ -101,8 +105,10 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り，toke
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
 
-[重要] Tokenizer 初期化に関する注意事項
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[重要] (0.3.x 以前のバージョン) Tokenizer 初期化に関する注意事項
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. note:: バージョン 0.4.0 以降，64bit アーキテクチャにおいて mmap モードがデフォルトになったことにより，初期化が高速になりました。
 
 Tokenizer オブジェクトの初期化はコストが高いため，インスタンスを使いまわしてください。 以下のようなサンプルコードを掲載しているブログ記事等がありますが，これは非常に遅くなる書き方で，誤っています。
 
@@ -330,8 +336,10 @@ TokenCountFilter の初期化時に ``sorted=True`` を指定すると，出現�
 * `け日記：Python janomeのanalyzerが便利 <http://ohke.hateblo.jp/entry/2017/11/02/230000>`_ (Analyzer 活用，独自フィルターの作成について詳しく解説されています。)
 * `データ解析、プログラミング学習中: janome Analayzerで複合語（複合名詞）を考慮して形態素解析を行う。 <http://eneprog.blogspot.com/2018/07/janome-analayzerpython.html>`_ (CompoundNounFilter の活用例があります。)
 
-ストリーミングモード (v0.3.1 以上)
+ストリーミングモード (v0.3.1 以上 v0.3.10 まで)
 -------------------------------------------------------
+
+.. note:: v0.4.0 から，ストリーミングモードのみサポートしており， ``stream`` オプションは廃止されました。
 
 tokenize() メソッドに ``stream = True`` オプションを与えると，ストリーミングモードで動作します。ストリーミングモードでは，部分的な解析が完了する都度，解析結果を返します。戻り値はリストではなく `generator <https://wiki.python.org/moin/Generators>`_ になります。
 
@@ -390,6 +398,8 @@ v0.3.7 より，janome コマンド (後述) が NEologd 辞書内包版にも�
 
 Memory-mapped file サポート (v0.3.3 以上)
 -------------------------------------------------------------------
+
+.. note:: v0.4.0 以上では， 64bit アーキテクチャにおいて ``mmap=True`` がデフォルトになりました（32bit アーキテクチャでのデフォルトは ``False``）。
 
 Tokenizer オブジェクトの初期化時に ``mmap=True`` オプションを与えると，辞書エントリは Memory-mapped file としてアクセスされるようになります。
 
@@ -536,13 +546,11 @@ A. 辞書は，FST (正確には Minimal Acyclic Subsequential Transducer, `論�
 
 Janome は Lucene の単語辞書やクエリパーサで使われている FST について調べていて生まれました。もしも内部実装にご興味があれば，以下もどうぞ。
 
-* `Lucene FST のアルゴリズム (1) ～図解編～ <http://mocobeta-backup.tumblr.com/post/111076688132/lucene-fst-1>`_
-* `Lucene FST のアルゴリズム (2) 〜実装編〜 <http://mocobeta-backup.tumblr.com/post/113693778372/lucene-fst-2>`_
 * `Pyconjp2015 - Python で作って学ぶ形態素解析 <http://www.slideshare.net/tomokouchida505/pyconjp2015-python>`_
 
 Q. Python 2 系への対応は。
 
-A. デスヨネー。 => 対応しました。janomePy2 をご利用ください。=> janome 本体が Python2.7 にも対応しました。
+A. デスヨネー。 => 対応しました。janomePy2 をご利用ください。=> janome 本体が Python2.7 にも対応しました。 => v0.4.0 以降，Python 2.7 のサポートは停止されました。
 
 Q. 学習器ついてないの。
 
@@ -581,11 +589,12 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015, Tomoko Uchida. All rights reserved.
+Copyright(C) 2020, Tomoko Uchida. All rights reserved.
 
 History
 ----------
 
+* 2020.08.23 janome Version 0.4.0 リリース
 * 2019.11.03 janome Version 0.3.10 リリース
 * 2019.05.12 `janome Version 0.3.9 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-pyinstaller-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-9-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-c603b43fe288>`_
 * 2019.04.03 `janome Version 0.3.8 リリース <https://medium.com/@mocobeta/janome%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E6%96%B0%E5%85%83%E5%8F%B7-%E4%BB%A4%E5%92%8C-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-8-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-fd55b611e86>`_
@@ -597,16 +606,16 @@ History
 * 2017.07.05 janome Version 0.3.2 リリース
 * 2017.07.02 `janome Version 0.3.1 リリース <https://medium.com/@mocobeta/janome-release-0-3-1-3e7afd9d1de3>`_
 * 2017.06.30 janome Version 0.3.0 リリース
-* 2016.05.07 `janome Vesrion 0.2.8 リリース <http://mocobeta-backup.tumblr.com/post/143988723452/janome-028>`_
-* 2016.03.05 `janome Version 0.2.7 リリース <http://mocobeta-backup.tumblr.com/post/140503222592/janome-027>`_
-* 2015.10.26 `janome Version 0.2.6 リリース <http://mocobeta-backup.tumblr.com/post/131952293527/janome-026>`_
+* 2016.05.07 janome Vesrion 0.2.8 リリース
+* 2016.03.05 janome Version 0.2.7 リリース
+* 2015.10.26 janome Version 0.2.6 リリース
 * 2015.05.11 janome Version 0.2.5 リリース
 * 2015.05.03 janome Version 0.2.4 リリース
 * 2015.05.03 janome Version 0.2.3 リリース
 * 2015.04.24 janome Version 0.2.2 リリース
-* 2015.04.24 `janome Version 0.2.0 リリース <http://mocobeta-backup.tumblr.com/post/117180400907/python27-34-janome-020>`_ / janomePy2 は deprecated （数日中に PyPI から削除します。）
-* 2015.04.11 `janome Version 0.1.4 リリース / janomePy2 0.1.4 公開 <http://mocobeta-backup.tumblr.com/post/116108998822/janomepy2-janome-014>`_
-* 2015.04.08 `janome Version 0.1.3 公開 <http://mocobeta-backup.tumblr.com/post/115843098157/pure-python-janome>`_
+* 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated （数日中に PyPI から削除します。）
+* 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
+* 2015.04.08 janome Version 0.1.3 公開
 
 詳細: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
@@ -614,7 +623,6 @@ History
    :alt: Badge(FISHEYE)
    :target: http://www.unicode.org/consortium/adopt-a-character.html
 
-`このバッジについて <http://mocobeta-backup.tumblr.com/post/145913418922/u-25c9-sponsorship>`_
 
 .. Indices and tables
 .. ==================

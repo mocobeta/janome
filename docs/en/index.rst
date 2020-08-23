@@ -46,12 +46,14 @@ API reference
 Requirements
 ------------
 
-Python 2.7.x or Python 3.5+ interpreter
+Python 3.6+ interpreter
+
+(Since v0.4.0, Python 2.7 is no longer supported.)
 
 Latest version
 --------------
 
-* janome: 0.3.10
+* janome: 0.4.0
 
 Install
 -------
@@ -72,7 +74,7 @@ Usage
 
 Create janome.tokenizer.Tokenizer object and call tokenize() method with the sentences you want to analyze.
 
-The return value is a list of Token objects. Token includes morphologic information such as surface form, part-of-speech. See `reference <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ for more details.
+The return value is a gnerator of Token objects. Token includes morphologic information such as surface form, part-of-speech. See `reference <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ for more details.
 
 ::
 
@@ -263,8 +265,10 @@ You can count word frequencies in the input text by using TokenCountFilter.
 
 See API reference for other built-in CharFilters and TokenFilters. You can implement custom filters by extending CharFilter or TokenFilter.
 
-Streaming mode (v0.3.1+)
--------------------------
+Streaming mode (v0.3.1 - v0.3.10)
+----------------------------------
+
+.. note:: As of v0.4.0, janome supports streaming mode only; ``stream`` option was removed.
 
 When ``stream = True`` option is given to tokenize() method, it runs on streaming mode. On streaming mode, partial analyzed results are returned through `generator <https://wiki.python.org/moin/Generators>`_ interface.
 
@@ -310,6 +314,8 @@ When this option is passed to Tokenizer object, tokenize() method always runs in
 
 Memory-mapped file support (v0.3.3+)
 ----------------------------------------
+
+.. note:: Since v0.4.0 release, the default value of ``mmap`` option is set to ``True`` on 64bit architecture. On 32bit architecture, the default is ``False``.
 
 If ``mmap=True`` option is given to Tokenizer.__init__(), dictionary entries are not loaded to process space but searched through memory-mapped file.
 
@@ -464,11 +470,12 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015, Tomoko Uchida. All rights reserved.
+Copyright(C) 2020, Tomoko Uchida. All rights reserved.
 
 History
 ----------
 
+* 2020.08.23 janome Version 0.4.0 released
 * 2019.11.03 janome Version 0.3.10 released
 * 2019.05.12 janome Version 0.3.9 released
 * 2019.04.03 janome Version 0.3.8 released
