@@ -36,7 +36,7 @@ class TestTokenizer(unittest.TestCase):
         else:
             self.assertIsInstance(t.sys_dic, SystemDictionary)
 
-    def test_tokenize(self):
+    def test_tokenize_nommap(self):
         text = 'すもももももももものうち'
         tokens = list(Tokenizer(mmap=False).tokenize(text))
         self.assertEqual(7, len(tokens))

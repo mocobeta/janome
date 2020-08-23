@@ -34,7 +34,8 @@ archive_path = glob.glob(ARCHIVE_NAME)[0]
 # avoiding conflict to existing package
 sys.path.insert(0, archive_path)
 
-t = Tokenizer()
+# mmap option shold be set to False
+t = Tokenizer(mmap=False)
 for token in t.tokenize('すもももももももものうち'):
     print(token)
 
