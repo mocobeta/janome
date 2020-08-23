@@ -9,7 +9,7 @@ $ pip wheel . --no-deps --no-binary
 $ python setup.py bdist_wheel --universal
 出来上がった.whlファイルを使う
 
-[制限事項] mmap=True オプションとは併用できません。(i.e. NEologd 同梱 janome に zip import は適用できません。)
+[制限事項] mmap=False を指定した場合のみ有効です。(NEologd 同梱 janome に zip import は適用できません。)
 
 How to import the zip archive
 
@@ -19,7 +19,7 @@ $ python setup.py bdist_wheel --universal
 
 You can also create a zip archived package by yourself.
 
-[Limitation] mmap=True option cannot be used with zip importing.
+[Limitation] only supported on mmap=False.
 """
 
 import janome.tokenizer

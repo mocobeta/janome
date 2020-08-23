@@ -27,7 +27,7 @@ sys.path.insert(0, parent_dir)
 class TestTokenizer(unittest.TestCase):
     def test_tokenize(self):
         text = 'すもももももももものうち'
-        tokens = list(Tokenizer().tokenize(text))
+        tokens = list(Tokenizer(mmap=False).tokenize(text))
         self.assertEqual(7, len(tokens))
         self._check_token(tokens[0], 'すもも', '名詞,一般,*,*,*,*,すもも,スモモ,スモモ', NodeType.SYS_DICT)
         self._check_token(tokens[1], 'も', '助詞,係助詞,*,*,*,*,も,モ,モ', NodeType.SYS_DICT)

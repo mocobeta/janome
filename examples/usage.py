@@ -6,8 +6,8 @@ for token in t.tokenize(u'すもももももももものうち'):
     print(token)
 
 print('')
-print(u'Tokenize (mmap system dictionary)')
-t = Tokenizer(mmap=True)
+print(u'Tokenize (system dictionary w/o mmap)')
+t = Tokenizer(mmap=False)
 for token in t.tokenize(u'すもももももももものうち'):
     print(token)
 

@@ -38,7 +38,7 @@ class TestAnalyzer(unittest.TestCase):
 
     def test_analyzer_custom(self):
         char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('\s+', '')]
-        tokenizer = Tokenizer(mmap=True)
+        tokenizer = Tokenizer()
         token_filters = [CompoundNounFilter(), POSStopFilter(['記号', '助詞']), LowerCaseFilter()]
         a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
         self.assertTrue(len(a.char_filters) == 2)

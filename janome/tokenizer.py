@@ -151,7 +151,7 @@ class Tokenizer(object):
                  udic_type: str = 'ipadic',
                  max_unknown_length: int = 1024,
                  wakati: bool = False,
-                 mmap: bool = False,
+                 mmap: bool = True,
                  dotfile: str = ''):
         """
         Initialize Tokenizer object with optional arguments.
@@ -162,7 +162,8 @@ class Tokenizer(object):
                           default is 'ipadic'
         :param max_unknows_length: (Optional) max unknown word length. default is 1024.
         :param wakati: (Optional) if given True load minimum sysdic data for 'wakati' mode.
-        :param mmap: (Optional) if given True use memory-mapped file for dictionary data.
+        :param mmap: (Optional) if given False, memory-mapped file mode is disabled.
+                     Set this option to False on any environments that do not support mmap.
 
         .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
