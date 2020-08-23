@@ -48,7 +48,7 @@ API リファレンス
 
 Python 3.6+ インタプリタ
 
-.. note:: v0.4.0 で Python 2.7 サポートは廃止されました。
+(v0.4.0 より Python 2.7 サポートは廃止されました。)
 
 バージョン
 -----------------
@@ -105,10 +105,10 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り，toke
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
 
-[重要] (0.3.x 以前のバージョン) Tokenizer 初期化に関する注意事項
+(0.3.x 以前のバージョン) Tokenizer 初期化に関する注意事項
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note:: バージョン 0.4.0 以降，64bit アーキテクチャにおいて mmap モードがデフォルトになったことにより，初期化が高速になりました。
+.. note:: バージョン 0.4.0 以降，64bit アーキテクチャにおいて mmap モードがデフォルトになったことにより，初期化が速くなったため，この Tips は不要となりました。
 
 Tokenizer オブジェクトの初期化はコストが高いため，インスタンスを使いまわしてください。 以下のようなサンプルコードを掲載しているブログ記事等がありますが，これは非常に遅くなる書き方で，誤っています。
 
@@ -232,8 +232,6 @@ user_simpledic.csv ::
 
 現在のところ，コンパイルのためのツールはありませんが， `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。
 
-.. note:: v0.3.9 で，ユーザー辞書コンパイル時の API が少し変わっているため注意してください。
-
 辞書のコンパイル(MeCab IPADIC format) ::
 
   >>> from janome.dic import UserDictionary
@@ -256,7 +254,7 @@ user_simpledic.csv ::
 
 .. note:: コンパイル済みユーザー辞書は，コンパイル時と読み取り時で同一のメジャーバージョンの Python を使ってください。辞書の前方/後方互換性は保証されないため，Python のメジャーバージョンが異なると読めない可能性があります。
 
-(experimental) Analyzer フレームワーク (v0.3.4 以上)
+Analyzer フレームワーク (v0.3.4 以上)
 ----------------------------------------------------------------
 
 Analyzer は，形態素解析の前処理・後処理をテンプレ化するためのフレームワークです。Analyzer フレームワークは下記のクラスを含みます。
@@ -594,7 +592,7 @@ Copyright(C) 2020, Tomoko Uchida. All rights reserved.
 History
 ----------
 
-* 2020.08.23 janome Version 0.4.0 リリース
+* 2020.08.23 `janome Version 0.4.0 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-v0-4-0-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-%E3%83%A1%E3%83%A2%E3%83%AA%E4%BD%BF%E7%94%A8%E9%87%8F%E3%81%AE%E5%89%8A%E6%B8%9B%E3%82%84-python2-7-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88%E5%81%9C%E6%AD%A2%E3%81%AA%E3%81%A9%E3%81%AA%E3%81%A9-d91ec3642d7>`_
 * 2019.11.03 janome Version 0.3.10 リリース
 * 2019.05.12 `janome Version 0.3.9 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-pyinstaller-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-9-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-c603b43fe288>`_
 * 2019.04.03 `janome Version 0.3.8 リリース <https://medium.com/@mocobeta/janome%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E6%96%B0%E5%85%83%E5%8F%B7-%E4%BB%A4%E5%92%8C-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-8-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-fd55b611e86>`_

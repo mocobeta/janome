@@ -107,4 +107,4 @@ Special thanks to @ikawaha, @takuyaa, @nakagami and @janome_oekaki.
 Copyright
 ==========
 
-Copyright(C) 2015, Tomoko Uchida. All rights reserved.
+Copyright(C) 2020, Tomoko Uchida. All rights reserved.
