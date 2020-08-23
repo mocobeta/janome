@@ -6,19 +6,15 @@
 $ python setup.py test
 ```
 
-2. Update CHANGES.txt.
+2. Update CHANGES.txt and documentation.
 
-3. Create the release tag.
-
-4. Push the changes and tags to the repository.
-
-5. Build the release candidates and upload them to TestPyPI.
+3. Build the release candidates and upload them to TestPyPI.
 
 https://packaging.python.org/guides/using-testpypi/
 
 ```
 $ cat janome/version.py
-JANOME_VERSION='x.x.x-rc'
+JANOME_VERSION='x.x.xrc1'
 $ rm dist/*
 $ python setup.py sdist
 $ python setup.py bdist_wheel --universal
@@ -28,14 +24,16 @@ $ python setup.py bdist_wheel --universal
 $ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
-6. Confirm the release candidate works correctly with Python2/3.
+4. Confirm the release candidate works correctly with Python 3.
 
 ```
-$ pip install -i https://test.pypi.org/simple/ Janome==x.x.xrc0
+$ pip install -i https://test.pypi.org/simple/ Janome==x.x.xrc1
+$ pip freeze
+Janome==x.x.xrc1
 $ echo "リリースするぞ！" | janome
 ```
 
-7. Create a tag for the release.
+5. Create a tag for the release.
 
 ```
 $ cat janome/version.py
@@ -44,7 +42,7 @@ $ git tag x.x.x
 $ git push --tags
 ```
 
-8. Build the release modules and upload them to PyPI.
+6. Build the release modules and upload them to PyPI.
 
 ```
 $ rm dist/*
@@ -56,7 +54,36 @@ $ python setup.py bdist_wheel --universal
 $ twine upload dist/*
 ```
 
-9. Update documentation.
+7. Publish documentation.
+
+Prepare virtual env.
+
+```
+$ cd docs
+$ python -m venv .venv
+$ . .venv/bin/activate
+$ pip install -r requirements-docs.txt
+```
+
+Generate documentation.
+
+```
+$ cd docs/api
+$ make html
+
+$ cd docs/ja
+$ make html
+
+$ cd docs/en
+$ make html
+```
+
+Publish to web site.
+
+```
+$ cd docs
+$ ./upload_docs.sh $DOCS_ROOT_PATH
+```
 
 Well done!
 
