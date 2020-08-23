@@ -1,3 +1,12 @@
+* 0.4.0 (2020.8.23)
+  - #72: Stop supporting Python 2.7.
+  - #73: Refactoring: Modernize source code.
+  - #81: Add profiling scripts (cProfile, tracemaloc).
+  - #82: Avoid frequent tuple unpacking.
+  - #83: Refactor lattice node and tokenizer token.
+  - #84: Improve mmap mode (reduce dictionary size, reduce memory consumption, and improve analysis performance).
+  - #85: Switch default mmap mode to True on 64bit architecture.
+
 * 0.3.10 (2019.11.03)
   - #69: Remove unnecessary sys.path change.
   - #70: Remove python 3.3 and 3.4 support.
