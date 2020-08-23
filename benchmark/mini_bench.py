@@ -12,21 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import timeit
 import sys
-n = int(sys.argv[1]) if len(sys.argv) > 1 else 10
 
+mmap = False
+n = 10
+if len(sys.argv) > 1 and sys.argv[1] == '-m':
+    mmap = True
+    if len(sys.argv) > 2:
+        n = int(sys.argv[2])
+elif len(sys.argv) > 1:
+    n = int(sys.argv[1])
+
+print("** Setup **")
+print(f'mmap={mmap}, loop={n}')
 print("** initialize Tokenizer object **")
-print(timeit.timeit(stmt='Tokenizer()', setup='from janome.tokenizer import Tokenizer', number=1))
+print(timeit.timeit(stmt=f'Tokenizer(mmap={mmap})', setup='from janome.tokenizer import Tokenizer', number=1))
 
 print("** execute tokenize() %d times **" % n)
-setup = """
+setup = f"""
 from janome.tokenizer import Tokenizer
-t = Tokenizer()
+t = Tokenizer(mmap={mmap})
 with open('text_lemon.txt') as f:
-    s = f.read()
+    lines = f.readlines()
 """
-res = timeit.repeat(stmt='list(t.tokenize(s))', setup=setup, repeat=5, number=n)
+
+
+def test(t, lines):
+    for line in lines:
+        list(t.tokenize(line))
+
+
+res = timeit.repeat(stmt='test(t, lines)', setup=setup, repeat=5, number=n, globals=globals())
 for i, x in enumerate(res):
     print("repeat %d: %f" % (i, x))

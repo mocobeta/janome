@@ -52,16 +52,14 @@ def save_fstdata(data, dir, part=0):
     _save_as_module(os.path.join(dir, MODULE_FST_DATA % part), data, binary=True)
 
 
-def start_save_entries(dir, bucket_num):
-    for i in range(0, bucket_num):
-        _start_entries_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT % i))
-        _start_entries_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA % i))
+def start_save_entries(dir, bucket_idx, morph_offset):
+    _start_entries_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT % bucket_idx), morph_offset)
+    _start_entries_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA % bucket_idx), morph_offset)
 
 
-def end_save_entries(dir, bucket_num):
-    for i in range(0, bucket_num):
-        _end_entries_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT % i))
-        _end_entries_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA % i))
+def end_save_entries(dir, bucket_idx):
+    _end_entries_as_module(os.path.join(dir, MODULE_ENTRIES_COMPACT % bucket_idx))
+    _end_entries_as_module(os.path.join(dir, MODULE_ENTRIES_EXTRA % bucket_idx))
 
 
 def save_entry(dir, bucket_idx, morph_id, entry):
@@ -130,12 +128,13 @@ def _save_as_module(file, data, binary=False):
         f.flush()
 
 
-def _start_entries_as_module(file):
+def _start_entries_as_module(file, morph_id_offset):
     idx_file = re.sub(r'\.py$', '_idx.py', file)
     with open(file, 'w') as f:
         with open(idx_file, 'w') as f_idx:
             f.write('DATA={')
             f_idx.write('DATA={')
+            f_idx.write(f'"offset": {morph_id_offset}, "positions": [')
 
 
 def _end_entries_as_module(file):
@@ -143,7 +142,7 @@ def _end_entries_as_module(file):
     with open(file, 'a') as f:
         with open(idx_file, 'a') as f_idx:
             f.write('}\n')
-            f_idx.write('}\n')
+            f_idx.write(']}\n')
             f.flush()
             f_idx.flush()
 
@@ -153,9 +152,9 @@ def _save_entry_as_module_compact(file, morph_id, entry):
     with open(file, 'a') as f:
         with open(idx_file, 'a') as f_idx:
             f.write('%d:(' % morph_id)
-            _pos1 = f.tell()
-            f_idx.write('%d:%d,' % (morph_id, _pos1))
-            s = u"u'%s',%s,%s,%d" % (
+            pos = f.tell()
+            f_idx.write(f'{pos},')
+            s = u"u'%s',%4d,%4d,%5d" % (
                 entry[0].encode('unicode_escape').decode('ascii'),
                 entry[1],
                 entry[2],
@@ -169,8 +168,8 @@ def _save_entry_as_module_extra(file, morph_id, entry):
     with open(file, 'a') as f:
         with open(idx_file, 'a') as f_idx:
             f.write('%d:(' % morph_id)
-            _pos1 = f.tell()
-            f_idx.write('%d:%d,' % (morph_id, _pos1))
+            pos = f.tell()
+            f_idx.write(f'{pos},')
             s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
                 entry[4].encode('unicode_escape').decode('ascii'),
                 entry[5].encode('unicode_escape').decode('ascii'),
@@ -249,6 +248,7 @@ class MMapDictionary(Dictionary):
         self.compiledFST = compiledFST
         self.matcher = Matcher(compiledFST)
         self.entries_compact = entries_compact
+        self.bucket_ranges = entries_compact.keys()
         self.entries_extra = entries_extra
         self.open_files = open_files
         self.connections = connections
@@ -261,19 +261,7 @@ class MMapDictionary(Dictionary):
             matched_entries = []
             for e in outputs:
                 idx = unpack('I', e)[0]
-                bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_compact.keys()))
-                mm, mm_idx = self.entries_compact[bucket]
-                _pos1s = mm_idx[idx] + 2
-                _pos1e = mm.find(b"',", _pos1s)
-                _pos2s = _pos1e + 2
-                _pos2e = mm.find(b",", _pos2s)
-                _pos3s = _pos2e + 1
-                _pos3e = mm.find(b",", _pos3s)
-                _pos4s = _pos3e + 1
-                _pos4e = mm.find(b")", _pos4s)
-                _entry = (mm[_pos1s:_pos1e].decode('unicode_escape'), int(
-                    mm[_pos2s:_pos2e]), int(mm[_pos3s:_pos3e]), int(mm[_pos4s:_pos4e]))
-                matched_entries.append((idx,) + _entry)
+                matched_entries.append((idx,) + self._find_entry(idx))
             return matched_entries
         except Exception:
             logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
@@ -282,11 +270,33 @@ class MMapDictionary(Dictionary):
             traceback.format_exc()
             sys.exit(1)
 
+    @lru_cache(maxsize=8192)
+    def _find_entry(self, idx):
+        bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.bucket_ranges))
+        mm, mm_idx = self.entries_compact[bucket]
+        rel_idx = idx - mm_idx['offset']
+        _pos1s = mm_idx['positions'][rel_idx] + 2
+        _pos1e = mm.find(b"',", _pos1s)
+        _pos2s = _pos1e + 2
+        _pos2e = _pos2s + 4
+        _pos3s = _pos2e + 1
+        _pos3e = _pos3s + 4
+        _pos4s = _pos3e + 1
+        _pos4e = _pos4s + 5
+        _entry = (
+            mm[_pos1s:_pos1e].decode('unicode_escape'),
+            int(mm[_pos2s:_pos2e]),
+            int(mm[_pos3s:_pos3e]),
+            int(mm[_pos4s:_pos4e]))
+        return _entry
+
+    @lru_cache(maxsize=1024)
     def lookup_extra(self, idx):
         try:
-            bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.entries_extra.keys()))
+            bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.bucket_ranges))
             mm, mm_idx = self.entries_extra[bucket]
-            _pos1s = mm_idx[idx] + 2
+            rel_idx = idx - mm_idx['offset']
+            _pos1s = mm_idx['positions'][rel_idx] + 2
             _pos1e = mm.find(b"',u'", _pos1s)
             _pos2s = _pos1e + 4
             _pos2e = mm.find(b"',u'", _pos2s)
@@ -409,8 +419,7 @@ class UserDictionary(RAMDictionary):
                 line = line.rstrip()
                 surface, left_id, right_id, cost, \
                     pos_major, pos_minor1, pos_minor2, pos_minor3, \
-                    infl_type, infl_form, base_form, reading, phonetic = \
-                    line.split(',')
+                    infl_type, infl_form, base_form, reading, phonetic = line.split(',')
                 part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
                 morph_id = len(surfaces)
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
