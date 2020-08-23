@@ -144,7 +144,6 @@ class Token(object):
 class Tokenizer(object):
     """
     A Tokenizer tokenizes Japanese texts with system and optional user defined dictionary.
-    It is strongly recommended to re-use a Tokenizer object because object initialization cost is high.
     """
     MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
