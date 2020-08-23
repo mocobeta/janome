@@ -8,3 +8,5 @@ pyflakes==2.2.0
 toml==0.10.1
 typed-ast==1.4.1
 typing-extensions==3.7.4.2
+twine==3.2.0
+wheel==0.35.1
