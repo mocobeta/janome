@@ -396,7 +396,7 @@ class UserDictionary(RAMDictionary):
     User dictionary class (on-the-fly)
     """
 
-    def __init__(self, user_dict, enc, type, connections):
+    def __init__(self, user_dict, enc, type, connections, progress_handler=None):
         """
         Initialize user defined dictionary object.
 
@@ -408,12 +408,19 @@ class UserDictionary(RAMDictionary):
         .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
         build_method = getattr(self, 'build' + type)
-        compiledFST, entries = build_method(user_dict, enc)
+        compiledFST, entries = build_method(user_dict, enc, progress_handler)
         super().__init__([compiledFST], entries, connections)
 
-    def buildipadic(self, user_dict, enc):
+    def buildipadic(self, user_dict, enc, progress_handler):
         surfaces = []
         entries = {}
+
+        # init progress for reading CSV
+        if progress_handler:
+            progress_handler.on_start(
+                total=sum(1 for line in open(user_dict)),
+                desc="Reading user dictionary from CSV")
+
         with io.open(user_dict, encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
@@ -425,13 +432,34 @@ class UserDictionary(RAMDictionary):
                 surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
                 entries[morph_id] = (surface, int(left_id), int(right_id), int(
                     cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+                # update progress
+                if progress_handler:
+                    progress_handler.on_progress()
+
+        # complete progress for reading CSV
+        if progress_handler:
+            progress_handler.on_complete()
+
         inputs = sorted(surfaces)  # inputs must be sorted.
         assert len(surfaces) == len(entries)
-        processed, fst = create_minimum_transducer(inputs)
+
+        # init progress for create_minimum_transducer
+        if progress_handler:
+            progress_handler.on_start(
+                total=len(inputs),
+                desc="Running create_minimum_transducer")
+
+        processed, fst = create_minimum_transducer(inputs,
+            on_progress=progress_handler.on_progress if progress_handler else None)
+
+        # complete progress for create_minimum_transducer
+        if progress_handler:
+            progress_handler.on_complete()
+
         compiledFST = compileFST(fst)
         return compiledFST, entries
 
-    def buildsimpledic(self, user_dict, enc):
+    def buildsimpledic(self, user_dict, enc, progress_handler):
         surfaces = []
         entries = {}
         with io.open(user_dict, encoding=enc) as f:

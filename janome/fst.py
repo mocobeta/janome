@@ -155,7 +155,7 @@ class FST(object):
 
 # naive implementation for building fst
 # http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698
-def create_minimum_transducer(inputs):
+def create_minimum_transducer(inputs, on_progress=None):
     inputs_size = len(inputs)
     logger.info('(partial) input size: %d' % inputs_size)
 
@@ -247,6 +247,9 @@ def create_minimum_transducer(inputs):
         prev_word = current_word
 
         processed += 1
+
+        if on_progress:
+            on_progress()
 
     # minimize the last word
     for i in range(len(current_word), 0, -1):
