@@ -3,7 +3,7 @@
 IPADIC_DIR=$1
 OUT_DIR=sysdic
 WORKING_DIR=work
-WORKER_PROCESS=2
+WORKER_PROCESS=6
 
 if [ -z ${IPADIC_DIR} ]; then
   echo "Usage: ./build.sh <mecab ipadic dir>"
