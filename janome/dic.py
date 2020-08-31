@@ -404,6 +404,7 @@ class UserDictionary(RAMDictionary):
         :param enc: character encoding
         :param type: user dictionary type. supported types are 'ipadic' and 'simpledic'
         :param connections: connection cost matrix. expected value is SYS_DIC.connections
+        :param progress_handler: handler mainly to indicate progress, implementation of ProgressHandler
 
         .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
