@@ -137,6 +137,7 @@ class TestDictionary(unittest.TestCase):
         compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections)
         self.assertEqual(1, len(compiled_user_dic.lookup('とうきょうスカイツリー駅'.encode('utf8'))))
 
+    def test_user_dictionary_with_progress(self):
         # create user dictionary from csv with progress indicator
         progress_indicator = SimpleProgressIndicator(update_frequency=1.0)
         with self.assertLogs(logger=p_logger) as cm:
@@ -187,6 +188,7 @@ class TestDictionary(unittest.TestCase):
         compiled_user_dic = CompiledUserDictionary(dic_dir, connections=connections)
         self.assertEqual(1, len(compiled_user_dic.lookup('とうきょうスカイツリー駅'.encode('utf8'))))
 
+    def test_simplified_user_dictionary_with_progress(self):
         # create simplified user dictionary from csv with progress indicator
         progress_indicator = SimpleProgressIndicator(update_frequency=1.0)
         with self.assertLogs(logger=p_logger) as cm:
