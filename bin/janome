@@ -24,8 +24,12 @@ import sys
 import subprocess
 
 import signal
+
+
 def signal_handler(signal, frame):
     sys.exit(0)
+
+
 signal.signal(signal.SIGINT, signal_handler)
 
 
@@ -33,19 +37,22 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("-e", "--enc", dest="enc", default="utf8", help="Input encoding. Default is 'utf8'")
     parser.add_argument("--udic", dest="udic", default="", help="Path to user dictionary file")
-    parser.add_argument("--udic-enc", dest="udic_enc", default="utf8", help="User dictionary encoding. Default is 'utf8'")
-    parser.add_argument("--udic-type", dest="udic_type", default="ipadic", help="User dictionary type, 'ipadic' or 'simpledic.' Default is 'ipadic'")
-    parser.add_argument("-m", "--mmap", dest="mmap", nargs='?', const=True, default=False, help="Use mmap mode")
-    parser.add_argument("-g", "--graphviz", dest="graphviz", nargs='?', const=True, default=False, help="Output visualized lattice graph by Graphviz")
-    parser.add_argument("--gv-out", dest="gv_out", default="lattice.gv", help="Graphviz output file path. This option is used with -g or --graphviz")
-    parser.add_argument("--gv-format", dest="gv_format", default="png", help="Graphviz output format. default is 'png'. This option is used with -g or --graphviz. See https://graphviz.gitlab.io/_pages/doc/info/output.html for the supported formats.")
+    parser.add_argument("--udic-enc", dest="udic_enc", default="utf8",
+                        help="User dictionary encoding. Default is 'utf8'")
+    parser.add_argument("--udic-type", dest="udic_type", default="ipadic",
+                        help="User dictionary type, 'ipadic' or 'simpledic.' Default is 'ipadic'")
+    parser.add_argument("-g", "--graphviz", dest="graphviz", nargs='?', const=True,
+                        default=False, help="Output visualized lattice graph by Graphviz")
+    parser.add_argument("--gv-out", dest="gv_out", default="lattice.gv",
+                        help="Graphviz output file path. This option is used with -g or --graphviz")
+    parser.add_argument("--gv-format", dest="gv_format", default="png",
+                        help="Graphviz output format. default is 'png'. This option is used with -g or --graphviz. See https://graphviz.gitlab.io/_pages/doc/info/output.html for the supported formats.")
     parser.add_argument('--version', action="version", version="janome {}".format(JANOME_VERSION))
     args = parser.parse_args()
 
     t = Tokenizer(udic=args.udic,
                   udic_enc=args.udic_enc,
-                  udic_type=args.udic_type,
-                  mmap=args.mmap)
+                  udic_type=args.udic_type)
     dotfile = args.gv_out if args.graphviz else ''
     while True:
         try:
@@ -58,6 +65,7 @@ def main():
     if args.graphviz:
         generate_graph(dotfile, args.gv_format)
 
+
 def generate_graph(dotfile, gv_format):
     format_opt = '-T%s' % gv_format
     output = '%s.%s' % (dotfile, gv_format)
@@ -68,6 +76,6 @@ def generate_graph(dotfile, gv_format):
         sys.exit(1)
     print('Graph was successfully output to %s' % output)
 
+
 if __name__ == '__main__':
     main()
-    
