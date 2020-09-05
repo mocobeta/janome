@@ -408,11 +408,28 @@ class UserDictionary(RAMDictionary):
 
         .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
-        build_method = getattr(self, 'build' + type)
-        compiledFST, entries = build_method(user_dict, enc, progress_handler)
+        line_to_entry = getattr(self, 'line_to_entry_' + type)
+        compiledFST, entries = self.build_dic(user_dict, enc, progress_handler, line_to_entry)
         super().__init__([compiledFST], entries, connections)
 
-    def buildipadic(self, user_dict, enc, progress_handler):
+    @classmethod
+    def line_to_entry_ipadic(cls, line):
+        """Convert IPADIC formatted string to an user dictionary entry"""
+        surface, left_id, right_id, cost, \
+            pos_major, pos_minor1, pos_minor2, pos_minor3, \
+            infl_type, infl_form, base_form, reading, phonetic = line.split(',')
+        part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
+        return (surface, int(left_id), int(right_id), int(cost),
+                part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+
+    @classmethod
+    def line_to_entry_simpledic(cls, line):
+        """Convert simpledict formatted string to an user dictionary entry"""
+        surface, pos_major, reading = line.split(',')
+        part_of_speech = ','.join([pos_major, '*', '*', '*'])
+        return (surface, 0, 0, -100000, part_of_speech, '*', '*', surface, reading, reading)
+
+    def build_dic(self, user_dict, enc, progress_handler, line_to_entry):
         surfaces = []
         entries = {}
 
@@ -426,14 +443,13 @@ class UserDictionary(RAMDictionary):
         with io.open(user_dict, encoding=enc) as f:
             for line in f:
                 line = line.rstrip()
-                surface, left_id, right_id, cost, \
-                    pos_major, pos_minor1, pos_minor2, pos_minor3, \
-                    infl_type, infl_form, base_form, reading, phonetic = line.split(',')
-                part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
+                # entry should be a tuple:
+                # (surface, left_id, right_id, cost, part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+                entry = line_to_entry(line)
                 morph_id = len(surfaces)
-                surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, int(left_id), int(right_id), int(
-                    cost), part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+                surfaces.append((entry[0].encode('utf8'), pack('I', morph_id)))
+                entries[morph_id] = entry
+
                 # update progress
                 if progress_handler:
                     progress_handler.on_progress()
@@ -452,53 +468,7 @@ class UserDictionary(RAMDictionary):
                 desc='Running create_minimum_transducer')
 
         processed, fst = create_minimum_transducer(inputs,
-            on_progress=progress_handler.on_progress if progress_handler else None)
-
-        # complete progress for create_minimum_transducer
-        if progress_handler:
-            progress_handler.on_complete()
-
-        compiledFST = compileFST(fst)
-        return compiledFST, entries
-
-    def buildsimpledic(self, user_dict, enc, progress_handler):
-        surfaces = []
-        entries = {}
-
-        # init progress for reading CSV
-        if progress_handler:
-            with open(user_dict, encoding=enc) as f:
-                progress_handler.on_start(
-                    total=sum(1 for line in f),
-                    desc='Reading user dictionary from CSV')
-
-        with io.open(user_dict, encoding=enc) as f:
-            for line in f:
-                line = line.rstrip()
-                surface, pos_major, reading = line.split(',')
-                part_of_speech = ','.join([pos_major, '*', '*', '*'])
-                morph_id = len(surfaces)
-                surfaces.append((surface.encode('utf8'), pack('I', morph_id)))
-                entries[morph_id] = (surface, 0, 0, -100000, part_of_speech, '*', '*', surface, reading, reading)
-                # update progress
-                if progress_handler:
-                    progress_handler.on_progress()
-
-        # complete progress for reading CSV
-        if progress_handler:
-            progress_handler.on_complete()
-
-        inputs = sorted(surfaces)  # inputs must be sorted.
-        assert len(surfaces) == len(entries)
-
-        # init progress for create_minimum_transducer
-        if progress_handler:
-            progress_handler.on_start(
-                total=len(inputs),
-                desc='Running create_minimum_transducer')
-
-        processed, fst = create_minimum_transducer(inputs,
-            on_progress=progress_handler.on_progress if progress_handler else None)
+                                                   on_progress=progress_handler.on_progress if progress_handler else None)
 
         # complete progress for create_minimum_transducer
         if progress_handler:
