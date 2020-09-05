@@ -467,8 +467,9 @@ class UserDictionary(RAMDictionary):
                 total=len(inputs),
                 desc='Running create_minimum_transducer')
 
-        processed, fst = create_minimum_transducer(inputs,
-                                                   on_progress=progress_handler.on_progress if progress_handler else None)
+        processed, fst = create_minimum_transducer(
+            inputs,
+            on_progress=progress_handler.on_progress if progress_handler else None)
 
         # complete progress for create_minimum_transducer
         if progress_handler:
