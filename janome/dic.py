@@ -418,9 +418,10 @@ class UserDictionary(RAMDictionary):
 
         # init progress for reading CSV
         if progress_handler:
-            progress_handler.on_start(
-                total=sum(1 for line in open(user_dict)),
-                desc='Reading user dictionary from CSV')
+            with open(user_dict, encoding=enc) as f:
+                progress_handler.on_start(
+                    total=sum(1 for line in f),
+                    desc='Reading user dictionary from CSV')
 
         with io.open(user_dict, encoding=enc) as f:
             for line in f:
@@ -466,9 +467,10 @@ class UserDictionary(RAMDictionary):
 
         # init progress for reading CSV
         if progress_handler:
-            progress_handler.on_start(
-                total=sum(1 for line in open(user_dict)),
-                desc='Reading user dictionary from CSV')
+            with open(user_dict, encoding=enc) as f:
+                progress_handler.on_start(
+                    total=sum(1 for line in f),
+                    desc='Reading user dictionary from CSV')
 
         with io.open(user_dict, encoding=enc) as f:
             for line in f:
