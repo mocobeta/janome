@@ -230,20 +230,26 @@ user_simpledic.csv ::
 
 ユーザー定義辞書は，巨大になるとバイナリコンパイルに時間がかかるため，あらかじめコンパイルしておき，コンパイル済みの辞書を使うことも可能です。
 
-現在のところ，コンパイルのためのツールはありませんが， `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。
+現在のところ，コンパイルのためのツールはありませんが， `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。 ``progress_handler`` オプションは v0.4.1 以上でサポートされます。
 
 辞書のコンパイル(MeCab IPADIC format) ::
 
   >>> from janome.dic import UserDictionary
+  >>> from janome.progress import SimpleProgressIndicator
   >>> from janome import sysdic
-  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections)
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections, progress_handler=SimpleProgressIndicator(update_frequency=0.01))
+  Reading user dictionary from CSV: 100.0% | 17149/17149
+  Running create_minimum_transducer: 100.0% | 17149/17149
   >>> user_dict.save("/tmp/userdic")
 
 辞書のコンパイル(simplified format) ::
 
   >>> from janome.dic import UserDictionary
+  >>> from janome.progress import SimpleProgressIndicator
   >>> from janome import sysdic
-  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
+  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections, progress_handler=SimpleProgressIndicator(update_frequency=0.01))
+  Reading user dictionary from CSV: 100.0% | 17149/17149
+  Running create_minimum_transducer: 100.0% | 17149/17149
   >>> user_dict.save("/tmp/userdic")
 
 これで， */tmp/userdic* 以下にコンパイル済みのユーザー辞書が保存されます。使うときは Tokenizer のコンストラクタにディレクトリのパスを指定します。

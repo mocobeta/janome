@@ -186,20 +186,26 @@ Pre-compiled user dictionary
 
 With large user dictionary, it can take much time to convert CSV file to the binary data structure. You can compile the user dictionary in advance and use that at runtime.
 
-For now, there is no tools for compiling user dictionary. Use `APIs <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ as below.
+For now, there is no tools for compiling user dictionary. Use `APIs <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ as below. ``progress_handler`` option is supported in v0.4.1 or above.
 
 How to compile user dictionary (MeCab IPADIC format): ::
 
   >>> from janome.dic import UserDictionary
-  >>> import sysdic
-  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections)
+  >>> from janome import sysdic
+  >>> from janome.progress import SimpleProgressIndicator
+  >>> user_dict = UserDictionary("userdic.csv", "utf8", "ipadic", sysdic.connections, progress_handler=SimpleProgressIndicator(update_frequency=0.01))
+  Reading user dictionary from CSV: 100.0% | 17149/17149
+  Running create_minimum_transducer: 100.0% | 17149/17149
   >>> user_dict.save("/tmp/userdic")
 
 How to compile user dictionary (simplified format): ::  
 
   >>> from janome.dic import UserDictionary
-  >>> import sysdic
-  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections)
+  >>> from janome import sysdic
+  >>> from janome.progress import SimpleProgressIndicator
+  >>> user_dict = UserDictionary("user_simpledic.csv", "utf8", "simpledic", sysdic.connections, progress_handler=SimpleProgressIndicator(update_frequency=0.01))
+  Reading user dictionary from CSV: 100.0% | 17149/17149
+  Running create_minimum_transducer: 100.0% | 17149/17149
   >>> user_dict.save("/tmp/userdic")
 
 Once compiling has been successfully completed, the data is saved in ``/tmp/userdic`` directory. Pass the directory path to Tokenizer's constructor to use it.
