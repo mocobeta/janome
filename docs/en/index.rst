@@ -53,7 +53,7 @@ Python 3.6+ interpreter
 Latest version
 --------------
 
-* janome: 0.4.0
+* 0.4.1
 
 Install
 -------
@@ -238,7 +238,7 @@ Analyzser usage
   >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
   >>> tokenizer = Tokenizer()
   >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
-  >>> a = Analyzer(char_filters, tokenizer, token_filters)
+  >>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
   >>> for token in a.analyze(text):
   ...     print(token)
   ... 
@@ -403,6 +403,8 @@ How to bundle janome with an application by PyInstaller (v0.3.9+)
 
 You can create (and distribute) stand-alone executables which bundle janome by `PyInstaller <https://www.pyinstaller.org/>`_.
 
+``mmap=False`` option is required when initializing Tokenizer.
+
 ::
 
     (venv) $ janome --version
@@ -413,7 +415,7 @@ You can create (and distribute) stand-alone executables which bundle janome by `
     (venv) $ cat test.py 
     # -*- utf-8
     from janome.tokenizer import Tokenizer
-    t = Tokenizer()
+    t = Tokenizer(mmap=False)
         for token in t.tokenize('令和元年'):
         print(token)
 
@@ -481,6 +483,7 @@ Copyright(C) 2020, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2020.09.21 janome Version 0.4.1 released
 * 2020.08.23 janome Version 0.4.0 released
 * 2019.11.03 janome Version 0.3.10 released
 * 2019.05.12 janome Version 0.3.9 released
@@ -509,13 +512,3 @@ Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES
 .. image:: ../img/bronze-25C9.png
    :alt: Badge(FISHEYE)
    :target: http://www.unicode.org/consortium/adopt-a-character.html	 
-
-`About this badge <http://mocobeta-backup.tumblr.com/post/153598031477/u-25c9-sponsorship-en>`_
-
-.. Indices and tables
-.. ==================
-
-.. * :ref:`genindex`
-.. * :ref:`modindex`
-.. * :ref:`search`
-

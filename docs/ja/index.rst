@@ -50,10 +50,10 @@ Python 3.6+ インタプリタ
 
 (v0.4.0 より Python 2.7 サポートは廃止されました。)
 
-バージョン
+最新バージョン
 -----------------
 
-* janome: 0.4.0
+* 0.4.1
 
 インストール
 ---------------
@@ -289,7 +289,7 @@ Analyzer を初期化したら，analyze() メソッドに解析したい文字�
   >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
   >>> tokenizer = Tokenizer()
   >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
-  >>> a = Analyzer(char_filters, tokenizer, token_filters)
+  >>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
   >>> for token in a.analyze(text):
   ...     print(token)
   ... 
@@ -488,6 +488,8 @@ PyInstaller でアプリケーションにバンドルする (v0.3.9+)
 
 `PyInstaller <https://www.pyinstaller.org/>`_ で janome をアプリケーションにバンドルして，実行可能ファイルとして配布できます。
 
+Tokenizer 初期化時に ``mmap=False`` オプションをつけてください。
+
 ::
 
     (venv) $ janome --version
@@ -498,7 +500,7 @@ PyInstaller でアプリケーションにバンドルする (v0.3.9+)
     (venv) $ cat test.py 
     # -*- utf-8
     from janome.tokenizer import Tokenizer
-    t = Tokenizer()
+    t = Tokenizer(mmap=False)
         for token in t.tokenize('令和元年'):
         print(token)
 
@@ -598,6 +600,7 @@ Copyright(C) 2020, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2020.09.21 janome Version 0.4.1 リリース
 * 2020.08.23 `janome Version 0.4.0 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-v0-4-0-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-%E3%83%A1%E3%83%A2%E3%83%AA%E4%BD%BF%E7%94%A8%E9%87%8F%E3%81%AE%E5%89%8A%E6%B8%9B%E3%82%84-python2-7-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88%E5%81%9C%E6%AD%A2%E3%81%AA%E3%81%A9%E3%81%AA%E3%81%A9-d91ec3642d7>`_
 * 2019.11.03 janome Version 0.3.10 リリース
 * 2019.05.12 `janome Version 0.3.9 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-pyinstaller-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-9-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-c603b43fe288>`_
@@ -626,12 +629,3 @@ History
 .. image:: ../img/bronze-25C9.png
    :alt: Badge(FISHEYE)
    :target: http://www.unicode.org/consortium/adopt-a-character.html
-
-
-.. Indices and tables
-.. ==================
-
-.. * :ref:`genindex`
-.. * :ref:`modindex`
-.. * :ref:`search`
-
