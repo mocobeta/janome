@@ -30,7 +30,7 @@ Usage:
 >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
 >>> tokenizer = Tokenizer()
 >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
->>> a = Analyzer(char_filters, tokenizer, token_filters)
+>>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
 >>> for token in a.analyze(text):
 ...     print(token)
 ...
