@@ -15,7 +15,7 @@ on:
     - '.github/workflows/**'
 
 jobs:
-  check:
+  test:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -44,7 +44,7 @@ jobs:
         mypy ./janome/charfilter.py
         mypy ./janome/tokenfilter.py
 
-  coverage:
+  check:
 
     runs-on: ubuntu-latest
     steps:
@@ -60,3 +60,12 @@ jobs:
       with:
         parallel: true
         flag-name: Unit Test
+
+  coveralls_finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel-finished: true
