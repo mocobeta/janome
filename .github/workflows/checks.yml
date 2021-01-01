@@ -43,3 +43,9 @@ jobs:
         mypy ./janome/analyzer.py
         mypy ./janome/charfilter.py
         mypy ./janome/tokenfilter.py
+    - name: Coveralls
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel: true
+        flag-name: Unit Test
+        basd-path: 'janome'
