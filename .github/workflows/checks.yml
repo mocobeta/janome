@@ -27,4 +27,7 @@ jobs:
     - name: Lint with mypy
       run: |
         pip install mypy
-        mypy ./janome/*.py
+        mypy ./janome/tokenizer.py
+        mypy ./janome/analyzer.py
+        mypy ./janome/charfilter.py
+        mypy ./janome/tokenfilter.py
