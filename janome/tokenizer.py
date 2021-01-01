@@ -138,7 +138,7 @@ class Token(object):
 
     def __setattr__(self, name: str, value: Any) -> None:
         # see https://stackoverflow.com/questions/61213745/typechecking-dynamically-added-attributes
-        pass
+        object.__setattr__(self, name, value)
 
     def __str__(self):
         return f'{self.surface}\t' \
