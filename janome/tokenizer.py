@@ -137,6 +137,7 @@ class Token(object):
             None
 
     def __setattr__(self, name: str, value: Any) -> None:
+        # see https://stackoverflow.com/questions/61213745/typechecking-dynamically-added-attributes
         pass
 
     def __str__(self):
