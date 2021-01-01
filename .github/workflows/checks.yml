@@ -53,6 +53,7 @@ jobs:
     - name: Unit tests
       run: |
         pip install coverage
+        python setup.py develop
         coverage run -m unittest discover tests
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
