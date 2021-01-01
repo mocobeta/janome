@@ -91,7 +91,7 @@ with user dictionary (simplified format):
 
 import sys
 import os
-from typing import Iterator, Union, Tuple, Optional
+from typing import Iterator, Union, Tuple, Optional, Any
 from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType  # type: ignore
 from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary  # type: ignore
 
@@ -116,7 +116,7 @@ class Token(object):
         self.node = node
         self.extra = extra
 
-    def __getattr__(self, name):
+    def __getattr__(self, name) -> Any:
         if name == 'surface':
             return self.node.surface
         elif name == 'part_of_speech':
@@ -135,6 +135,9 @@ class Token(object):
             return self.node.node_type
         else:
             None
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        pass
 
     def __str__(self):
         return f'{self.surface}\t' \
