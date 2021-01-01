@@ -1,6 +1,16 @@
 name: Checks
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+    - 'janome/**'
+    - 'tests/**'
+    - 'ipadic/**'
+  pull_request:
+    paths:
+    - 'janome/**'
+    - 'tests/**'
+    - 'ipadic/**'
 
 jobs:
   check:
@@ -31,22 +41,3 @@ jobs:
         mypy ./janome/analyzer.py
         mypy ./janome/charfilter.py
         mypy ./janome/tokenfilter.py
-    - name: Upload Coverage
-      run: coveralls
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
-        COVERALLS_PARALLEL: true
-
-  coveralls:
-    name: Finish Coveralls
-    needs: check
-    runs-on: ubuntu-latest
-    container: python:3-slim
-    steps:
-    - name: Finished
-      run: |
-        pip3 install --upgrade coveralls
-        coveralls --finish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
