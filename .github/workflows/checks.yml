@@ -32,6 +32,23 @@ jobs:
     - name: Test
       run: |
         python setup.py test
+
+  check:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+    - name: Unit tests for coverage
+      run: |
+        pip install coverage
+        python setup.py develop
+        coverage run -m unittest discover tests
+    - name: Coveralls
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel: true
+        flag-name: Unit Test
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -43,23 +60,6 @@ jobs:
         mypy ./janome/analyzer.py
         mypy ./janome/charfilter.py
         mypy ./janome/tokenfilter.py
-
-  check:
-
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
-    - name: Unit tests
-      run: |
-        pip install coverage
-        python setup.py develop
-        coverage run -m unittest discover tests
-    - name: Coveralls
-      uses: AndreMiras/coveralls-python-action@develop
-      with:
-        parallel: true
-        flag-name: Unit Test
 
   coveralls_finish:
     needs: check
