@@ -1,9 +1,9 @@
 name: Checks
 
-on: [push]
+on: [push, pull-request]
 
 jobs:
-  build:
+  check:
 
     runs-on: ${{ matrix.os }}
     strategy:
@@ -31,3 +31,22 @@ jobs:
         mypy ./janome/analyzer.py
         mypy ./janome/charfilter.py
         mypy ./janome/tokenfilter.py
+      - name: Upload Coverage
+        run: coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: ${{ matrix.test-name }}
+          COVERALLS_PARALLEL: true
+
+  coveralls:
+    name: Finish Coveralls
+    needs: test
+    runs-on: ubuntu-latest
+    container: python:3-slim
+    steps:
+    - name: Finished
+      run: |
+        pip3 install --upgrade coveralls
+        coveralls --finish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
