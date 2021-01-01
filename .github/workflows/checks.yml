@@ -43,6 +43,16 @@ jobs:
         mypy ./janome/analyzer.py
         mypy ./janome/charfilter.py
         mypy ./janome/tokenfilter.py
+
+  coverage:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+    - name: Unit tests
+      run: |
+        python setup.py test
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:
