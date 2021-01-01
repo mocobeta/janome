@@ -1,0 +1,5 @@
+[run]
+relative_files = True
+omit = 
+    ./janome/sysdic/*
+    ./tests/*

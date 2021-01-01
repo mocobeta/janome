@@ -1,0 +1,71 @@
+name: Checks
+
+on:
+  push:
+    paths:
+    - 'janome/**'
+    - 'tests/**'
+    - 'ipadic/**'
+    - '.github/workflows/**'
+  pull_request:
+    paths:
+    - 'janome/**'
+    - 'tests/**'
+    - 'ipadic/**'
+    - '.github/workflows/**'
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Test
+      run: |
+        python setup.py test
+
+  check:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+    - name: Unit tests for coverage
+      run: |
+        pip install coverage
+        python setup.py develop
+        coverage run -m unittest discover tests
+    - name: Coveralls
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel: true
+        flag-name: Unit Test
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8 ./janome
+    - name: Lint with mypy
+      run: |
+        pip install mypy
+        mypy ./janome/tokenizer.py
+        mypy ./janome/analyzer.py
+        mypy ./janome/charfilter.py
+        mypy ./janome/tokenfilter.py
+
+  coveralls_finish:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel-finished: true
