@@ -52,10 +52,9 @@ jobs:
     - uses: actions/setup-python@v1
     - name: Unit tests
       run: |
-        python setup.py test
+        coverage run -m unittest discover tests
     - name: Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:
         parallel: true
         flag-name: Unit Test
-        #base-path: 'janome'
