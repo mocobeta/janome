@@ -58,4 +58,4 @@ jobs:
       with:
         parallel: true
         flag-name: Unit Test
-        base-path: 'janome'
+        #base-path: 'janome'
