@@ -6,11 +6,13 @@ on:
     - 'janome/**'
     - 'tests/**'
     - 'ipadic/**'
+    - '.github/workflows/**'
   pull_request:
     paths:
     - 'janome/**'
     - 'tests/**'
     - 'ipadic/**'
+    - '.github/workflows/**'
 
 jobs:
   check:
