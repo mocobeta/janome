@@ -1,7 +1,8 @@
 # type: ignore
 import os, sys
 base_dir = os.path.dirname(os.path.abspath(__file__))
-
+root_dir = os.path.dirname(os.path.dirname(base_dir))
+sys.path.insert(0, root_dir)
 from janome.dic import LoadingDictionaryError
 from . import connections1, connections2
 from . import chardef, unknowns
