@@ -18,6 +18,14 @@ import signal
 import functools
 import pickle
 from struct import pack
+import glob
+import time
+import logging
+import os
+import sys
+from io import open
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, parent_dir)
 from janome.dic import (
     start_save_entries,
     save_entry,
@@ -33,14 +41,6 @@ from janome.fst import (
     create_minimum_transducer,
     compileFST
 )
-import glob
-import time
-import logging
-import os
-import sys
-from io import open
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, parent_dir)
 
 
 logger = logging.getLogger('dic_builder')
