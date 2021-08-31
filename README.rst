@@ -80,10 +80,6 @@ Run
   形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
   です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
-Twitter
-=======
-
-`@janome_py <https://twitter.com/janome_py>`_
 
 Developmet information for contributors
 =======================================
