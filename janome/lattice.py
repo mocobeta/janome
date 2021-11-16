@@ -139,6 +139,10 @@ class Lattice(object):
             cost = enode.min_cost + dic.get_trans_cost(enode.right_id, node_left_id)
             if cost < min_cost:
                 min_cost, best_node = cost, enode
+            elif cost == min_cost \
+                    and isinstance(best_node, SurfaceNode) and isinstance(enode, SurfaceNode) \
+                    and enode.num < best_node.num:
+                min_cost, best_node = cost, enode
         node.min_cost = min_cost + node.cost
         node.back_index = best_node.index
         node.back_pos = best_node.pos
