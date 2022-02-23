@@ -9,7 +9,6 @@ build/
 .idea/
 .vscode/
 .venv
-.python-version
 sysdic
 work
 ipadic/mecab-ipadic*
