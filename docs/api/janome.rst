@@ -12,6 +12,14 @@ janome\.dic module
     :undoc-members:
     :show-inheritance:
 
+janome\.system_dic module
+--------------------------
+
+.. automodule:: janome.system_dic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 janome\.tokenizer module
 ------------------------

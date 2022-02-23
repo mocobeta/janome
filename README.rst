@@ -58,29 +58,6 @@ Run
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
-.. code:: bash
-
-  (env) $ python
-  >>> from janome.tokenizer import Tokenizer
-  >>> from janome.analyzer import Analyzer
-  >>> from janome.charfilter import *
-  >>> from janome.tokenfilter import *
-  >>> text = '蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
-  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('蛇の目', 'janome')]
-  >>> tokenizer = Tokenizer()
-  >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
-  >>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
-  >>> for token in a.analyze(text):
-  ...     print(token)
-  ...
-  janome  名詞,固有名詞,組織,*,*,*,*,*,*
-  pure    名詞,固有名詞,組織,*,*,*,*,*,*
-  python  名詞,一般,*,*,*,*,*,*,*
-  な       助動詞,*,*,*,特殊・ダ,体言接続,だ,ナ,ナ
-  形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
-  です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
-
-
 License
 ========
 

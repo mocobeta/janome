@@ -56,33 +56,16 @@ $ twine upload dist/*
 
 7. Publish documentation.
 
-Prepare virtual env.
-
-```
-$ cd docs
-$ python -m venv .venv
-$ . .venv/bin/activate
-$ pip install -r requirements-docs.txt
-```
-
 Generate documentation.
 
 ```
-$ cd docs/api
-$ make html
-
-$ cd docs/ja
-$ make html
-
-$ cd docs/en
-$ make html
+./docs/build_docs.sh
 ```
 
 Publish to web site.
 
 ```
-$ cd docs
-$ ./upload_docs.sh $DOCS_ROOT_PATH
+$ ./docs/upload_docs.sh $DOCS_ROOT_PATH
 ```
 
 Well done!

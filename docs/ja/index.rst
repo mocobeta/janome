@@ -46,14 +46,12 @@ API リファレンス
 動作に必要なソフトウェア
 --------------------------
 
-Python 3.6+ インタプリタ
-
-(v0.4.0 より Python 2.7 サポートは廃止されました。)
+Python 3.7+ インタプリタ
 
 最新バージョン
 -----------------
 
-* 0.4.1
+* 0.4.2
 
 インストール
 ---------------
@@ -75,7 +73,7 @@ PyPI
 チュートリアル
 ------------------
 
-初心者向けチュートリアル＆ハンズオン教材「Janome ではじめるテキストマイニング」を公開しました。(`ブログ <https://medium.com/@mocobeta/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB-janome-%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%9E%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0-%E3%82%92-github-google-colab-%E3%81%A7%E5%85%AC%E9%96%8B%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-28c1bf0008b9>`_)
+初心者向けチュートリアル＆ハンズオン教材「Janome ではじめるテキストマイニング」を公開しました。
 
 * `GitHub リポジトリ <https://github.com/mocobeta/janome-tutorial>`_
 * `チュートリアル資料(HTML) <http://mocobeta.github.io/slides-html/janome-tutorial/tutorial-slides.html>`_
@@ -93,7 +91,7 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り，toke
 
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize(u'すもももももももものうち'):
+  >>> for token in t.tokenize('すもももももももものうち'):
   ...     print(token)
   ...
   すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -104,31 +102,6 @@ janome.tokenizer パッケージの Tokenizer オブジェクトを作り，toke
   の    助詞,連体化,*,*,*,*,の,ノ,ノ
   うち  名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
-
-(0.3.x 以前のバージョン) Tokenizer 初期化に関する注意事項
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. note:: バージョン 0.4.0 以降，64bit アーキテクチャにおいて mmap モードがデフォルトになったことにより，初期化が速くなったため，この Tips は不要となりました。
-
-Tokenizer オブジェクトの初期化はコストが高いため，インスタンスを使いまわしてください。 以下のようなサンプルコードを掲載しているブログ記事等がありますが，これは非常に遅くなる書き方で，誤っています。
-
-.. code-block:: python
-
-  for s in sentences:
-      t = Tokenizer()
-      for token in t.tokenize(s):
-          ...
-
-正しくは以下のように，**ループの外で** Tokenizer を初期化します。
-
-.. code-block:: python
-
-  t = Tokenizer()
-  for s in sentences:
-      for token in t.tokenize(s):
-          ...
-
-
 for Windows users
 ^^^^^^^^^^^^^^^^^
 
@@ -138,7 +111,7 @@ for Windows users
 
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize(u'すもももももももものうち'):
+  >>> for token in t.tokenize('すもももももももものうち'):
   ...     print(str(token).decode('utf8'))
 
 
@@ -162,7 +135,7 @@ userdic.csv ::
 
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer("userdic.csv", udic_enc="utf8")
-  >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+  >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   ...   print(token)
   ...
 
@@ -206,7 +179,7 @@ user_simpledic.csv ::
 
    >>> from janome.tokenizer import Tokenizer
    >>> t = Tokenizer("user_simpledic.csv", udic_type="simpledic", udic_enc="utf8")
-   >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便 利です。'):
+   >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便 利です。'):
    ...   print(token)
    ...
    東京スカイツリー	カスタム名詞,*,*,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
@@ -285,8 +258,8 @@ Analyzer を初期化したら，analyze() メソッドに解析したい文字�
   >>> from janome.analyzer import Analyzer
   >>> from janome.charfilter import *
   >>> from janome.tokenfilter import *
-  >>> text = u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
-  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
+  >>> text = '蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
+  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('蛇の目', 'janome')]
   >>> tokenizer = Tokenizer()
   >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
   >>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
@@ -311,7 +284,7 @@ TokenCountFilter を使うと，入力文字列中の単語出現頻度を数え
   >>> from janome.tokenizer import Tokenizer
   >>> from janome.analyzer import Analyzer
   >>> from janome.tokenfilter import *
-  >>> text = u'すもももももももものうち'
+  >>> text = 'すもももももももものうち'
   >>> token_filters = [POSKeepFilter(['名詞']), TokenCountFilter()]
   >>> a = Analyzer(token_filters=token_filters)
   >>> for k, v in a.analyze(text):
@@ -515,22 +488,6 @@ Tokenizer 初期化時に ``mmap=False`` オプションをつけてください
     令和	名詞,固有名詞,一般,*,*,*,令和,レイワ,レイワ
     元年	名詞,一般,*,*,*,*,元年,ガンネン,ガンネン
 
-
-大きな文書を解析する際の注意 (v0.2.8 以下)
----------------------------------------------------------
-
-.. note:: 
-
-  バージョン 0.3 では，大きな文書を解析したときにメモリを大量に消費（リーク）してしまう問題が解決されました。内部バッファに収まらないサイズの文書が与えられた場合，部分的に解析することでメモリ使用量を抑制しています。よりメモリ使用量を抑制したい場合は「ストリーミングモード」を使ってください。
-
-  詳しくはこちら： `[janome開発日誌] 省メモリ対応をした janome 0.3.1 をリリースしました <https://medium.com/@mocobeta/janome-release-0-3-1-3e7afd9d1de3>`_
-
-  この修正の影響で，0.2 系と 0.3 系以上 では，大きなドキュメントを解析したときの解析結果が若干異なる可能性があります。
-
-
-古いバージョン(< 0.3)では，入力全体を読んでラティスを構築するため，入力文字列が大きくなると多くのリソースを消費します。数十キロバイト以上の文書を解析する場合は，なるべく適度に分割して与えてください。
-
-
 よくある（かもしれない）質問
 ---------------------------------
 
@@ -577,12 +534,12 @@ A. `Gitter room <https://gitter.im/janome-python/ja>`_ でつぶやくか，Gith
 For Contributors
 ----------------
 
-See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
+See `https://github.com/mocobeta/janome/blob/master/CONTRIBUTING.md <https://github.com/mocobeta/janome/blob/master/CONTRIBUTING.md>`_
 
 作者について
 --------------
 
-`プロフィール <https://medium.com/@mocobeta/about-me-b28838ba631f>`_
+`プロフィール <https://github.com/mocobeta/mocobeta/blob/main/profile.md>`_
 
 License
 ------------
@@ -595,37 +552,38 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2020, Tomoko Uchida. All rights reserved.
+Copyright(C) 2022, Tomoko Uchida. All rights reserved.
 
 History
 ----------
 
-* 2020.09.21 janome Version 0.4.1 リリース
-* 2020.08.23 `janome Version 0.4.0 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-v0-4-0-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-%E3%83%A1%E3%83%A2%E3%83%AA%E4%BD%BF%E7%94%A8%E9%87%8F%E3%81%AE%E5%89%8A%E6%B8%9B%E3%82%84-python2-7-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88%E5%81%9C%E6%AD%A2%E3%81%AA%E3%81%A9%E3%81%AA%E3%81%A9-d91ec3642d7>`_
-* 2019.11.03 janome Version 0.3.10 リリース
-* 2019.05.12 `janome Version 0.3.9 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-pyinstaller-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-9-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-c603b43fe288>`_
-* 2019.04.03 `janome Version 0.3.8 リリース <https://medium.com/@mocobeta/janome%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E6%96%B0%E5%85%83%E5%8F%B7-%E4%BB%A4%E5%92%8C-%E3%81%AB%E5%AF%BE%E5%BF%9C%E3%81%97%E3%81%9F-janome-0-3-8-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-fd55b611e86>`_
-* 2018.12.11 `janome Version 0.3.7 リリース <https://medium.com/@mocobeta/janome-%E9%96%8B%E7%99%BA%E6%97%A5%E8%AA%8C-%E3%83%A9%E3%83%86%E3%82%A3%E3%82%B9%E5%8F%AF%E8%A6%96%E5%8C%96%E3%81%AA%E3%81%A9%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F-janome-0-3-7-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-bbce681f7612>`_
-* 2017.12.07 janome Version 0.3.6 リリース
-* 2017.08.06 `janome Version 0.3.5 リリース <https://medium.com/@mocobeta/janome-0-3-5-release-ee5de2196330>`_
-* 2017.07.29 `janome Version 0.3.4 リリース <https://medium.com/@mocobeta/janome-0-3-4-release-63ed21f4fda9>`_
-* 2017.07.23 `janome Version 0.3.3 リリース <https://medium.com/@mocobeta/janoe-0-3-3-release-eddd139eec9e>`_
-* 2017.07.05 janome Version 0.3.2 リリース
-* 2017.07.02 `janome Version 0.3.1 リリース <https://medium.com/@mocobeta/janome-release-0-3-1-3e7afd9d1de3>`_
-* 2017.06.30 janome Version 0.3.0 リリース
-* 2016.05.07 janome Vesrion 0.2.8 リリース
-* 2016.03.05 janome Version 0.2.7 リリース
-* 2015.10.26 janome Version 0.2.6 リリース
-* 2015.05.11 janome Version 0.2.5 リリース
-* 2015.05.03 janome Version 0.2.4 リリース
-* 2015.05.03 janome Version 0.2.3 リリース
-* 2015.04.24 janome Version 0.2.2 リリース
-* 2015.04.24 janome Version 0.2.0 リリース / janomePy2 は deprecated （数日中に PyPI から削除します。）
-* 2015.04.11 janome Version 0.1.4 リリース / janomePy2 0.1.4 公開
-* 2015.04.08 janome Version 0.1.3 公開
+* 2022.02.23 janome Version 0.4.2 released
+* 2020.09.21 janome Version 0.4.1 released
+* 2020.08.23 janome Version 0.4.0 released
+* 2019.11.03 janome Version 0.3.10 released
+* 2019.05.12 janome Version 0.3.9 released
+* 2019.04.03 janome Version 0.3.8 released
+* 2018.12.11 janome Version 0.3.7 released
+* 2017.12.07 janome Version 0.3.6 released
+* 2017.08.06 janome Version 0.3.5 released
+* 2017.07.29 janome Version 0.3.4 released
+* 2017.07.23 janome Version 0.3.3 released
+* 2017.07.05 janome Version 0.3.2 released 
+* 2017.07.02 janome Version 0.3.1 released
+* 2017.06.30 janome Version 0.3.0 released
+* 2016.05.07 janome Version 0.2.8 released
+* 2016.03.05 janome Version 0.2.7 released
+* 2015.10.26 janome Version 0.2.6 released
+* 2015.05.11 janome Version 0.2.5 released
+* 2015.05.03 janome Version 0.2.4 released
+* 2015.05.03 janome Version 0.2.3 released
+* 2015.04.24 janome Version 0.2.2 released
+* 2015.04.24 janome Version 0.2.0 released
+* 2015.04.11 janome Version 0.1.4 released
+* 2015.04.08 janome Version 0.1.3 released
 
 詳細: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES.txt>`_
 
 .. image:: ../img/bronze-25C9.png
    :alt: Badge(FISHEYE)
-   :target: http://www.unicode.org/consortium/adopt-a-character.html
+   :target: https://home.unicode.org/adopt-a-character/about-adopt-a-character/
