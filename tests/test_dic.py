@@ -24,6 +24,7 @@ from janome.dic import (
     FILE_USER_FST_DATA,
     FILE_USER_ENTRIES_DATA
 )
+from janome.fst import Matcher
 from janome.progress import SimpleProgressIndicator, logger as p_logger
 
 # TODO: better way to find package...
@@ -33,8 +34,9 @@ sys.path.insert(0, parent_dir)
 
 class TestDictionary(unittest.TestCase):
     def test_system_dictionary_ipadic(self):
-        sys_dic = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
-        self.assertEqual(7, len(sys_dic.lookup('形態素'.encode('utf-8'))))
+        matcher = Matcher(all_fstdata())
+        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+        self.assertEqual(7, len(sys_dic.lookup('形態素'.encode('utf-8'), matcher)))
         self.assertEqual(1, sys_dic.get_trans_cost(0, 1))
         self.assertEqual({'HIRAGANA': []}, sys_dic.get_char_categories('は'))
         self.assertEqual({'KATAKANA': []}, sys_dic.get_char_categories('ハ'))
@@ -58,9 +60,10 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(2, sys_dic.unknown_length('HIRAGANA'))
 
     def test_property_types(self):
-        sys_dic = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
+        matcher = Matcher(all_fstdata())
+        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
         # entry in the system dictionary
-        entry = sys_dic.lookup('すもも'.encode('utf8'))[0]
+        entry = sys_dic.lookup('すもも'.encode('utf8'), matcher)[0]
         self.assertTrue(type(entry[1]) is str)
         self.assertTrue(type(entry[0]) is int)
         self.assertTrue(type(entry[2]) is int)
@@ -83,8 +86,9 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(type(entry[2]) is int)
 
         # mmap dict etnry
-        mmap_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(), connections, chardef.DATA, unknowns.DATA)
-        entry = mmap_dic.lookup(u'すもも'.encode('utf8'))[0]
+        matcher = Matcher(all_fstdata())
+        mmap_dic = MMapSystemDictionary(mmap_entries(), connections, chardef.DATA, unknowns.DATA)
+        entry = mmap_dic.lookup(u'すもも'.encode('utf8'), matcher)[0]
         self.assertTrue(type(entry[1]) is str)
         self.assertTrue(type(entry[0]) is int)
         self.assertTrue(type(entry[2]) is int)
@@ -110,16 +114,17 @@ class TestDictionary(unittest.TestCase):
         self.assertTrue(type(entry[4]) is int)
 
     def test_system_dictionary_cache(self):
-        sys_dic = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
-        self.assertEqual(11, len(sys_dic.lookup('小書き'.encode('utf8'))))
-        self.assertEqual(11, len(sys_dic.lookup('小書き'.encode('utf8'))))
-        self.assertEqual(11, len(sys_dic.lookup('小書きにしました'.encode('utf8'))))
+        matcher = Matcher(all_fstdata())
+        sys_dic = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+        self.assertEqual(11, len(sys_dic.lookup('小書き'.encode('utf8'), matcher)))
+        self.assertEqual(11, len(sys_dic.lookup('小書き'.encode('utf8'), matcher)))
+        self.assertEqual(11, len(sys_dic.lookup('小書きにしました'.encode('utf8'), matcher)))
 
-        self.assertEqual(10, len(sys_dic.lookup('みんなと'.encode('utf8'))))
-        self.assertEqual(10, len(sys_dic.lookup('みんなと'.encode('utf8'))))
+        self.assertEqual(10, len(sys_dic.lookup('みんなと'.encode('utf8'), matcher)))
+        self.assertEqual(10, len(sys_dic.lookup('みんなと'.encode('utf8'), matcher)))
 
-        self.assertEqual(2, len(sys_dic.lookup('叩く'.encode('utf8'))))
-        self.assertEqual(2, len(sys_dic.lookup('叩く'.encode('utf8'))))
+        self.assertEqual(2, len(sys_dic.lookup('叩く'.encode('utf8'), matcher)))
+        self.assertEqual(2, len(sys_dic.lookup('叩く'.encode('utf8'), matcher)))
 
     def test_user_dictionary(self):
         # create user dictionary from csv

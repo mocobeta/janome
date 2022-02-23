@@ -187,7 +187,7 @@ class Dictionary(ABC):
     """
 
     @abstractmethod
-    def lookup(self, s):
+    def lookup(self, s, matcher):
         pass
 
     @abstractmethod
@@ -204,14 +204,12 @@ class RAMDictionary(Dictionary):
     RAM dictionary class
     """
 
-    def __init__(self, compiledFST, entries, connections):
-        self.compiledFST = compiledFST
-        self.matcher = Matcher(compiledFST)
+    def __init__(self, entries, connections):
         self.entries = entries
         self.connections = connections
 
-    def lookup(self, s):
-        (matched, outputs) = self.matcher.run(s)
+    def lookup(self, s, matcher):
+        (matched, outputs) = matcher.run(s)
         if not matched:
             return []
         try:
@@ -244,17 +242,15 @@ class MMapDictionary(Dictionary):
     MMap dictionary class
     """
 
-    def __init__(self, compiledFST, entries_compact, entries_extra, open_files, connections):
-        self.compiledFST = compiledFST
-        self.matcher = Matcher(compiledFST)
+    def __init__(self, entries_compact, entries_extra, open_files, connections):
         self.entries_compact = entries_compact
         self.bucket_ranges = entries_compact.keys()
         self.entries_extra = entries_extra
         self.open_files = open_files
         self.connections = connections
 
-    def lookup(self, s):
-        (matched, outputs) = self.matcher.run(s)
+    def lookup(self, s, matcher):
+        (matched, outputs) = matcher.run(s)
         if not matched:
             return []
         try:
@@ -376,8 +372,8 @@ class SystemDictionary(RAMDictionary, UnknownsDictionary):
     System dictionary class
     """
 
-    def __init__(self, all_fstdata, entries, connections, chardefs, unknowns):
-        RAMDictionary.__init__(self, all_fstdata, entries, connections)
+    def __init__(self, entries, connections, chardefs, unknowns):
+        RAMDictionary.__init__(self, entries, connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -386,8 +382,8 @@ class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
     MMap System dictionary class
     """
 
-    def __init__(self, all_fstdata, mmap_entries, connections, chardefs, unknowns):
-        MMapDictionary.__init__(self, all_fstdata, mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
+    def __init__(self, mmap_entries, connections, chardefs, unknowns):
+        MMapDictionary.__init__(self, mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
         UnknownsDictionary.__init__(self, chardefs, unknowns)
 
 
@@ -408,9 +404,13 @@ class UserDictionary(RAMDictionary):
 
         .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
         """
-        line_to_entry = getattr(self, 'line_to_entry_' + type)
-        compiledFST, entries = self.build_dic(user_dict, enc, progress_handler, line_to_entry)
-        super().__init__([compiledFST], entries, connections)
+        fst_data, entries = UserDictionary.build_dic(user_dict, enc, type, progress_handler)
+        super().__init__(entries, connections)
+        self.compiledFST = [fst_data]
+        self.matcher = Matcher([fst_data])
+
+    def lookup(self, s):
+        return super().lookup(s, self.matcher)
 
     @classmethod
     def line_to_entry_ipadic(cls, line):
@@ -429,10 +429,12 @@ class UserDictionary(RAMDictionary):
         part_of_speech = ','.join([pos_major, '*', '*', '*'])
         return (surface, 0, 0, -100000, part_of_speech, '*', '*', surface, reading, reading)
 
-    def build_dic(self, user_dict, enc, progress_handler, line_to_entry):
+    @classmethod
+    def build_dic(cls, user_dict, enc, dict_type, progress_handler):
         surfaces = []
         entries = {}
 
+        line_to_entry = getattr(cls, 'line_to_entry_' + dict_type)
         # init progress for reading CSV
         if progress_handler:
             with open(user_dict, encoding=enc) as f:
@@ -499,10 +501,15 @@ class CompiledUserDictionary(RAMDictionary):
     """
 
     def __init__(self, dic_dir, connections):
-        data, entries = self.load_dict(dic_dir)
-        super().__init__([data], entries, connections)
+        fst_data, entries = CompiledUserDictionary.load_dict(dic_dir)
+        super().__init__(entries, connections)
+        self.matcher = Matcher([fst_data])
 
-    def load_dict(self, dic_dir):
+    def lookup(self, s):
+        return super().lookup(s, self.matcher)
+
+    @classmethod
+    def load_dict(cls, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
             raise Exception(f'No such directory : {dic_dir}')
         data = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))

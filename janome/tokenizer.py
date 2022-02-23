@@ -94,6 +94,7 @@ import os
 from typing import Iterator, Union, Tuple, Optional, Any
 from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType  # type: ignore
 from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary  # type: ignore
+from .fst import Matcher
 
 try:
     from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
@@ -177,11 +178,12 @@ class Tokenizer(object):
         self.sys_dic: Union[SystemDictionary, MMapSystemDictionary]
         self.user_dic: Optional[Union[UserDictionary, CompiledUserDictionary]]
         self.wakati = wakati
+        self.matcher = Matcher(all_fstdata())
         if mmap:
-            self.sys_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(wakati),
+            self.sys_dic = MMapSystemDictionary(mmap_entries(wakati),
                                                 connections, chardef.DATA, unknowns.DATA)
         else:
-            self.sys_dic = SystemDictionary(all_fstdata(), entries(wakati), connections,
+            self.sys_dic = SystemDictionary(entries(wakati), connections,
                                             chardef.DATA, unknowns.DATA)
         if udic:
             if udic.endswith('.csv'):
@@ -244,7 +246,7 @@ class Tokenizer(object):
                 matched = len(entries) > 0
 
             # system dictionary
-            entries = self.sys_dic.lookup(encoded_partial_text)
+            entries = self.sys_dic.lookup(encoded_partial_text, self.matcher)
             for e in entries:
                 lattice.add(SurfaceNode(e, NodeType.SYS_DICT))
             matched = len(entries) > 0
