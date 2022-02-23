@@ -46,14 +46,12 @@ API reference
 Requirements
 ------------
 
-Python 3.6+ interpreter
-
-(Since v0.4.0, Python 2.7 is no longer supported.)
+Python 3.7+ interpreter
 
 Latest version
 --------------
 
-* 0.4.1
+* 0.4.2
 
 Install
 -------
@@ -80,7 +78,7 @@ The return value is a gnerator of Token objects. Token includes morphologic info
 
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize(u'すもももももももものうち'):
+  >>> for token in t.tokenize('すもももももももものうち'):
   ...     print(token)
   ...
   すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -100,7 +98,7 @@ Use ``decode('utf8')`` if the output is garbled.
 
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize(u'すもももももももものうち'):
+  >>> for token in t.tokenize('すもももももももものうち'):
   ...     print(str(token).decode('utf8'))
 
 
@@ -126,7 +124,7 @@ userdic.csv ::
 
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer("userdic.csv", udic_enc="utf8")
-  >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+  >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
   ...   print(token)
   ...
 
@@ -162,7 +160,7 @@ user_simpledic.csv ::
 
    >>> from janome.tokenizer import Tokenizer
    >>> t = Tokenizer("user_simpledic.csv", udic_type="simpledic", udic_enc="utf8")
-   >>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便 利です。'):
+   >>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便 利です。'):
    ...   print(token)
    ...
    東京スカイツリー	カスタム名詞,*,*,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
@@ -234,8 +232,8 @@ Analyzser usage
   >>> from janome.analyzer import Analyzer
   >>> from janome.charfilter import *
   >>> from janome.tokenfilter import *
-  >>> text = u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
-  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
+  >>> text = '蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
+  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('蛇の目', 'janome')]
   >>> tokenizer = Tokenizer()
   >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
   >>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
@@ -259,7 +257,7 @@ You can count word frequencies in the input text by using TokenCountFilter.
   >>> from janome.tokenizer import Tokenizer
   >>> from janome.analyzer import Analyzer
   >>> from janome.tokenfilter import *
-  >>> text = u'すもももももももものうち'
+  >>> text = 'すもももももももものうち'
   >>> token_filters = [POSKeepFilter(['名詞']), TokenCountFilter()]
   >>> a = Analyzer(token_filters=token_filters)
   >>> for k, v in a.analyze(text):
@@ -297,7 +295,7 @@ When 'wakati = True' option is given to tokenize() method, it runs on 'wakati-ga
 ::
 
   >>> t = Tokenizer()
-  >>> tokens = t.tokenize(u'分かち書きモードがつきました！', wakati=True)
+  >>> tokens = t.tokenize('分かち書きモードがつきました！', wakati=True)
   >>> tokens
   ['分かち書き', 'モード', 'が', 'つき', 'まし', 'た', '！']
 
@@ -430,14 +428,6 @@ You can create (and distribute) stand-alone executables which bundle janome by `
     令和	名詞,固有名詞,一般,*,*,*,令和,レイワ,レイワ
     元年	名詞,一般,*,*,*,*,元年,ガンネン,ガンネン
 
-
-Note for analyzing large document set
--------------------------------------
-
-.. note:: This memory leak problem was solved at v0.3. The analyzed results with version 0.3 or over can be a bit different from ones with version 0.2. You may want to examine streaming and/or wakati-gaki mode to reduce memory usage more.
-
-In older version (< 0.3), Janome can consume large memory when a very large document is passed all at once. Please split large documents (larger than tens of killobytes) into small chunks or sentences.
-
 FAQ
 ---
 
@@ -460,12 +450,12 @@ A. Bug reports or requests (and of course, patches) are welcome. Create issues i
 For Contributors
 ----------------
 
-See `https://github.com/mocobeta/janome/wiki <https://github.com/mocobeta/janome/wiki>`_
+See `https://github.com/mocobeta/janome/blob/master/CONTRIBUTING.md <https://github.com/mocobeta/janome/blob/master/CONTRIBUTING.md>`_
 
 Author
 ---------
 
-`Profile <https://medium.com/@mocobeta/about-me-b28838ba631f>`_
+`Profile <https://github.com/mocobeta/mocobeta/blob/main/profile.md>`_
 
 License
 ------------
@@ -478,11 +468,12 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2020, Tomoko Uchida. All rights reserved.
+Copyright(C) 2022, Tomoko Uchida. All rights reserved.
 
 History
 ----------
 
+* 2022.02.23 janome Version 0.4.2 released
 * 2020.09.21 janome Version 0.4.1 released
 * 2020.08.23 janome Version 0.4.0 released
 * 2019.11.03 janome Version 0.3.10 released
@@ -511,4 +502,4 @@ Change details: `CHANGES <https://github.com/mocobeta/janome/blob/master/CHANGES
 
 .. image:: ../img/bronze-25C9.png
    :alt: Badge(FISHEYE)
-   :target: http://www.unicode.org/consortium/adopt-a-character.html	 
+   :target: https://home.unicode.org/adopt-a-character/about-adopt-a-character/

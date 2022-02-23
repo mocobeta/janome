@@ -20,7 +20,7 @@ Usage:
 
 >>> from janome.tokenizer import Tokenizer
 >>> t = Tokenizer()
->>> for token in t.tokenize(u'すもももももももものうち'):
+>>> for token in t.tokenize('すもももももももものうち'):
 ...   print(token)
 ...
 すもも	名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -35,7 +35,7 @@ with wakati ('分かち書き') mode:
 
 >>> from janome.tokenizer import Tokenizer
 >>> t = Tokenizer()
->>> for token in t.tokenize(u'すもももももももものうち', wakati=True):
+>>> for token in t.tokenize('すもももももももものうち', wakati=True):
 ...   print(token)
 ...
 すもも
@@ -56,7 +56,7 @@ with user dictionary (IPAdic format):
   とうきょうスカイツリー駅,1288,1288,4143,名詞,固有名詞,一般,*,*,*,とうきょうスカイツリー駅,トウキョウスカイツリーエキ,トウキョウスカイツリーエキ
 
 >>> t = Tokenizer("user_ipadic.csv", udic_enc="utf8")
->>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+>>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
 ...  print(token)...
 ...
 東京スカイツリー	名詞,固有名詞,一般,*,*,*,東京スカイツリー,トウキョウスカイツリー,トウキョウスカイツリー
@@ -84,7 +84,7 @@ with user dictionary (simplified format):
   とうきょうスカイツリー駅,カスタム名詞,トウキョウスカイツリーエキ
 
 >>> t = Tokenizer("user_simpledic.csv", udic_type="simpledic", udic_enc="utf8")
->>> for token in t.tokenize(u'東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
+>>> for token in t.tokenize('東京スカイツリーへのお越しは、東武スカイツリーライン「とうきょうスカイツリー駅」が便利です。'):
 ...   print(token)
 
 """
