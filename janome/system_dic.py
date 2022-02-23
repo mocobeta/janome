@@ -14,7 +14,7 @@
 
 import threading
 
-from .sysdic import entries, mmap_entries, connections, chardef, unknowns
+from .sysdic import entries, mmap_entries, connections, chardef, unknowns  # type: ignore
 from .dic import RAMDictionary, MMapDictionary, UnknownsDictionary
 
 
