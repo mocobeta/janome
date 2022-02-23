@@ -16,7 +16,8 @@ import os
 import sys
 import unittest
 from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
-from janome.dic import SystemDictionary, MMapSystemDictionary
+from janome.system_dic import SystemDictionary, MMapSystemDictionary
+from janome.fst import Matcher
 from janome.lattice import Lattice, BOS, EOS, SurfaceNode
 
 # TODO: better way to find package...
@@ -24,8 +25,9 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 
-SYS_DIC = SystemDictionary(all_fstdata(), entries(), connections, chardef.DATA, unknowns.DATA)
-MMAP_SYS_DIC = MMapSystemDictionary(all_fstdata(), mmap_entries(), connections, chardef.DATA, unknowns.DATA)
+MATCHER = Matcher(all_fstdata())
+SYS_DIC = SystemDictionary.instance()
+MMAP_SYS_DIC = MMapSystemDictionary.instance()
 
 
 class TestLattice(unittest.TestCase):
@@ -39,7 +41,7 @@ class TestLattice(unittest.TestCase):
     def test_add_forward_end(self):
         s = 'すもも'
         lattice = Lattice(len(s), SYS_DIC)
-        entries = SYS_DIC.lookup(s.encode('utf8'))
+        entries = SYS_DIC.lookup(s.encode('utf8'), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -49,7 +51,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = SYS_DIC.lookup(s[1:].encode('utf8'))
+        entries = SYS_DIC.lookup(s[1:].encode('utf8'), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -58,7 +60,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = SYS_DIC.lookup(s[2:].encode('utf8'))
+        entries = SYS_DIC.lookup(s[2:].encode('utf8'), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -75,7 +77,7 @@ class TestLattice(unittest.TestCase):
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = SYS_DIC.lookup(s[pos:].encode('utf8'))
+            entries = SYS_DIC.lookup(s[pos:].encode('utf8'), MATCHER)
             for e in entries:
                 lattice.add(SurfaceNode(e))
             pos += lattice.forward()
@@ -95,7 +97,7 @@ class TestLattice(unittest.TestCase):
     def test_add_forward_end_mmap(self):
         s = 'すもも'
         lattice = Lattice(len(s), SYS_DIC)
-        entries = MMAP_SYS_DIC.lookup(s.encode('utf8'))
+        entries = MMAP_SYS_DIC.lookup(s.encode('utf8'), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -105,7 +107,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = MMAP_SYS_DIC.lookup(s[1:].encode('utf8'))
+        entries = MMAP_SYS_DIC.lookup(s[1:].encode('utf8'), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -114,7 +116,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = MMAP_SYS_DIC.lookup(s[2:].encode('utf8'))
+        entries = MMAP_SYS_DIC.lookup(s[2:].encode('utf8'), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -131,7 +133,7 @@ class TestLattice(unittest.TestCase):
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = MMAP_SYS_DIC.lookup(s[pos:].encode('utf8'))
+            entries = MMAP_SYS_DIC.lookup(s[pos:].encode('utf8'), MATCHER)
             for e in entries:
                 lattice.add(SurfaceNode(e))
             pos += lattice.forward()
