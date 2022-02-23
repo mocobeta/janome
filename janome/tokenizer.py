@@ -98,12 +98,12 @@ from .system_dic import SystemDictionary, MMapSystemDictionary
 from .fst import Matcher
 
 try:
-    from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
+    from janome.sysdic import all_fstdata, connections  # type: ignore
 except ImportError:
     # hack for unit testing...
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, parent_dir)
-    from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
+    from sysdic import all_fstdata, connections  # type: ignore
 
 
 DEFAULT_MMAP_MODE = sys.maxsize > 2**32

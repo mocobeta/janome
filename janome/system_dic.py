@@ -14,8 +14,9 @@
 
 import threading
 
-from .sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
+from .sysdic import entries, mmap_entries, connections, chardef, unknowns
 from .dic import RAMDictionary, MMapDictionary, UnknownsDictionary
+
 
 class SystemDictionary(RAMDictionary, UnknownsDictionary):
     """
@@ -30,7 +31,7 @@ class SystemDictionary(RAMDictionary, UnknownsDictionary):
         if not cls.__INSTANCE:
             with cls.__lock:
                 if not cls.__INSTANCE:
-                   cls.__INSTANCE = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
+                    cls.__INSTANCE = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
         return cls.__INSTANCE
 
     def __init__(self, entries, connections, chardefs, unknowns):
