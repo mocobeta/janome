@@ -1,6 +1,7 @@
 * 0.4.2 (yyyy.mm.dd)
   - #105: Fix Non-deterministic behavior of tokenizer (thanks @sueki1242)
   - #107: Make system dictionary singleton to avoid 'Too much open files' error.
+  - #108: Bump minimum Python version to 3.7.
 
 * 0.4.1 (2020.9.21)
   - #87: Add progress indicator when compiling user dictionary (thanks @uezo)
