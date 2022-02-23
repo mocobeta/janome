@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-from janome.dic import MMapSystemDictionary
 from janome.tokenfilter import CompoundNounFilter, POSStopFilter, LowerCaseFilter, ExtractAttributeFilter
 from janome.charfilter import UnicodeNormalizeCharFilter, RegexReplaceCharFilter
 from janome.tokenizer import Tokenizer

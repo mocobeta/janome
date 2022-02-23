@@ -16,7 +16,7 @@ import os
 import sys
 import unittest
 from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns
-from janome.dic import SystemDictionary, MMapSystemDictionary
+from janome.system_dic import SystemDictionary, MMapSystemDictionary
 from janome.fst import Matcher
 from janome.lattice import Lattice, BOS, EOS, SurfaceNode
 
@@ -26,8 +26,8 @@ sys.path.insert(0, parent_dir)
 
 
 MATCHER = Matcher(all_fstdata())
-SYS_DIC = SystemDictionary(entries(), connections, chardef.DATA, unknowns.DATA)
-MMAP_SYS_DIC = MMapSystemDictionary(mmap_entries(), connections, chardef.DATA, unknowns.DATA)
+SYS_DIC = SystemDictionary.instance()
+MMAP_SYS_DIC = MMapSystemDictionary.instance()
 
 
 class TestLattice(unittest.TestCase):

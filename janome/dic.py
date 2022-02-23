@@ -367,26 +367,6 @@ class UnknownsDictionary(object):
         return -1
 
 
-class SystemDictionary(RAMDictionary, UnknownsDictionary):
-    """
-    System dictionary class
-    """
-
-    def __init__(self, entries, connections, chardefs, unknowns):
-        RAMDictionary.__init__(self, entries, connections)
-        UnknownsDictionary.__init__(self, chardefs, unknowns)
-
-
-class MMapSystemDictionary(MMapDictionary, UnknownsDictionary):
-    """
-    MMap System dictionary class
-    """
-
-    def __init__(self, mmap_entries, connections, chardefs, unknowns):
-        MMapDictionary.__init__(self, mmap_entries[0], mmap_entries[1], mmap_entries[2], connections)
-        UnknownsDictionary.__init__(self, chardefs, unknowns)
-
-
 class UserDictionary(RAMDictionary):
     """
     User dictionary class (on-the-fly)

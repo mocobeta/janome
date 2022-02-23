@@ -93,7 +93,8 @@ import sys
 import os
 from typing import Iterator, Union, Tuple, Optional, Any
 from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType  # type: ignore
-from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary  # type: ignore
+from .dic import UserDictionary, CompiledUserDictionary  # type: ignore
+from .system_dic import SystemDictionary, MMapSystemDictionary
 from .fst import Matcher
 
 try:
@@ -180,11 +181,9 @@ class Tokenizer(object):
         self.wakati = wakati
         self.matcher = Matcher(all_fstdata())
         if mmap:
-            self.sys_dic = MMapSystemDictionary(mmap_entries(wakati),
-                                                connections, chardef.DATA, unknowns.DATA)
+            self.sys_dic = MMapSystemDictionary.instance()
         else:
-            self.sys_dic = SystemDictionary(entries(wakati), connections,
-                                            chardef.DATA, unknowns.DATA)
+            self.sys_dic = SystemDictionary.instance()
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
