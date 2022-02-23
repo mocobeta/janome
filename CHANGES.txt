@@ -1,4 +1,4 @@
-* 0.4.2 (yyyy.mm.dd)
+* 0.4.2 (2022.02.23)
   - #105: Fix Non-deterministic behavior of tokenizer (thanks @sueki1242)
   - #107: Make system dictionary singleton to avoid 'Too much open files' error.
   - #108: Bump minimum Python version to 3.7.
