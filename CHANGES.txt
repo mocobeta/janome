@@ -1,7 +1,11 @@
 * 0.4.2 (2022.02.23)
-  - #105: Fix Non-deterministic behavior of tokenizer (thanks @sueki1242)
-  - #107: Make system dictionary singleton to avoid 'Too much open files' error.
-  - #108: Bump minimum Python version to 3.7.
+  - #90: Fix Analyzer usage. (@syou6162)
+  - #92: Add version info. (@norihitoishida)
+  - #95: Migrate to GitHub Actions. (@mocobeta)
+  - #101: Fix invalid import position of build.py. (@narupo)
+  - #105: Fix Non-deterministic behavior of tokenizer (@sueki1242)
+  - #107: Make system dictionary singleton to avoid 'Too much open files' error. (@mocobeta)
+  - #108: Bump minimum Python version to 3.7. (@mocobeta)
 
 * 0.4.1 (2020.9.21)
   - #87: Add progress indicator when compiling user dictionary (thanks @uezo)
