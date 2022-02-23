@@ -47,7 +47,7 @@ Run
   (env) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
-  >>> for token in t.tokenize(u'すもももももももものうち'):
+  >>> for token in t.tokenize('すもももももももものうち'):
   ...     print(token)
   ...
   すもも 名詞,一般,*,*,*,*,すもも,スモモ,スモモ
@@ -65,8 +65,8 @@ Run
   >>> from janome.analyzer import Analyzer
   >>> from janome.charfilter import *
   >>> from janome.tokenfilter import *
-  >>> text = u'蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
-  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter(u'蛇の目', u'janome')]
+  >>> text = '蛇の目はPure Ｐｙｔｈｏｎな形態素解析器です。'
+  >>> char_filters = [UnicodeNormalizeCharFilter(), RegexReplaceCharFilter('蛇の目', 'janome')]
   >>> tokenizer = Tokenizer()
   >>> token_filters = [CompoundNounFilter(), POSStopFilter(['記号','助詞']), LowerCaseFilter()]
   >>> a = Analyzer(char_filters=char_filters, tokenizer=tokenizer, token_filters=token_filters)
@@ -80,13 +80,6 @@ Run
   形態素解析器  名詞,複合,*,*,*,*,形態素解析器,ケイタイソカイセキキ,ケイタイソカイセキキ
   です     助動詞,*,*,*,特殊・デス,基本形,です,デス,デス
 
-
-Developmet information for contributors
-=======================================
-
-See this Wiki:
-
-https://github.com/mocobeta/janome/wiki#for-contributors
 
 License
 ========
@@ -103,4 +96,4 @@ Special thanks to @ikawaha, @takuyaa, @nakagami and @janome_oekaki.
 Copyright
 ==========
 
-Copyright(C) 2020, Tomoko Uchida. All rights reserved.
+Copyright(C) 2022, Tomoko Uchida. All rights reserved.
