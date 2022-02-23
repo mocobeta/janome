@@ -18,11 +18,9 @@ Welcome to janome's documentation! (Japanese)
 Janome とは
 -----------
 
-.. figure:: ../img/janome_small.jpg
+.. image:: ../img/janome_small.jpg
   :scale: 20
   :align: right
-
-  Illustration by `janome <https://janomeekaki.wixsite.com/janome>`_. All rights reserved.
 
 Janome (蛇の目; ◉) は，Pure Python で書かれた，辞書内包の形態素解析器です。
 

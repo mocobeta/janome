@@ -1,2 +1,2 @@
-Sphinx==3.2.1
+Sphinx==4.4.0
 sphinxcontrib-github-ribbon==0.9.0

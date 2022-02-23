@@ -8,6 +8,6 @@ python -m venv .venv
 . .venv/bin/activate
 pip install -r requirements-docs.txt
 
-cd ${BASEDIR}/api && make html
-cd ${BASEDIR}/ja && make html
-cd ${BASEDIR}/en && make html
+cd ${BASEDIR}/api && make clean && make html
+cd ${BASEDIR}/ja && make clean && make html
+cd ${BASEDIR}/en && make clean && make html

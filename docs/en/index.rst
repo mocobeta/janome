@@ -19,11 +19,9 @@ Welcome to janome's documentation! (English)
 What's Janome?
 --------------
 
-.. figure:: ../img/janome_small.jpg
+.. image:: ../img/janome_small.jpg
   :scale: 20
   :align: right
-
-  Illustration by `janome <https://janomeekaki.wixsite.com/janome>`_. All rights reserved.
 
 Janome (蛇の目; ◉) is a Japanese morphological analysis engine (or tokenizer, pos-tagger) written in pure Python including the built-in dictionary and the language model.
 
@@ -370,7 +368,10 @@ Use ``-e sjis`` option if the output is garbled.
 Visualizing lattice graph
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. note:: You need Graphviz to use this functionality. Please install Graphviz from `here <https://graphviz.gitlab.io/download/>`_.
+.. note:: 
+
+  You need Graphviz to use this functionality. Please install Graphviz from `here <https://graphviz.gitlab.io/download/>`_.
+
 
 If given ``-g`` option, janome command outputs the visualized lattice image to the current directory after analyzing the text. Default output format is PNG.
 
