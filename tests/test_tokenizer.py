@@ -16,9 +16,10 @@ import os
 import sys
 from io import open
 import unittest
+import psutil
 from janome.lattice import NodeType
 from janome.tokenizer import Tokenizer
-from janome.dic import SystemDictionary, MMapSystemDictionary
+from janome.system_dic import SystemDictionary, MMapSystemDictionary
 
 # TODO: better way to find package...
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -259,6 +260,20 @@ class TestTokenizer(unittest.TestCase):
             text = f.read()
             list(Tokenizer().tokenize(text, dotfile=dotfile))
         self.assertFalse(os.path.exists(dotfile))
+
+    def test_mmap_open_files(self):
+        def open_dict_files():
+            p = psutil.Process()
+            open_dict_files = len(list(filter(lambda x: x.path.find('janome/sysdic') >= 0, p.open_files())))
+
+        fp_count = open_dict_files()
+
+        tokenizers = []
+        for i in range(100):
+            tokenizers.append(Tokenizer(mmap=True))
+
+        self.assertEqual(100, len(tokenizers))
+        self.assertEqual(fp_count, open_dict_files())
 
     def _check_token(self, token, surface, detail, node_type):
         self.assertEqual(surface, token.surface)

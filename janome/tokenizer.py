@@ -93,15 +93,17 @@ import sys
 import os
 from typing import Iterator, Union, Tuple, Optional, Any
 from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType  # type: ignore
-from .dic import SystemDictionary, MMapSystemDictionary, UserDictionary, CompiledUserDictionary  # type: ignore
+from .dic import UserDictionary, CompiledUserDictionary  # type: ignore
+from .system_dic import SystemDictionary, MMapSystemDictionary
+from .fst import Matcher
 
 try:
-    from janome.sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
+    from janome.sysdic import all_fstdata, connections  # type: ignore
 except ImportError:
     # hack for unit testing...
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, parent_dir)
-    from sysdic import all_fstdata, entries, mmap_entries, connections, chardef, unknowns  # type: ignore
+    from sysdic import all_fstdata, connections  # type: ignore
 
 
 DEFAULT_MMAP_MODE = sys.maxsize > 2**32
@@ -177,12 +179,11 @@ class Tokenizer(object):
         self.sys_dic: Union[SystemDictionary, MMapSystemDictionary]
         self.user_dic: Optional[Union[UserDictionary, CompiledUserDictionary]]
         self.wakati = wakati
+        self.matcher = Matcher(all_fstdata())
         if mmap:
-            self.sys_dic = MMapSystemDictionary(all_fstdata(), mmap_entries(wakati),
-                                                connections, chardef.DATA, unknowns.DATA)
+            self.sys_dic = MMapSystemDictionary.instance()
         else:
-            self.sys_dic = SystemDictionary(all_fstdata(), entries(wakati), connections,
-                                            chardef.DATA, unknowns.DATA)
+            self.sys_dic = SystemDictionary.instance()
         if udic:
             if udic.endswith('.csv'):
                 # build user dictionary from CSV
@@ -244,7 +245,7 @@ class Tokenizer(object):
                 matched = len(entries) > 0
 
             # system dictionary
-            entries = self.sys_dic.lookup(encoded_partial_text)
+            entries = self.sys_dic.lookup(encoded_partial_text, self.matcher)
             for e in entries:
                 lattice.add(SurfaceNode(e, NodeType.SYS_DICT))
             matched = len(entries) > 0

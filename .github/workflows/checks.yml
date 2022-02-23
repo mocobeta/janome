@@ -31,6 +31,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Test
       run: |
+        pip install psutil
         python setup.py test
 
   check:
@@ -42,6 +43,7 @@ jobs:
     - name: Unit tests for coverage
       run: |
         pip install coverage
+        pip install psutil
         python setup.py develop
         coverage run -m unittest discover tests
     - name: Coveralls
