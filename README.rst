@@ -37,14 +37,14 @@ Install
 
 .. code:: bash
 
-  (venv) $ python setup.py install
+  (venv) $ pip install janome
 
 Run
 ====
 
 .. code:: bash
 
-  (env) $ python
+  (venv) $ python
   >>> from janome.tokenizer import Tokenizer
   >>> t = Tokenizer()
   >>> for token in t.tokenize('すもももももももものうち'):
