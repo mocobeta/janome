@@ -45,6 +45,9 @@ setup(
     license='AL2',
     classifiers=classifiers,
     url='https://mocobeta.github.io/janome/en/',
+    project_urls={
+        'Source': 'https://github.com/mocobeta/janome',
+    },
     packages=['janome', 'janome.sysdic'],
     package_data={'janome.sysdic': ['fst.data*']},
     scripts=['bin/janome', 'bin/janome.bat'],
