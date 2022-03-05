@@ -1,3 +1,6 @@
+* 0.4.3 (yyyy.mm.dd)
+  - #112: Add GitHub URL for PyPi. (@andriyor)
+
 * 0.4.2 (2022.02.23)
   - #90: Fix Analyzer usage. (@syou6162)
   - #92: Add version info. (@norihitoishida)
