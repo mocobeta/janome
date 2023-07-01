@@ -2,17 +2,10 @@ name: Checks
 
 on:
   push:
-    paths:
-    - 'janome/**'
-    - 'tests/**'
-    - 'ipadic/**'
-    - '.github/workflows/**'
+    branches:
+    - 'master'
   pull_request:
-    paths:
-    - 'janome/**'
-    - 'tests/**'
-    - 'ipadic/**'
-    - '.github/workflows/**'
+
 
 jobs:
   test:
@@ -21,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12-dev']
 
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +24,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Test
       run: |
-        pip install psutil
+        pip install --upgrade pip
+        pip install --upgrade setuptools
+        pip install -r requirements-dev.txt
         python setup.py test
 
   check:
@@ -39,11 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
     - name: Unit tests for coverage
       run: |
-        pip install coverage
-        pip install psutil
+        pip install --upgrade pip
+        pip install --upgrade setuptools
+        pip install -r requirements-dev.txt
         python setup.py develop
         coverage run -m unittest discover tests
     - name: Coveralls

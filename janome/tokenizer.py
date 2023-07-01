@@ -114,7 +114,7 @@ class Token(object):
     A Token object contains all information for a token.
     """
 
-    def __init__(self, node: Node, extra: Tuple = None):
+    def __init__(self, node: Node, extra: Optional[Tuple] = None):
         self.node = node
         self.extra = extra
 
