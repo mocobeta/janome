@@ -14,7 +14,7 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Iterator, Tuple, Any
+from typing import Iterator, Tuple, Any, List, Dict
 
 from janome.tokenizer import Token
 
@@ -76,7 +76,7 @@ class POSStopFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, pos_list: list[str]):
+    def __init__(self, pos_list: List[str]):
         """
         Initialize POSStopFilter object.
 
@@ -102,7 +102,7 @@ class POSKeepFilter(TokenFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, pos_list: list[str]):
+    def __init__(self, pos_list: List[str]):
         """
         Initialize POSKeepFilter object.
 
@@ -242,7 +242,7 @@ class TokenCountFilter(TokenFilter):
         self.sorted = sorted
 
     def apply(self, tokens: Iterator[Token]) -> Iterator[Tuple[str, int]]:
-        token_counts: dict[str, int] = defaultdict(int)
+        token_counts: Dict[str, int] = defaultdict(int)
         for token in tokens:
             token_counts[getattr(token, self.att)] += 1
         if self.sorted:
