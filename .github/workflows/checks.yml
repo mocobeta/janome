@@ -24,6 +24,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Test
       run: |
+        pip install --upgrade setuptools
         pip install psutil
         python setup.py test
 
