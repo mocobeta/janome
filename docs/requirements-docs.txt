@@ -1,2 +1,8 @@
-Sphinx==4.4.0
-sphinxcontrib-github-ribbon==0.9.0
+Sphinx
+sphinxcontrib-applehelp
+sphinxcontrib-devhelp
+sphinxcontrib-github-ribbon
+sphinxcontrib-htmlhelp
+sphinxcontrib-jsmath
+sphinxcontrib-qthelp
+sphinxcontrib-serializinghtml

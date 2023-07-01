@@ -1,4 +1,6 @@
-* 0.4.3 (yyyy.mm.dd)
+* 0.5.0 (2023.07.01)
+  - #116: Add WordStopFilter and WordKeepFilter. (@mocobeta)
+  - #115: Run tests on Python 3.11 and 3.12 prerelease. (@mocobeta)
   - #112: Add GitHub URL for PyPi. (@andriyor)
 
 * 0.4.2 (2022.02.23)
