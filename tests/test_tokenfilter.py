@@ -20,8 +20,6 @@ from janome.tokenfilter import (
     UpperCaseFilter,
     POSStopFilter,
     POSKeepFilter,
-    WordStopFilter,
-    WordKeepFilter,
     CompoundNounFilter,
     ExtractAttributeFilter,
     TokenCountFilter
@@ -61,16 +59,6 @@ class TestTokenFilter(unittest.TestCase):
         tf = POSKeepFilter(['名詞,固有名詞', '動詞,自立'])
         tokens = tf.apply(self.t.tokenize('東京駅で降りる'))
         self.assertEqual(['名詞,固有名詞,地域,一般', '動詞,自立,*,*'], list(map(lambda token: token.part_of_speech, tokens)))
-
-    def test_word_stop_filter(self):
-        tf = WordStopFilter(['東京', '駅'])
-        tokens = tf.apply(self.t.tokenize('東京駅で降りる'))
-        self.assertEqual(['で', '降りる'], list(map(lambda token: token.surface, tokens)))
-
-    def test_word_keep_filter(self):
-        tf = WordKeepFilter(['東京', '駅'])
-        tokens = tf.apply(self.t.tokenize('東京駅で降りる'))
-        self.assertEqual(['東京', '駅'], list(map(lambda token: token.surface, tokens)))
 
     def test_compound_noun_filter(self):
         tf = CompoundNounFilter()
