@@ -14,9 +14,9 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Iterator, List, Dict, Tuple, Any
+from typing import Iterator, Tuple, Any, List, Dict
 
-from .tokenizer import Token
+from janome.tokenizer import Token
 
 
 class TokenFilter(ABC):
@@ -66,7 +66,7 @@ class UpperCaseFilter(TokenFilter):
 
 
 class POSStopFilter(TokenFilter):
-    u"""
+    """
     A POSStopFilter removes tokens associated with part-of-speech tags
     listed in the stop tags list and keeps other tokens.
 
@@ -113,6 +113,49 @@ class POSKeepFilter(TokenFilter):
     def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
         for token in tokens:
             if any(token.part_of_speech.startswith(pos) for pos in self.pos_list):
+                yield token
+
+
+class WordStopFilter(TokenFilter):
+    """
+    A WordStopFilter removes tokens whose surface form is listed in the stop words list.
+
+    Added in *version 0.5.0*
+    """
+
+    def __init__(self, stop_words: List[str]):
+        """
+        Initialize WordStopFilter object.
+
+        :param stop_words: stop words list.
+        """
+        self.stop_words = stop_words
+
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
+        for token in tokens:
+            if token.surface in self.stop_words:
+                continue
+            yield token
+
+
+class WordKeepFilter(TokenFilter):
+    """
+    A WordKeepFilter keeps tokens whose surface form is listed in the keep words list.
+
+    Added in *version 0.5.0*
+    """
+
+    def __init__(self, keep_words: List[str]) -> None:
+        """
+        Initialize WordKeepFilter object.
+
+        :param keep_words: keep words list.
+        """
+        self.keep_words = keep_words
+
+    def apply(self, tokens: Iterator[Token]) -> Iterator[Token]:
+        for token in tokens:
+            if token.surface in self.keep_words:
                 yield token
 
 
