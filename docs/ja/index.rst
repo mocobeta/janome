@@ -555,7 +555,7 @@ Copyright(C) 2015-2023, Tomoko Uchida. All rights reserved.
 History
 ----------
 
-* 2023.07.01 janome Version 0.5.0 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.5.0`_
+* 2023.07.01 janome Version 0.5.0 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.5.0>`_
 * 2022.02.23 janome Version 0.4.2 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.4.2>`_
 * 2020.09.21 janome Version 0.4.1 released
 * 2020.08.23 janome Version 0.4.0 released
