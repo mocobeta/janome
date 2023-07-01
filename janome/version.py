@@ -1,1 +1,1 @@
-JANOME_VERSION = '0.5.0'
+JANOME_VERSION = '0.5.1-dev'
