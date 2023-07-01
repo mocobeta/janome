@@ -123,7 +123,7 @@ class WordStopFilter(TokenFilter):
     Added in *version 0.5.0*
     """
 
-    def __init__(self, stop_words: list[str]):
+    def __init__(self, stop_words: List[str]):
         """
         Initialize WordStopFilter object.
 
@@ -145,7 +145,7 @@ class WordKeepFilter(TokenFilter):
     Added in *version 0.5.0*
     """
 
-    def __init__(self, keep_words: list[str]) -> None:
+    def __init__(self, keep_words: List[str]) -> None:
         """
         Initialize WordKeepFilter object.
 
