@@ -2,17 +2,10 @@ name: Checks
 
 on:
   push:
-    paths:
-    - 'janome/**'
-    - 'tests/**'
-    - 'ipadic/**'
-    - '.github/workflows/**'
+    branches:
+    - 'master'
   pull_request:
-    paths:
-    - 'janome/**'
-    - 'tests/**'
-    - 'ipadic/**'
-    - '.github/workflows/**'
+
 
 jobs:
   test:
