@@ -1,24 +1,43 @@
 ## Release operations
 
-1. Make sure that all tests are OK.
+1. Create the release branch.
 
 ```
-$ python setup.py test
+git switch -c release-x.x.x
 ```
 
-2. Build the release modules and upload them to PyPI.
+2. Make sure that all tests are OK.
 
 ```
-$ rm dist/*
-$ python setup.py sdist
-$ python setup.py bdist_wheel --universal
+python setup.py test
+```
+
+3. Fix version and create a new tag for the release.
+
+```
+vim janome/version.py
+
+git tag x.x.x
+git push --tags
+```
+
+4. Build the release modules and upload them to PyPI.
+
+```
+rm dist/*
+python setup.py sdist
+python setup.py bdist_wheel --universal
 ```
 
 ```
-$ twine upload dist/*
+twine upload dist/*
 ```
 
-3. Publish documentation.
+5. Create the GitHub release.
+
+https://github.com/mocobeta/janome/releases
+
+6. Update and publish documentation.
 
 Generate documentation.
 
@@ -29,15 +48,10 @@ Generate documentation.
 Publish to web site.
 
 ```
-$ ./docs/upload_docs.sh $DOCS_ROOT_PATH
+./docs/upload_docs.sh $DOCS_ROOT_PATH
 ```
 
-4. Create a tag for the release.
-
-```
-$ git tag x.x.x
-$ git push --tags
-```
+7. Push the release branch and merge to main branch via GitHub.
 
 Well done!
 
