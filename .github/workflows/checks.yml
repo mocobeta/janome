@@ -25,7 +25,6 @@ jobs:
     - name: Test
       run: |
         pip install --upgrade pip
-        pip install --upgrade setuptools
         pip install -r requirements-dev.txt
         python setup.py test
 
@@ -38,7 +37,6 @@ jobs:
     - name: Unit tests for coverage
       run: |
         pip install --upgrade pip
-        pip install --upgrade setuptools
         pip install -r requirements-dev.txt
         python setup.py develop
         coverage run -m unittest discover tests
