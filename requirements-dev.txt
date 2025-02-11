@@ -8,3 +8,4 @@ wheel
 psutil
 coverage
 setuptools
+build
