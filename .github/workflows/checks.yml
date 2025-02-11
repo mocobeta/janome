@@ -26,6 +26,7 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install -r requirements-dev.txt
+        python setup.py develop
         python -m unittest discover tests/
 
   check:
@@ -38,6 +39,7 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install -r requirements-dev.txt
+        python setup.py develop
         python -m unittest discover tests/
         coverage run -m unittest discover tests
     - name: Coveralls
