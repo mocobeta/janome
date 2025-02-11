@@ -9,7 +9,7 @@ git switch -c release-x.x.x
 2. Make sure that all tests are OK.
 
 ```
-python setup.py test
+python -m unittest discover tests/
 ```
 
 3. Fix version and create a new tag for the release.
@@ -25,8 +25,7 @@ git push --tags
 
 ```
 rm dist/*
-python setup.py sdist
-python setup.py bdist_wheel --universal
+python -m build
 ```
 
 ```

@@ -9,6 +9,7 @@ Steps to contribute
   $ python -m venv .venv
   $ . .venv/bin/activate
   (.venv) $ pip install -r requirements-dev.txt
+  (.venv) $ pip install -e .
   ```
 
 3. (Optional) Build and validate the built-in dictionary.
@@ -25,7 +26,7 @@ Steps to contribute
   $ cd ..
   $ rm -rf sysdic; unzip ./ipadic/sysdic.zip    // extract the built-in dictionary to janome root
   $ . .venv/bin/activate
-  (.venv) $ python setup.py develop    // install janome module for development
+  (.venv) $ pip install -e .   // install janome module for development
   (.venv) $ cd ipadic 
   (.venv) $ ./validate.sh mecab-ipadic-2.7.0-20070801
   ```

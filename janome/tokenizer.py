@@ -286,9 +286,9 @@ class Tokenizer(object):
         else:
             tokens = []
             for node in min_cost_path[1:-1]:
-                if type(node) == SurfaceNode and node.node_type == NodeType.SYS_DICT:
+                if type(node) is SurfaceNode and node.node_type is NodeType.SYS_DICT:
                     tokens.append(Token(node, self.sys_dic.lookup_extra(node.num)))
-                elif type(node) == SurfaceNode and node.node_type == NodeType.USER_DICT:
+                elif type(node) is SurfaceNode and node.node_type is NodeType.USER_DICT:
                     tokens.append(Token(node, self.user_dic.lookup_extra(node.num)))
                 else:
                     tokens.append(Token(node))
