@@ -63,7 +63,7 @@ class UnicodeNormalizeCharFilter(CharFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, form: str = 'NFKC'):
+    def __init__(self, form = 'NFKC'):
         """
         Initialize UnicodeNormalizeCharFilter with normalization form.
 
