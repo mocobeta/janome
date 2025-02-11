@@ -7,3 +7,4 @@ twine
 wheel
 psutil
 coverage
+setuptools
