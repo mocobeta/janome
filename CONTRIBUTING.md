@@ -41,9 +41,3 @@ Steps to contribute
   ```
 
 5. Once the branch passes all tests :100: , create a pull request :)
-
-If you have any questions, please post comments to Gitter room (below). Thanks!
-
-Japanese room: https://gitter.im/janome-python/ja
-
-English room: https://gitter.im/janome-python/en
