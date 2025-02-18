@@ -19,7 +19,7 @@
 #
 import os
 import sys
-sys.path.insert(0, '/home/moco/repo/janome')
+sys.path.insert(0, '../..')
 
 
 # -- General configuration ------------------------------------------------
