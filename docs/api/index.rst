@@ -8,9 +8,9 @@ Janome API reference
 
 For general documentation see:
 
-`http://mocobeta.github.io/janome/en/ <http://mocobeta.github.io/janome/en/>`_ (en)
+`http://janome.mocobeta.dev/en/ <http://janome.mocobeta.dev/en/>`_ (en)
 
-`http://mocobeta.github.io/janome/ <http://mocobeta.github.io/janome/>`_ (ja)
+`http://janome.mocobeta.dev/ja/ <http://janome.mocobeta.dev/ja/>`_ (ja)
 
 .. toctree::
    :maxdepth: 4

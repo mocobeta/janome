@@ -13,7 +13,7 @@
 Welcome to janome's documentation! (Japanese)
 ==============================================
 
-`English <http://mocobeta.github.io/janome/en/>`_
+`English <http://janome.mocobeta.dev/en/>`_
 
 Janome とは
 -----------
@@ -38,7 +38,7 @@ Janome (蛇の目; ◉) は，Pure Python で書かれた，辞書内包の形�
 API リファレンス
 --------------------------
 
-`https://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
+`https://janome.mocobeta.dev/reference/ <http://janome.mocobeta.dev/reference/>`_
 
 
 動作に必要なソフトウェア
@@ -83,7 +83,7 @@ PyPI
 
 janome.tokenizer パッケージの Tokenizer オブジェクトを作り，tokenize() メソッドに解析したい文字列を渡します。
 
-戻り値は Token オブジェクトのイテレータ (generator) です。Token は表層形や品詞といった形態素情報を含みます。詳しくは `リファレンス <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ を参照してください。
+戻り値は Token オブジェクトのイテレータ (generator) です。Token は表層形や品詞といった形態素情報を含みます。詳しくは `リファレンス <http://janome.mocobeta.dev/reference/janome.html#janome.tokenizer.Token>`_ を参照してください。
 
 ::
 
@@ -201,7 +201,7 @@ user_simpledic.csv ::
 
 ユーザー定義辞書は，巨大になるとバイナリコンパイルに時間がかかるため，あらかじめコンパイルしておき，コンパイル済みの辞書を使うことも可能です。
 
-現在のところ，コンパイルのためのツールはありませんが， `API <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。 ``progress_handler`` オプションは v0.4.1 以上でサポートされます。
+現在のところ，コンパイルのためのツールはありませんが， `API <http://janome.mocobeta.dev/reference/janome.html#janome.dic.UserDictionary>`_ を使ってコンパイルが行えます。 ``progress_handler`` オプションは v0.4.1 以上でサポートされます。
 
 辞書のコンパイル(MeCab IPADIC format) ::
 
@@ -236,9 +236,9 @@ Analyzer フレームワーク (v0.3.4 以上)
 
 Analyzer は，形態素解析の前処理・後処理をテンプレ化するためのフレームワークです。Analyzer フレームワークは下記のクラスを含みます。
 
-* 文字の正規化などの前処理を行う `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ クラス
-* 小文字化，品詞によるトークンのフィルタリングなど，形態素解析後の後処理を行う `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ クラス
-* CharFilter, Tokenizer, TokenFilter を組み合わせてカスタム解析フローを組み立てる `Analyzer <http://mocobeta.github.io/janome/api/janome.html#janome.analyzer.Analyzer>`_ クラス
+* 文字の正規化などの前処理を行う `CharFilter <http://janome.mocobeta.dev/reference/janome.html#janome.charfilter.CharFilter>`_ クラス
+* 小文字化，品詞によるトークンのフィルタリングなど，形態素解析後の後処理を行う `TokenFilter <http://janome.mocobeta.dev/reference/janome.html#janome.tokenfilter.TokenFilter>`_ クラス
+* CharFilter, Tokenizer, TokenFilter を組み合わせてカスタム解析フローを組み立てる `Analyzer <http://janome.mocobeta.dev/reference/janome.html#janome.analyzer.Analyzer>`_ クラス
 
 Analyzer の使い方
 ^^^^^^^^^^^^^^^^^^^^
