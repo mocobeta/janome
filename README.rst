@@ -70,4 +70,4 @@ Special thanks to @ikawaha, @takuyaa, @nakagami and @janome_oekaki.
 Copyright
 ==========
 
-Copyright(C) 2015-2023, Tomoko Uchida. All rights reserved.
+Copyright(C) 2015-2025, Tomoko Uchida. All rights reserved.
