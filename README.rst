@@ -18,9 +18,9 @@ Janome is a Japanese morphological analysis engine written in pure Python.
 
 General documentation:
 
-https://janome.mocobeta.dev/janome/en/ (English)
+https://janome.mocobeta.dev/en/ (English)
 
-https://janome.mocobeta.dev/janome/ja (Japanese)
+https://janome.mocobeta.dev/ja/ (Japanese)
 
 Requirements
 =============

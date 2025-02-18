@@ -14,7 +14,7 @@
 Welcome to janome's documentation! (English)
 =============================================
 
-`日本語 <http://mocobeta.github.io/janome/>`_
+`日本語 <http://janome.mocobeta.dev/ja/>`_
 
 What's Janome?
 --------------
@@ -39,7 +39,7 @@ If you like janome, please star the repository! :)
 API reference
 -------------
 
-`https://mocobeta.github.io/janome/api/ <http://mocobeta.github.io/janome/api/>`_
+`https://janome.mocobeta.dev/reference/ <http://janome.mocobeta.dev/reference/>`_
 
 Requirements
 ------------
@@ -70,7 +70,7 @@ Usage
 
 Create janome.tokenizer.Tokenizer object and call tokenize() method with the sentences you want to analyze.
 
-The return value is a gnerator of Token objects. Token includes morphologic information such as surface form, part-of-speech. See `reference <http://mocobeta.github.io/janome/api/janome.html#janome.tokenizer.Token>`_ for more details.
+The return value is a gnerator of Token objects. Token includes morphologic information such as surface form, part-of-speech. See `reference <http://janome.mocobeta.dev/reference/janome.html#janome.tokenizer.Token>`_ for more details.
 
 ::
 
@@ -182,7 +182,7 @@ Pre-compiled user dictionary
 
 With large user dictionary, it can take much time to convert CSV file to the binary data structure. You can compile the user dictionary in advance and use that at runtime.
 
-For now, there is no tools for compiling user dictionary. Use `APIs <http://mocobeta.github.io/janome/api/janome.html#janome.dic.UserDictionary>`_ as below. ``progress_handler`` option is supported in v0.4.1 or above.
+For now, there is no tools for compiling user dictionary. Use `APIs <http://janome.mocobeta.dev/reference/janome.html#janome.dic.UserDictionary>`_ as below. ``progress_handler`` option is supported in v0.4.1 or above.
 
 How to compile user dictionary (MeCab IPADIC format): ::
 
@@ -217,9 +217,9 @@ Once compiling has been successfully completed, the data is saved in ``/tmp/user
 
 Analyzer framework is for pre- and post- processing. Analyzer framework includes following classes.
 
-* `CharFilter <http://mocobeta.github.io/janome/api/janome.html#janome.charfilter.CharFilter>`_ class performs pre-processing such as character normalization.
-* `TokenFilter <http://mocobeta.github.io/janome/api/janome.html#janome.tokenfilter.TokenFilter>`_ class performs post-processing such as lowercase/uppercase conversion, token filtering by POS tags.
-* `Analyzer <http://mocobeta.github.io/janome/api/janome.html#janome.analyzer.Analyzer>`_ class combines CharFilters, a Tokenizer and TokenFilters to assemble custom analysis chain.
+* `CharFilter <http://janome.mocobeta.dev/reference/janome.html#janome.charfilter.CharFilter>`_ class performs pre-processing such as character normalization.
+* `TokenFilter <http://janome.mocobeta.dev/reference/janome.html#janome.tokenfilter.TokenFilter>`_ class performs post-processing such as lowercase/uppercase conversion, token filtering by POS tags.
+* `Analyzer <http://janome.mocobeta.dev/reference/janome.html#janome.analyzer.Analyzer>`_ class combines CharFilters, a Tokenizer and TokenFilters to assemble custom analysis chain.
 
 Analyzser usage
 ^^^^^^^^^^^^^^^^^^^^
