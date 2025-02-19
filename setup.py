@@ -45,7 +45,7 @@ setup(
     author_email='tomoko.uchida.1111@gmail.com',
     license='AL2',
     classifiers=classifiers,
-    url='https://mocobeta.github.io/janome/en/',
+    url='https://janome.mocobeta.dev/en/',
     project_urls={
         'Source': 'https://github.com/mocobeta/janome',
     },
