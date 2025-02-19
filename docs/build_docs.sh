@@ -7,6 +7,7 @@ rm -rf .venv
 python -m venv .venv
 . .venv/bin/activate
 pip install -r requirements-docs.txt
+pip install -e ..
 
 cd ${BASEDIR}/api && make clean && make html
 cd ${BASEDIR}/ja && make clean && make html
