@@ -382,7 +382,7 @@ class UserDictionary(RAMDictionary):
         :param connections: connection cost matrix. expected value is SYS_DIC.connections
         :param progress_handler: handler mainly to indicate progress, implementation of ProgressHandler
 
-        .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
+        .. seealso:: https://janome.mocobeta.dev/en/#how-to-use-with-user-defined-dictionary
         """
         fst_data, entries = UserDictionary.build_dic(user_dict, enc, type, progress_handler)
         super().__init__(entries, connections)

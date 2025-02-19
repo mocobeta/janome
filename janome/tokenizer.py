@@ -174,7 +174,7 @@ class Tokenizer(object):
                      Set this option to False on any environments that do not support mmap.
                      Default is True on 64bit architecture; otherwise False.
 
-        .. seealso:: http://mocobeta.github.io/janome/en/#use-with-user-defined-dictionary
+        .. seealso:: https://janome.mocobeta.dev/en/#how-to-use-with-user-defined-dictionary
         """
         self.sys_dic: Union[SystemDictionary, MMapSystemDictionary]
         self.user_dic: Optional[Union[UserDictionary, CompiledUserDictionary]]
