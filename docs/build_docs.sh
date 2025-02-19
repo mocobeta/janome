@@ -16,6 +16,9 @@ cd ${BASEDIR}/en && make clean && make html
 rm -rf ${BASEDIR}/build
 mkdir -p ${BASEDIR}/build
 cp ${BASEDIR}/_redirects ${BASEDIR}/build/
-cp -Rp ${BASEDIR}/api/_build/html/ ${BASEDIR}/build/reference
-cp -Rp ${BASEDIR}/ja/_build/html/ ${BASEDIR}/build/ja
+cp -Rp ${BASEDIR}/ja/_build/html/* ${BASEDIR}/build/
 cp -Rp ${BASEDIR}/en/_build/html/ ${BASEDIR}/build/en
+cp -Rp ${BASEDIR}/api/_build/html/ ${BASEDIR}/build/reference
+
+echo "All build finished. Assets are in ${BASEDIR}/build"
+  
