@@ -537,7 +537,7 @@ See `https://github.com/mocobeta/janome/blob/master/CONTRIBUTING.md <https://git
 作者について
 --------------
 
-`プロフィール <https://github.com/mocobeta/mocobeta/blob/main/profile.md>`_
+`プロフィール <https://blog.mocobeta.dev/about/>`_
 
 License
 ------------
@@ -550,7 +550,7 @@ See `LICENSE.txt <https://github.com/mocobeta/janome/blob/master/LICENSE.txt>`_ 
 Copyright
 -----------
 
-Copyright(C) 2015-2023, Tomoko Uchida. All rights reserved.
+Copyright(C) 2015-2025, Tomoko Uchida. All rights reserved.
 
 History
 ----------
