@@ -117,26 +117,83 @@ class Token(object):
     def __init__(self, node: Node, extra: Optional[Tuple] = None):
         self.node = node
         self.extra = extra
+        self._overrides: dict[str, str] = {}
+
+    def _get_attr(self, name: str, value: str) -> str:
+        return self._overrides.get(name, value)
+
+    @property
+    def surface(self) -> str:
+        return self._get_attr('surface', self.node.surface)
+
+    @surface.setter
+    def surface(self, value: str) -> None:
+        self._overrides['surface'] = value
+
+    @property
+    def part_of_speech(self) -> str:
+        value = self.extra[0] if self.extra else self.node.part_of_speech
+        return self._get_attr('part_of_speech', value)
+
+    @part_of_speech.setter
+    def part_of_speech(self, value: str) -> None:
+        self._overrides['part_of_speech'] = value
+
+    @property
+    def infl_type(self) -> str:
+        value = self.extra[1] if self.extra else self.node.infl_type
+        return self._get_attr('infl_type', value)
+
+    @infl_type.setter
+    def infl_type(self, value: str) -> None:
+        self._overrides['infl_type'] = value
+
+    @property
+    def infl_form(self) -> str:
+        value = self.extra[2] if self.extra else self.node.infl_form
+        return self._get_attr('infl_form', value)
+
+    @infl_form.setter
+    def infl_form(self, value: str) -> None:
+        self._overrides['infl_form'] = value
+
+    @property
+    def base_form(self) -> str:
+        value = self.extra[3] if self.extra else self.node.base_form
+        return self._get_attr('base_form', value)
+
+    @base_form.setter
+    def base_form(self, value: str) -> None:
+        self._overrides['base_form'] = value
+
+    @property
+    def reading(self) -> str:
+        value = self.extra[4] if self.extra else self.node.reading
+        return self._get_attr('reading', value)
+
+    @reading.setter
+    def reading(self, value: str) -> None:
+        self._overrides['reading'] = value
+
+    @property
+    def phonetic(self) -> str:
+        value = self.extra[5] if self.extra else self.node.phonetic
+        return self._get_attr('phonetic', value)
+
+    @phonetic.setter
+    def phonetic(self, value: str) -> None:
+        self._overrides['phonetic'] = value
+
+    @property
+    def node_type(self) -> str:
+        return self._get_attr('node_type', self.node.node_type)
+
+    @node_type.setter
+    def node_type(self, value: str) -> None:
+        self._overrides['node_type'] = value
 
     def __getattr__(self, name) -> Any:
-        if name == 'surface':
-            return self.node.surface
-        elif name == 'part_of_speech':
-            return self.extra[0] if self.extra else self.node.part_of_speech
-        elif name == 'infl_type':
-            return self.extra[1] if self.extra else self.node.infl_type
-        elif name == 'infl_form':
-            return self.extra[2] if self.extra else self.node.infl_form
-        elif name == 'base_form':
-            return self.extra[3] if self.extra else self.node.base_form
-        elif name == 'reading':
-            return self.extra[4] if self.extra else self.node.reading
-        elif name == 'phonetic':
-            return self.extra[5] if self.extra else self.node.phonetic
-        elif name == 'node_type':
-            return self.node.node_type
-        else:
-            None
+        return None
 
     def __setattr__(self, name: str, value: Any) -> None:
         # see https://stackoverflow.com/questions/61213745/typechecking-dynamically-added-attributes
