@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
+import csv
 import os
 import io
 import pickle
@@ -397,7 +398,7 @@ class UserDictionary(RAMDictionary):
         """Convert IPADIC formatted string to an user dictionary entry"""
         surface, left_id, right_id, cost, \
             pos_major, pos_minor1, pos_minor2, pos_minor3, \
-            infl_type, infl_form, base_form, reading, phonetic = line.split(',')
+            infl_type, infl_form, base_form, reading, phonetic = next(csv.reader([line]))
         part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
         return (surface, int(left_id), int(right_id), int(cost),
                 part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
@@ -405,7 +406,7 @@ class UserDictionary(RAMDictionary):
     @classmethod
     def line_to_entry_simpledic(cls, line):
         """Convert simpledict formatted string to an user dictionary entry"""
-        surface, pos_major, reading = line.split(',')
+        surface, pos_major, reading = next(csv.reader([line]))
         part_of_speech = ','.join([pos_major, '*', '*', '*'])
         return (surface, 0, 0, -100000, part_of_speech, '*', '*', surface, reading, reading)
 
