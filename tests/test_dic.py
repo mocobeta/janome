@@ -13,7 +13,10 @@
 # limitations under the License.
 
 import os
+import csv
+import io
 import sys
+import tempfile
 import unittest
 from janome.sysdic import connections
 from janome.dic import (
@@ -31,6 +34,41 @@ sys.path.insert(0, parent_dir)
 
 
 class TestUserDictionary(unittest.TestCase):
+    def test_quoted_csv_entries(self):
+        for surface in ('plain', '3,3-Dimethylpentane', 'say "hello"', 'quoted, "word"'):
+            for dict_type in ('ipadic', 'simpledic'):
+                with self.subTest(surface=surface, dict_type=dict_type):
+                    if dict_type == 'ipadic':
+                        fields = [surface, 0, 0, -100000, 'noun', '*', '*', '*',
+                                  '*', '*', surface, 'READING', 'READING']
+                    else:
+                        fields = [surface, 'noun', 'READING']
+                    stream = io.StringIO()
+                    csv.writer(stream).writerow(fields)
+                    parse = getattr(UserDictionary, 'line_to_entry_' + dict_type)
+                    entry = parse(stream.getvalue().rstrip('\r\n'))
+                    self.assertEqual(entry[0], surface)
+                    self.assertEqual(entry[7], surface)
+                    self.assertEqual(entry[8:], ('READING', 'READING'))
+
+    def test_quoted_csv_dictionary_lookup(self):
+        surface = '3,3-Dimethylpentane'
+        for dict_type in ('ipadic', 'simpledic'):
+            with self.subTest(dict_type=dict_type), tempfile.TemporaryDirectory() as directory:
+                path = os.path.join(directory, 'dictionary.csv')
+                if dict_type == 'ipadic':
+                    fields = [surface, 0, 0, -100000, 'noun', '*', '*', '*',
+                              '*', '*', surface, 'READING', 'READING']
+                else:
+                    fields = [surface, 'noun', 'READING']
+                with open(path, 'w', encoding='utf8', newline='') as stream:
+                    csv.writer(stream).writerow(fields)
+                dictionary = UserDictionary(path, 'utf8', dict_type, connections)
+                matches = dictionary.lookup(surface.encode('utf8'))
+                self.assertEqual(len(matches), 1)
+                self.assertEqual(dictionary.entries[0][0], surface)
+                self.assertEqual(dictionary.entries[0][8:], ('READING', 'READING'))
+
     def test_property_types(self):
         user_dic = UserDictionary(user_dict=os.path.join(parent_dir, 'tests/user_ipadic.csv'),
                                   enc='utf8', type='ipadic', connections=connections)
