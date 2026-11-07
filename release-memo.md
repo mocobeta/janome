@@ -18,26 +18,41 @@ The release flow is shown below:
 
 ```mermaid
 flowchart TD
-    subgraph Manual[Manual]
-        A[Start pypi-release skill]
-        C[Approve PyPI publication]
-        G[Review and merge release pull request]
-        H[Update documentation in a separate pull request]
-        I[Merge documentation pull request to master]
+    subgraph LocalMachine[Local machine]
+        subgraph Manual[Manual actions]
+            A[Start pypi-release skill]
+            F[Approve PyPI publication]
+            J[Review and merge release pull request]
+            K[Update documentation in a separate pull request]
+            L[Merge documentation pull request to master]
+        end
+
+        subgraph AgentSkill[Agent skill]
+            B[Prepare release branch, set release version, and commit]
+            C[Push version tag]
+            D[Run checks and build package]
+            G[Publish to PyPI and update GitHub Release]
+            H[Verify PyPI, update development version and changelog]
+            I[Open release pull request]
+        end
     end
 
-    subgraph Automated[Automated]
-        B[Prepare release branch, run checks, create tag, and build package]
-        D[Publish to PyPI]
-        E[Update development version and changelog]
-        F[Open release pull request]
-        J[Cloudflare Pages builds and deploys documentation]
+    subgraph GitHubActions[GitHub Actions]
+        E[Generate release notes and create a pre-release]
     end
 
-    A --> B --> C --> D --> E --> F --> G --> H --> I --> J
+    subgraph Cloudflare[Cloudflare Pages]
+        M[Build and deploy documentation]
+    end
+
+    A --> B --> C --> E --> D --> F --> G --> H --> I --> J --> K --> L --> M
 
     classDef manual fill:#fff3cd,stroke:#856404,color:#212529
-    classDef automated fill:#d4edda,stroke:#155724,color:#212529
-    class A,C,G,H,I manual
-    class B,D,E,F,J automated
+    classDef skill fill:#d4edda,stroke:#155724,color:#212529
+    classDef github fill:#dbeafe,stroke:#1d4ed8,color:#212529
+    classDef cloudflare fill:#fce7f3,stroke:#be185d,color:#212529
+    class A,F,J,K,L manual
+    class B,C,D,G,H,I skill
+    class E github
+    class M cloudflare
 ```
