@@ -119,21 +119,21 @@ class Token(object):
         self.extra = extra
 
     def __getattr__(self, name) -> Any:
-        if name == 'surface':
+        if name == "surface":
             return self.node.surface
-        elif name == 'part_of_speech':
+        elif name == "part_of_speech":
             return self.extra[0] if self.extra else self.node.part_of_speech
-        elif name == 'infl_type':
+        elif name == "infl_type":
             return self.extra[1] if self.extra else self.node.infl_type
-        elif name == 'infl_form':
+        elif name == "infl_form":
             return self.extra[2] if self.extra else self.node.infl_form
-        elif name == 'base_form':
+        elif name == "base_form":
             return self.extra[3] if self.extra else self.node.base_form
-        elif name == 'reading':
+        elif name == "reading":
             return self.extra[4] if self.extra else self.node.reading
-        elif name == 'phonetic':
+        elif name == "phonetic":
             return self.extra[5] if self.extra else self.node.phonetic
-        elif name == 'node_type':
+        elif name == "node_type":
             return self.node.node_type
         else:
             None
@@ -143,24 +143,31 @@ class Token(object):
         object.__setattr__(self, name, value)
 
     def __str__(self):
-        return f'{self.surface}\t' \
-            f'{self.part_of_speech},{self.infl_type},{self.infl_form},{self.base_form},{self.reading},{self.phonetic}'
+        return (
+            f"{self.surface}\t"
+            f"{self.part_of_speech},{self.infl_type},{self.infl_form},{self.base_form},{self.reading},{self.phonetic}"
+        )
 
 
 class Tokenizer(object):
     """
     A Tokenizer tokenizes Japanese texts with system and optional user defined dictionary.
     """
+
     MAX_CHUNK_SIZE = 1024
     CHUNK_SIZE = 500
 
-    def __init__(self, udic: str = '', *,
-                 udic_enc: str = 'utf8',
-                 udic_type: str = 'ipadic',
-                 max_unknown_length: int = 1024,
-                 wakati: bool = False,
-                 mmap: bool = DEFAULT_MMAP_MODE,
-                 dotfile: str = ''):
+    def __init__(
+        self,
+        udic: str = "",
+        *,
+        udic_enc: str = "utf8",
+        udic_type: str = "ipadic",
+        max_unknown_length: int = 1024,
+        wakati: bool = False,
+        mmap: bool = DEFAULT_MMAP_MODE,
+        dotfile: str = "",
+    ):
         """
         Initialize Tokenizer object with optional arguments.
 
@@ -185,7 +192,7 @@ class Tokenizer(object):
         else:
             self.sys_dic = SystemDictionary.instance()
         if udic:
-            if udic.endswith('.csv'):
+            if udic.endswith(".csv"):
                 # build user dictionary from CSV
                 self.user_dic = UserDictionary(udic, udic_enc, udic_type, connections)
             elif os.path.isdir(udic):
@@ -197,8 +204,9 @@ class Tokenizer(object):
             self.user_dic = None
         self.max_unknown_length = max_unknown_length
 
-    def tokenize(self, text: str, *, wakati: bool = False, baseform_unk: bool = True, dotfile: str = '') \
-            -> Iterator[Union[Token, str]]:
+    def tokenize(
+        self, text: str, *, wakati: bool = False, baseform_unk: bool = True, dotfile: str = ""
+    ) -> Iterator[Union[Token, str]]:
         """
         Tokenize the input text.
 
@@ -216,7 +224,7 @@ class Tokenizer(object):
         if dotfile and len(text) < Tokenizer.MAX_CHUNK_SIZE:
             return self.__tokenize_stream(text, wakati, baseform_unk, dotfile)
         else:
-            return self.__tokenize_stream(text, wakati, baseform_unk, '')
+            return self.__tokenize_stream(text, wakati, baseform_unk, "")
 
     def __tokenize_stream(self, text, wakati, baseform_unk, dotfile):
         text = text.strip()
@@ -236,7 +244,7 @@ class Tokenizer(object):
         lattice = Lattice(chunk_size, self.sys_dic)
         pos = 0
         while not self.__should_split(text, pos):
-            encoded_partial_text = text[pos:pos + min(50, chunk_size - pos)].encode('utf-8')
+            encoded_partial_text = text[pos : pos + min(50, chunk_size - pos)].encode("utf-8")
             # user dictionary
             if self.user_dic:
                 entries = self.user_dic.lookup(encoded_partial_text)
@@ -257,8 +265,11 @@ class Tokenizer(object):
                     if matched and not self.sys_dic.unknown_invoked_always(cate):
                         continue
                     # unknown word length
-                    length = self.sys_dic.unknown_length(cate) \
-                        if not self.sys_dic.unknown_grouping(cate) else self.max_unknown_length
+                    length = (
+                        self.sys_dic.unknown_length(cate)
+                        if not self.sys_dic.unknown_grouping(cate)
+                        else self.max_unknown_length
+                    )
                     assert length >= 0
                     # buffer for unknown word
                     buf = text[pos]
@@ -272,8 +283,8 @@ class Tokenizer(object):
                     assert unknown_entries
                     for entry in unknown_entries:
                         left_id, right_id, cost, part_of_speech = entry
-                        base_form = buf if baseform_unk else '*'
-                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, '*', '*', base_form, '*', '*')
+                        base_form = buf if baseform_unk else "*"
+                        dummy_dict_entry = (buf, left_id, right_id, cost, part_of_speech, "*", "*", base_form, "*", "*")
                         lattice.add(Node(dummy_dict_entry, NodeType.UNKNOWN))
 
             pos += lattice.forward()
@@ -297,19 +308,20 @@ class Tokenizer(object):
         return (tokens, pos)
 
     def __should_split(self, text, pos):
-        return \
-            pos >= len(text) or \
-            pos >= Tokenizer.MAX_CHUNK_SIZE or \
-            (pos >= Tokenizer.CHUNK_SIZE and self.__splittable(text[:pos]))
+        return (
+            pos >= len(text)
+            or pos >= Tokenizer.MAX_CHUNK_SIZE
+            or (pos >= Tokenizer.CHUNK_SIZE and self.__splittable(text[:pos]))
+        )
 
     def __splittable(self, text):
         return self.__is_punct(text[-1]) or self.__is_newline(text)
 
     def __is_punct(self, c):
-        return c == u'、' or c == u'。' or c == u',' or c == u'.' or c == u'？' or c == u'?' or c == u'！' or c == u'!'
+        return c == "、" or c == "。" or c == "," or c == "." or c == "？" or c == "?" or c == "！" or c == "!"
 
     def __is_newline(self, text):
-        return text.endswith('\n\n') or text.endswith('\r\n\r\n')
+        return text.endswith("\n\n") or text.endswith("\r\n\r\n")
 
 
 class WakatiModeOnlyException(Exception):

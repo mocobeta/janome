@@ -43,23 +43,19 @@ class ProgressHandler(ABC):
 class SimpleProgressIndicator(ProgressHandler):
     def __init__(self, update_frequency=0.0001, format=None):
         self.update_frequency = update_frequency
-        self.format = format or '\r{}: {:.1f}% | {}/{}'
+        self.format = format or "\r{}: {:.1f}% | {}/{}"
         self.total = None
         self.value = None
         self.desc = None
 
-    def print_progress(self, terminator=''):
+    def print_progress(self, terminator=""):
         logger.handlers[0].terminator = terminator
-        logger.info(self.format.format(
-            self.desc,
-            self.value * 100 / self.total,
-            self.value,
-            self.total))
+        logger.info(self.format.format(self.desc, self.value * 100 / self.total, self.value, self.total))
 
     def on_start(self, total, value=0, desc=None):
         self.total = total
         self.value = value
-        self.desc = desc or 'Processing'
+        self.desc = desc or "Processing"
 
     def on_progress(self, value=1):
         self.value += value
@@ -68,5 +64,5 @@ class SimpleProgressIndicator(ProgressHandler):
             self.print_progress()
 
     def on_complete(self):
-        self.print_progress('\n')
+        self.print_progress("\n")
         self.total = self.value = self.desc = None

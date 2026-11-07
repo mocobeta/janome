@@ -33,20 +33,20 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
 handler = logging.StreamHandler()
 handler.setLevel(logging.WARN)
-formatter = logging.Formatter('%(asctime)s\t%(name)s - %(levelname)s\t%(message)s')
+formatter = logging.Formatter("%(asctime)s\t%(name)s - %(levelname)s\t%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-MODULE_FST_DATA = 'fst_data%d.py'
-MODULE_ENTRIES_EXTRA = 'entries_extra%d.py'
-MODULE_ENTRIES_COMPACT = 'entries_compact%d.py'
-MODULE_ENTRIES_BUCKETS = 'entries_buckets.py'
-MODULE_CONNECTIONS = 'connections%d.py'
-MODULE_CHARDEFS = 'chardef.py'
-MODULE_UNKNOWNS = 'unknowns.py'
+MODULE_FST_DATA = "fst_data%d.py"
+MODULE_ENTRIES_EXTRA = "entries_extra%d.py"
+MODULE_ENTRIES_COMPACT = "entries_compact%d.py"
+MODULE_ENTRIES_BUCKETS = "entries_buckets.py"
+MODULE_CONNECTIONS = "connections%d.py"
+MODULE_CHARDEFS = "chardef.py"
+MODULE_UNKNOWNS = "unknowns.py"
 
-FILE_USER_FST_DATA = 'user_fst.data'
-FILE_USER_ENTRIES_DATA = 'user_entries.data'
+FILE_USER_FST_DATA = "user_fst.data"
+FILE_USER_ENTRIES_DATA = "user_entries.data"
 
 
 def save_fstdata(data, dir, part=0):
@@ -72,29 +72,28 @@ def save_entry_buckets(dir, buckets):
     _save_as_module(os.path.join(dir, MODULE_ENTRIES_BUCKETS), buckets)
 
 
-def save_connections(connections, dir='.'):
+def save_connections(connections, dir="."):
     # split whole connections to 2 buckets to reduce memory usage while installing.
     # TODO: find better ways...
     bucket_size = (len(connections) // 2) + 1
     offset = 0
     for i in range(1, 3):
-        _save_as_module(os.path.join(dir, MODULE_CONNECTIONS % i),
-                        connections[offset:offset + bucket_size])
+        _save_as_module(os.path.join(dir, MODULE_CONNECTIONS % i), connections[offset : offset + bucket_size])
         offset += bucket_size
 
 
-def save_chardefs(chardefs, dir='.'):
+def save_chardefs(chardefs, dir="."):
     _save_as_module(os.path.join(dir, MODULE_CHARDEFS), chardefs)
 
 
-def save_unknowns(unknowns, dir='.'):
+def save_unknowns(unknowns, dir="."):
     _save_as_module(os.path.join(dir, MODULE_UNKNOWNS), unknowns)
 
 
 def _save(file, data, compresslevel):
     if not data:
         return
-    with gzip.open(file, 'wb', compresslevel) as f:
+    with gzip.open(file, "wb", compresslevel) as f:
         f.write(data)
         f.flush()
 
@@ -102,7 +101,7 @@ def _save(file, data, compresslevel):
 def _load(file):
     if not os.path.exists(file):
         return None
-    with gzip.open(file, 'rb') as f:
+    with gzip.open(file, "rb") as f:
         data = f.read()
         return data
 
@@ -118,68 +117,65 @@ def _load_package_data(package, resource):
 def _save_as_module(file, data, binary=False):
     if not data:
         return
-    with open(file, 'w') as f:
-        f.write('DATA=')
+    with open(file, "w") as f:
+        f.write("DATA=")
         if binary:
             f.write('"')
-            f.write(base64.b64encode(data).decode('ascii'))
+            f.write(base64.b64encode(data).decode("ascii"))
             f.write('"')
         else:
-            f.write(str(data).replace('\\\\', '\\'))
+            f.write(str(data).replace("\\\\", "\\"))
         f.flush()
 
 
 def _start_entries_as_module(file, morph_id_offset):
-    idx_file = re.sub(r'\.py$', '_idx.py', file)
-    with open(file, 'w') as f:
-        with open(idx_file, 'w') as f_idx:
-            f.write('DATA={')
-            f_idx.write('DATA={')
+    idx_file = re.sub(r"\.py$", "_idx.py", file)
+    with open(file, "w") as f:
+        with open(idx_file, "w") as f_idx:
+            f.write("DATA={")
+            f_idx.write("DATA={")
             f_idx.write(f'"offset": {morph_id_offset}, "positions": [')
 
 
 def _end_entries_as_module(file):
-    idx_file = re.sub(r'\.py$', '_idx.py', file)
-    with open(file, 'a') as f:
-        with open(idx_file, 'a') as f_idx:
-            f.write('}\n')
-            f_idx.write(']}\n')
+    idx_file = re.sub(r"\.py$", "_idx.py", file)
+    with open(file, "a") as f:
+        with open(idx_file, "a") as f_idx:
+            f.write("}\n")
+            f_idx.write("]}\n")
             f.flush()
             f_idx.flush()
 
 
 def _save_entry_as_module_compact(file, morph_id, entry):
-    idx_file = re.sub(r'\.py$', '_idx.py', file)
-    with open(file, 'a') as f:
-        with open(idx_file, 'a') as f_idx:
-            f.write('%d:(' % morph_id)
+    idx_file = re.sub(r"\.py$", "_idx.py", file)
+    with open(file, "a") as f:
+        with open(idx_file, "a") as f_idx:
+            f.write("%d:(" % morph_id)
             pos = f.tell()
-            f_idx.write(f'{pos},')
-            s = u"u'%s',%4d,%4d,%5d" % (
-                entry[0].encode('unicode_escape').decode('ascii'),
-                entry[1],
-                entry[2],
-                entry[3])
+            f_idx.write(f"{pos},")
+            s = "u'%s',%4d,%4d,%5d" % (entry[0].encode("unicode_escape").decode("ascii"), entry[1], entry[2], entry[3])
             f.write(s)
-            f.write('),')
+            f.write("),")
 
 
 def _save_entry_as_module_extra(file, morph_id, entry):
-    idx_file = re.sub(r'\.py$', '_idx.py', file)
-    with open(file, 'a') as f:
-        with open(idx_file, 'a') as f_idx:
-            f.write('%d:(' % morph_id)
+    idx_file = re.sub(r"\.py$", "_idx.py", file)
+    with open(file, "a") as f:
+        with open(idx_file, "a") as f_idx:
+            f.write("%d:(" % morph_id)
             pos = f.tell()
-            f_idx.write(f'{pos},')
-            s = u"u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
-                entry[4].encode('unicode_escape').decode('ascii'),
-                entry[5].encode('unicode_escape').decode('ascii'),
-                entry[6].encode('unicode_escape').decode('ascii'),
-                entry[7].encode('unicode_escape').decode('ascii'),
-                entry[8].encode('unicode_escape').decode('ascii'),
-                entry[9].encode('unicode_escape').decode('ascii'))
+            f_idx.write(f"{pos},")
+            s = "u'%s',u'%s',u'%s',u'%s',u'%s',u'%s'" % (
+                entry[4].encode("unicode_escape").decode("ascii"),
+                entry[5].encode("unicode_escape").decode("ascii"),
+                entry[6].encode("unicode_escape").decode("ascii"),
+                entry[7].encode("unicode_escape").decode("ascii"),
+                entry[8].encode("unicode_escape").decode("ascii"),
+                entry[9].encode("unicode_escape").decode("ascii"),
+            )
             f.write(s)
-            f.write('),')
+            f.write("),")
 
 
 class Dictionary(ABC):
@@ -216,13 +212,13 @@ class RAMDictionary(Dictionary):
         try:
             res = []
             for e in outputs:
-                num = unpack('I', e)[0]
+                num = unpack("I", e)[0]
                 res.append((num,) + self.entries[num][:4])
             return res
         except Exception:
-            logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logger.error(f'input={s}')
-            logger.error(f'outputs={str(outputs)}')
+            logger.error("Cannot load dictionary data. The dictionary may be corrupted?")
+            logger.error(f"input={s}")
+            logger.error(f"outputs={str(outputs)}")
             traceback.format_exc()
             sys.exit(1)
 
@@ -230,7 +226,7 @@ class RAMDictionary(Dictionary):
         try:
             return self.entries[num][4:]
         except Exception:
-            logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
+            logger.error("Cannot load dictionary data. The dictionary may be corrupted?")
             traceback.format_exc()
             sys.exit(1)
 
@@ -257,13 +253,13 @@ class MMapDictionary(Dictionary):
         try:
             matched_entries = []
             for e in outputs:
-                idx = unpack('I', e)[0]
+                idx = unpack("I", e)[0]
                 matched_entries.append((idx,) + self._find_entry(idx))
             return matched_entries
         except Exception:
-            logger.error('Cannot load dictionary data. The dictionary may be corrupted?')
-            logger.error(f'input={s}')
-            logger.error(f'outputs={str(outputs)}')
+            logger.error("Cannot load dictionary data. The dictionary may be corrupted?")
+            logger.error(f"input={s}")
+            logger.error(f"outputs={str(outputs)}")
             traceback.format_exc()
             sys.exit(1)
 
@@ -271,8 +267,8 @@ class MMapDictionary(Dictionary):
     def _find_entry(self, idx):
         bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.bucket_ranges))
         mm, mm_idx = self.entries_compact[bucket]
-        rel_idx = idx - mm_idx['offset']
-        _pos1s = mm_idx['positions'][rel_idx] + 2
+        rel_idx = idx - mm_idx["offset"]
+        _pos1s = mm_idx["positions"][rel_idx] + 2
         _pos1e = mm.find(b"',", _pos1s)
         _pos2s = _pos1e + 2
         _pos2e = _pos2s + 4
@@ -281,10 +277,11 @@ class MMapDictionary(Dictionary):
         _pos4s = _pos3e + 1
         _pos4e = _pos4s + 5
         _entry = (
-            mm[_pos1s:_pos1e].decode('unicode_escape'),
+            mm[_pos1s:_pos1e].decode("unicode_escape"),
             int(mm[_pos2s:_pos2e]),
             int(mm[_pos3s:_pos3e]),
-            int(mm[_pos4s:_pos4e]))
+            int(mm[_pos4s:_pos4e]),
+        )
         return _entry
 
     @lru_cache(maxsize=1024)
@@ -292,8 +289,8 @@ class MMapDictionary(Dictionary):
         try:
             bucket = next(filter(lambda b: idx >= b[0] and idx < b[1], self.bucket_ranges))
             mm, mm_idx = self.entries_extra[bucket]
-            rel_idx = idx - mm_idx['offset']
-            _pos1s = mm_idx['positions'][rel_idx] + 2
+            rel_idx = idx - mm_idx["offset"]
+            _pos1s = mm_idx["positions"][rel_idx] + 2
             _pos1e = mm.find(b"',u'", _pos1s)
             _pos2s = _pos1e + 4
             _pos2e = mm.find(b"',u'", _pos2s)
@@ -306,14 +303,16 @@ class MMapDictionary(Dictionary):
             _pos6s = _pos5e + 4
             _pos6e = mm.find(b"')", _pos6s)
             return (
-                mm[_pos1s:_pos1e].decode('unicode_escape'), mm[_pos2s:_pos2e].decode(
-                    'unicode_escape'), mm[_pos3s:_pos3e].decode('unicode_escape'),
-                mm[_pos4s:_pos4e].decode('unicode_escape'), mm[_pos5s:_pos5e].decode(
-                    'unicode_escape'), mm[_pos6s:_pos6e].decode('unicode_escape')
+                mm[_pos1s:_pos1e].decode("unicode_escape"),
+                mm[_pos2s:_pos2e].decode("unicode_escape"),
+                mm[_pos3s:_pos3e].decode("unicode_escape"),
+                mm[_pos4s:_pos4e].decode("unicode_escape"),
+                mm[_pos5s:_pos5e].decode("unicode_escape"),
+                mm[_pos6s:_pos6e].decode("unicode_escape"),
             )
         except Exception:
-            logger.error('Cannot load extra info. The dictionary may be corrupted?')
-            logger.error(f'idx={idx}')
+            logger.error("Cannot load extra info. The dictionary may be corrupted?")
+            logger.error(f"idx={idx}")
             traceback.format_exc()
             sys.exit(1)
 
@@ -344,27 +343,27 @@ class UnknownsDictionary(object):
     def get_char_categories(self, c):
         res = {}
         for chr_range in self.char_ranges:
-            if chr_range['from'] <= c <= chr_range['to']:
-                cate = chr_range['cate']
-                compate_cates = chr_range['compat_cates'] if 'compat_cates' in chr_range else []
+            if chr_range["from"] <= c <= chr_range["to"]:
+                cate = chr_range["cate"]
+                compate_cates = chr_range["compat_cates"] if "compat_cates" in chr_range else []
                 res[cate] = compate_cates
         if not res:
-            res = {'DEFAULT': []}
+            res = {"DEFAULT": []}
         return res
 
     def unknown_invoked_always(self, cate):
         if cate in self.char_categories:
-            return self.char_categories[cate]['INVOKE']
+            return self.char_categories[cate]["INVOKE"]
         return False
 
     def unknown_grouping(self, cate):
         if cate in self.char_categories:
-            return self.char_categories[cate]['GROUP']
+            return self.char_categories[cate]["GROUP"]
         return False
 
     def unknown_length(self, cate):
         if cate in self.char_categories:
-            return self.char_categories[cate]['LENGTH']
+            return self.char_categories[cate]["LENGTH"]
         return -1
 
 
@@ -396,32 +395,52 @@ class UserDictionary(RAMDictionary):
     @classmethod
     def line_to_entry_ipadic(cls, line):
         """Convert IPADIC formatted string to an user dictionary entry"""
-        surface, left_id, right_id, cost, \
-            pos_major, pos_minor1, pos_minor2, pos_minor3, \
-            infl_type, infl_form, base_form, reading, phonetic = next(csv.reader([line]))
-        part_of_speech = ','.join([pos_major, pos_minor1, pos_minor2, pos_minor3])
-        return (surface, int(left_id), int(right_id), int(cost),
-                part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
+        (
+            surface,
+            left_id,
+            right_id,
+            cost,
+            pos_major,
+            pos_minor1,
+            pos_minor2,
+            pos_minor3,
+            infl_type,
+            infl_form,
+            base_form,
+            reading,
+            phonetic,
+        ) = next(csv.reader([line]))
+        part_of_speech = ",".join([pos_major, pos_minor1, pos_minor2, pos_minor3])
+        return (
+            surface,
+            int(left_id),
+            int(right_id),
+            int(cost),
+            part_of_speech,
+            infl_type,
+            infl_form,
+            base_form,
+            reading,
+            phonetic,
+        )
 
     @classmethod
     def line_to_entry_simpledic(cls, line):
         """Convert simpledict formatted string to an user dictionary entry"""
         surface, pos_major, reading = next(csv.reader([line]))
-        part_of_speech = ','.join([pos_major, '*', '*', '*'])
-        return (surface, 0, 0, -100000, part_of_speech, '*', '*', surface, reading, reading)
+        part_of_speech = ",".join([pos_major, "*", "*", "*"])
+        return (surface, 0, 0, -100000, part_of_speech, "*", "*", surface, reading, reading)
 
     @classmethod
     def build_dic(cls, user_dict, enc, dict_type, progress_handler):
         surfaces = []
         entries = {}
 
-        line_to_entry = getattr(cls, 'line_to_entry_' + dict_type)
+        line_to_entry = getattr(cls, "line_to_entry_" + dict_type)
         # init progress for reading CSV
         if progress_handler:
             with open(user_dict, encoding=enc) as f:
-                progress_handler.on_start(
-                    total=sum(1 for line in f),
-                    desc='Reading user dictionary from CSV')
+                progress_handler.on_start(total=sum(1 for line in f), desc="Reading user dictionary from CSV")
 
         with io.open(user_dict, encoding=enc) as f:
             for line in f:
@@ -430,7 +449,7 @@ class UserDictionary(RAMDictionary):
                 # (surface, left_id, right_id, cost, part_of_speech, infl_type, infl_form, base_form, reading, phonetic)
                 entry = line_to_entry(line)
                 morph_id = len(surfaces)
-                surfaces.append((entry[0].encode('utf8'), pack('I', morph_id)))
+                surfaces.append((entry[0].encode("utf8"), pack("I", morph_id)))
                 entries[morph_id] = entry
 
                 # update progress
@@ -446,13 +465,11 @@ class UserDictionary(RAMDictionary):
 
         # init progress for create_minimum_transducer
         if progress_handler:
-            progress_handler.on_start(
-                total=len(inputs),
-                desc='Running create_minimum_transducer')
+            progress_handler.on_start(total=len(inputs), desc="Running create_minimum_transducer")
 
         processed, fst = create_minimum_transducer(
-            inputs,
-            on_progress=progress_handler.on_progress if progress_handler else None)
+            inputs, on_progress=progress_handler.on_progress if progress_handler else None
+        )
 
         # complete progress for create_minimum_transducer
         if progress_handler:
@@ -469,9 +486,9 @@ class UserDictionary(RAMDictionary):
         :compressionlevel: (Optional) gzip compression level. default is 9
         """
         if os.path.exists(to_dir) and not os.path.isdir(to_dir):
-            raise Exception(f'Not a directory : {to_dir}')
+            raise Exception(f"Not a directory : {to_dir}")
         elif not os.path.exists(to_dir):
-            os.makedirs(to_dir, mode=int('0755', 8))
+            os.makedirs(to_dir, mode=int("0755", 8))
         _save(os.path.join(to_dir, FILE_USER_FST_DATA), self.compiledFST[0], compressionlevel)
         _save(os.path.join(to_dir, FILE_USER_ENTRIES_DATA), pickle.dumps(self.entries), compressionlevel)
 
@@ -492,7 +509,7 @@ class CompiledUserDictionary(RAMDictionary):
     @classmethod
     def load_dict(cls, dic_dir):
         if not os.path.exists(dic_dir) or not os.path.isdir(dic_dir):
-            raise Exception(f'No such directory : {dic_dir}')
+            raise Exception(f"No such directory : {dic_dir}")
         data = _load(os.path.join(dic_dir, FILE_USER_FST_DATA))
         entries = pickle.loads(_load(os.path.join(dic_dir, FILE_USER_ENTRIES_DATA)))
         return data, entries
@@ -500,4 +517,4 @@ class CompiledUserDictionary(RAMDictionary):
 
 class LoadingDictionaryError(Exception):
     def __init__(self):
-        self.message = 'Cannot load dictionary data. Try mmap mode for very large dictionary.'
+        self.message = "Cannot load dictionary data. Try mmap mode for very large dictionary."

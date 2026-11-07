@@ -39,9 +39,9 @@ class TestLattice(unittest.TestCase):
         self.assertTrue(isinstance(lattice.enodes[1][0], BOS))
 
     def test_add_forward_end(self):
-        s = 'すもも'
+        s = "すもも"
         lattice = Lattice(len(s), SYS_DIC)
-        entries = SYS_DIC.lookup(s.encode('utf8'), MATCHER)
+        entries = SYS_DIC.lookup(s.encode("utf8"), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -51,7 +51,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = SYS_DIC.lookup(s[1:].encode('utf8'), MATCHER)
+        entries = SYS_DIC.lookup(s[1:].encode("utf8"), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -60,7 +60,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = SYS_DIC.lookup(s[2:].encode('utf8'), MATCHER)
+        entries = SYS_DIC.lookup(s[2:].encode("utf8"), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -73,11 +73,11 @@ class TestLattice(unittest.TestCase):
         self.assertTrue(isinstance(lattice.enodes[5][0], EOS))
 
     def test_backward(self):
-        s = 'すもももももももものうち'
+        s = "すもももももももものうち"
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = SYS_DIC.lookup(s[pos:].encode('utf8'), MATCHER)
+            entries = SYS_DIC.lookup(s[pos:].encode("utf8"), MATCHER)
             for e in entries:
                 lattice.add(SurfaceNode(e))
             pos += lattice.forward()
@@ -85,19 +85,19 @@ class TestLattice(unittest.TestCase):
         min_cost_path = lattice.backward()
         self.assertEqual(9, len(min_cost_path))
         self.assertTrue(isinstance(min_cost_path[0], BOS))
-        self.assertEqual('すもも', min_cost_path[1].surface)
-        self.assertEqual('も', min_cost_path[2].surface)
-        self.assertEqual('もも', min_cost_path[3].surface)
-        self.assertEqual('も', min_cost_path[4].surface)
-        self.assertEqual('もも', min_cost_path[5].surface)
-        self.assertEqual('の', min_cost_path[6].surface)
-        self.assertEqual('うち', min_cost_path[7].surface)
+        self.assertEqual("すもも", min_cost_path[1].surface)
+        self.assertEqual("も", min_cost_path[2].surface)
+        self.assertEqual("もも", min_cost_path[3].surface)
+        self.assertEqual("も", min_cost_path[4].surface)
+        self.assertEqual("もも", min_cost_path[5].surface)
+        self.assertEqual("の", min_cost_path[6].surface)
+        self.assertEqual("うち", min_cost_path[7].surface)
         self.assertTrue(isinstance(min_cost_path[8], EOS))
 
     def test_add_forward_end_mmap(self):
-        s = 'すもも'
+        s = "すもも"
         lattice = Lattice(len(s), SYS_DIC)
-        entries = MMAP_SYS_DIC.lookup(s.encode('utf8'), MATCHER)
+        entries = MMAP_SYS_DIC.lookup(s.encode("utf8"), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(9, len(lattice.snodes[1]))
@@ -107,7 +107,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = MMAP_SYS_DIC.lookup(s[1:].encode('utf8'), MATCHER)
+        entries = MMAP_SYS_DIC.lookup(s[1:].encode("utf8"), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(4, len(lattice.snodes[2]))
@@ -116,7 +116,7 @@ class TestLattice(unittest.TestCase):
 
         self.assertEqual(1, lattice.forward())
 
-        entries = MMAP_SYS_DIC.lookup(s[2:].encode('utf8'), MATCHER)
+        entries = MMAP_SYS_DIC.lookup(s[2:].encode("utf8"), MATCHER)
         for entry in entries:
             lattice.add(SurfaceNode(entry))
         self.assertEqual(2, len(lattice.snodes[3]))
@@ -129,11 +129,11 @@ class TestLattice(unittest.TestCase):
         self.assertTrue(isinstance(lattice.enodes[5][0], EOS))
 
     def test_backward_mmap(self):
-        s = 'すもももももももものうち'
+        s = "すもももももももものうち"
         lattice = Lattice(len(s), SYS_DIC)
         pos = 0
         while pos < len(s):
-            entries = MMAP_SYS_DIC.lookup(s[pos:].encode('utf8'), MATCHER)
+            entries = MMAP_SYS_DIC.lookup(s[pos:].encode("utf8"), MATCHER)
             for e in entries:
                 lattice.add(SurfaceNode(e))
             pos += lattice.forward()
@@ -141,15 +141,15 @@ class TestLattice(unittest.TestCase):
         min_cost_path = lattice.backward()
         self.assertEqual(9, len(min_cost_path))
         self.assertTrue(isinstance(min_cost_path[0], BOS))
-        self.assertEqual('すもも', min_cost_path[1].surface)
-        self.assertEqual('も', min_cost_path[2].surface)
-        self.assertEqual('もも', min_cost_path[3].surface)
-        self.assertEqual('も', min_cost_path[4].surface)
-        self.assertEqual('もも', min_cost_path[5].surface)
-        self.assertEqual('の', min_cost_path[6].surface)
-        self.assertEqual('うち', min_cost_path[7].surface)
+        self.assertEqual("すもも", min_cost_path[1].surface)
+        self.assertEqual("も", min_cost_path[2].surface)
+        self.assertEqual("もも", min_cost_path[3].surface)
+        self.assertEqual("も", min_cost_path[4].surface)
+        self.assertEqual("もも", min_cost_path[5].surface)
+        self.assertEqual("の", min_cost_path[6].surface)
+        self.assertEqual("うち", min_cost_path[7].surface)
         self.assertTrue(isinstance(min_cost_path[8], EOS))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
