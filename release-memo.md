@@ -38,16 +38,43 @@ https://github.com/mocobeta/janome/releases
 
 6. Update and publish documentation.
 
-Generate documentation.
+From the Janome repository root, build the API, Japanese, and English HTML documentation.
 
 ```
-./docs/build_docs.sh
+uv run --group docs sphinx-build -b html docs/api docs/api/_build/html
+uv run --group docs sphinx-build -b html docs/ja docs/ja/_build/html
+uv run --group docs sphinx-build -b html docs/en docs/en/_build/html
 ```
 
-Publish to web site.
+Clone the website repository into a temporary directory. `DOCS_ROOT_PATH` is the clone's `janome` directory.
 
 ```
-./docs/upload_docs.sh $DOCS_ROOT_PATH
+TEMP_DIR=$(mktemp -d)
+git clone --branch master https://github.com/mocobeta/mocobeta.github.io.git "$TEMP_DIR/mocobeta.github.io"
+DOCS_ROOT_PATH="$TEMP_DIR/mocobeta.github.io/janome"
+mkdir -p "$DOCS_ROOT_PATH/api" "$DOCS_ROOT_PATH/en"
+rsync -a --delete \
+  --exclude='/.buildinfo' --exclude='/.doctrees/' \
+  --exclude='/.gitignore' --exclude='/index.md' \
+  --exclude='/api/' --exclude='/en/' \
+  docs/ja/_build/html/ "$DOCS_ROOT_PATH/"
+rsync -a --delete \
+  --exclude='/.buildinfo' --exclude='/.doctrees/' \
+  --exclude='/.gitignore' --exclude='/index.md' \
+  docs/api/_build/html/ "$DOCS_ROOT_PATH/api/"
+rsync -a --delete \
+  --exclude='/.buildinfo' --exclude='/.doctrees/' \
+  --exclude='/.gitignore' --exclude='/index.md' \
+  docs/en/_build/html/ "$DOCS_ROOT_PATH/en/"
+```
+
+Review the website repository changes, then commit and push the documentation update.
+
+```
+git -C "$TEMP_DIR/mocobeta.github.io" add janome
+git -C "$TEMP_DIR/mocobeta.github.io" commit -m "Update documentation"
+git -C "$TEMP_DIR/mocobeta.github.io" pull --rebase origin master
+git -C "$TEMP_DIR/mocobeta.github.io" push origin master
 ```
 
 7. Push the release branch and merge to main branch via GitHub.
