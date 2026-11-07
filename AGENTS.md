@@ -14,7 +14,7 @@ Run the relevant checks for code changes:
 
 ```sh
 uv run python -m unittest discover tests/
-uv run python -m flake8 src/janome/
+uv run ruff check src/janome/
 uv run python -m mypy src/janome/
 ```
 

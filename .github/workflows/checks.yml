@@ -44,8 +44,8 @@ jobs:
       with:
         parallel: true
         flag-name: Unit Test
-    - name: Lint with flake8
-      run: uv run python -m flake8 ./src/janome
+    - name: Lint with Ruff
+      run: uv run ruff check ./src/janome
     - name: Lint with mypy
       run: uv run python -m mypy ./src/janome
 

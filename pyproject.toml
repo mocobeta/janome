@@ -53,10 +53,10 @@ path = "hatch_build.py"
 dev = [
     "autopep8>=2.3.2",
     "coverage>=7.14.0",
-    "flake8>=7.3.0",
     "hatchling>=1.29.0",
     "mypy>=2.1.0",
     "psutil>=7.2.2",
+    "ruff>=0.17.4",
 ]
 
 [tool.coverage.run]
@@ -68,3 +68,11 @@ omit = ["src/janome/sysdic/*", "tests/*"]
 [[tool.mypy.overrides]]
 module = "janome.sysdic.*"
 ignore_errors = true
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["docs", "sysdic", "work", "mecab-ipadic-2.7.0-20070801", "benchmark"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "W"]
+ignore = ["W605"]

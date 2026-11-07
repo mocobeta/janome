@@ -33,7 +33,7 @@ Steps to contribute
   ```
   $ cd janome  // change directory to janome root
   $ uv run python -m unittest discover tests/
-  $ uv run python -m flake8 src/janome/
+  $ uv run ruff check src/janome/
   $ uv run python -m mypy src/janome/
   ```
 
