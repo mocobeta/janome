@@ -32,8 +32,9 @@ Steps to contribute
 
   ```
   $ cd janome  // change directory to janome root
-  $ uv run python -m unittest discover tests/
-  $ uv run ruff check src/janome/
+  $ uv run pytest tests/
+  $ uv run ruff check src/
+  $ uv run ruff format --check src/ tests/
   $ uv run python -m mypy src/janome/
   ```
 
