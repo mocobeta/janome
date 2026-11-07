@@ -29,7 +29,7 @@ Follow this sequence for a Janome PyPI release. Do not create release notes. Kee
 7. After the build and validation succeed, report the version and artifact names and ask the developer to approve PyPI publication. Do not upload until approval is received.
 8. After approval, publish once with `uv publish`. Use PyPI Trusted Publishing when the environment is configured for it; otherwise use `UV_PUBLISH_TOKEN` from the environment or a secret manager. Never request a token in chat or print it. If credentials are unavailable, stop before upload. If the upload result is unclear, check PyPI before any retry.
 9. Verify the target version and both files on PyPI. Then increment `src/janome/version.py` to the next patch development version, following the repository's `X.Y.Z-dev` convention (for example, `0.5.2` becomes `0.5.3-dev`), and commit the post-release version change on the release branch. Do not change docs.
-10. Switch to `master`, make sure it is up to date, and merge the release branch into it. Resolve conflicts before completing the merge. Do not push `master` unless the developer explicitly asks.
+10. Push the release branch to `origin` and create a pull request targeting `master`; do not merge the release branch into `master`. Include a concise work history in the PR description covering the version/tag, checks and build results, PyPI publication verification, and post-release development-version commit. Include a direct link to the published package: `https://pypi.org/project/Janome/{release-version}/`. Verify the link and release details before creating the PR, then report the PR URL without merging it.
 
 ## Boundaries
 
