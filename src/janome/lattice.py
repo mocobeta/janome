@@ -215,54 +215,51 @@ class Lattice(object):
         def is_unknown(node):
             return hasattr(node, "node_type") and node.node_type == NodeType.UNKNOWN
 
-        # traverse lattice and make nodes and edges
-        node_ids = []
-        edges = []
-        path = self.backward()
-        for pos in range(0, len(self.snodes) - 1):
-            for i in range(0, len(self.snodes[pos])):
-                node1 = self.snodes[pos][i]
-                if is_unknown(node1) and node1 not in path:
-                    continue
-                node1_id = (pos, i)
-                if node1_id not in node_ids:
-                    node_ids.append(node1_id)
-                node_len = len(node1.surface) if hasattr(node1, "surface") else 1
-                for j in range(0, len(self.snodes[pos + node_len])):
-                    node2 = self.snodes[pos + node_len][j]
-                    if is_unknown(node2) and node2 not in path:
-                        continue
-                    node2_id = (pos + node_len, j)
-                    if node2_id not in node_ids:
-                        node_ids.append(node1_id)
-                    edges.append((node1_id, node2_id))
+        # traverse lattice and make node lines and edge lines
+        snodes = self.snodes
+        on_path = {id(node) for node in self.backward()}
+        font = "MS UI Gothic" if os.name == "nt" else ""
+        get_trans_cost = self.dic.get_trans_cost
+        # visible (dot id, node, on best path) triples per position; unknown nodes are shown only on the best path
+        visible = [
+            [
+                (f"{pos}.{i}", node, id(node) in on_path)
+                for i, node in enumerate(nodes)
+                if not is_unknown(node) or id(node) in on_path
+            ]
+            for pos, nodes in enumerate(snodes)
+        ]
+        lines = ["digraph G {\n", "  rankdir=LR;\n", "  ranksep=2.0;\n"]
+        edge_lines = []
+        seen_ids = set()
+        for pos in range(0, len(snodes) - 1):
+            for id1, node1, on_path1 in visible[pos]:
+                is_terminal = isinstance(node1, (BOS, EOS))
+                shape = "ellipse" if is_terminal else "box"
+                color = "lightblue" if is_terminal or on_path1 else "lightgray"
+                node_line = (
+                    f'  {id1} [label="{node1.node_label()}\\n{node1.cost}",shape={shape},'
+                    f'style=filled,fillcolor={color},fontname="{font}"];\n'
+                )
+                if id1 not in seen_ids:
+                    seen_ids.add(id1)
+                    lines.append(node_line)
+                edge_prefix = f"  {id1} -> "
+                right_id = node1.right_id
+                pos2 = pos + (len(node1.surface) if hasattr(node1, "surface") else 1)
+                for id2, node2, on_path2 in visible[pos2]:
+                    if id2 not in seen_ids:
+                        lines.append(node_line)
+                    style = "color=blue,style=bold" if on_path1 and on_path2 else "color=black,style=solid"
+                    edge_lines.append(
+                        f'{edge_prefix}{id2} [label="{get_trans_cost(right_id, node2.left_id)}",{style},fontcolor=red];\n'
+                    )
+        lines += edge_lines
+        lines.append("}\n")
 
         # output dot file
         with self.__open_file(filename, mode="w", encoding="utf-8") as f:
-            f.write("digraph G {\n")
-            f.write("  rankdir=LR;\n")
-            f.write("  ranksep=2.0;\n")
-            for node_id in node_ids:
-                (pos, idx) = node_id
-                node = self.snodes[pos][idx]
-                id_str = f"{pos}.{idx}"
-                label = f"{node.node_label()}\\n{str(node.cost)}"
-                shape = "ellipse" if isinstance(node, BOS) or isinstance(node, EOS) else "box"
-                color = "lightblue" if isinstance(node, BOS) or isinstance(node, EOS) or node in path else "lightgray"
-                font = "MS UI Gothic" if os.name == "nt" else ""
-                f.write(
-                    f'  {id_str} [label="{label}",shape={shape},style=filled,fillcolor={color},fontname="{font}"];\n'
-                )
-            for edge in edges:
-                ((pos1, idx1), (pos2, idx2)) = edge
-                node1 = self.snodes[pos1][idx1]
-                node2 = self.snodes[pos2][idx2]
-                id_str1 = f"{pos1}.{idx1}"
-                id_str2 = f"{pos2}.{idx2}"
-                label = str(self.dic.get_trans_cost(node1.right_id, node2.left_id))
-                (color, style) = ("blue", "bold") if node1 in path and node2 in path else ("black", "solid")
-                f.write(f'  {id_str1} -> {id_str2} [label="{label}",color={color},style={style},fontcolor=red];\n')
-            f.write("}\n")
+            f.write("".join(lines))
 
     def __open_file(self, filename, mode, encoding):
         return open(filename, mode=mode, encoding=encoding)
