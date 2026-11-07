@@ -9,8 +9,8 @@ Prepare accurate, user-facing release notes for Janome using the Markdown struct
 
 ## Workflow
 
-1. Establish the target release version and identify the previous published release. Use GitHub Releases to find the previous release and its publication date; ignore draft releases. If the previous release or its date cannot be determined confidently, ask the developer before drafting.
-2. Include only pull requests merged after the previous release was published. Use each PR's `merged_at` time, not its creation or last update time. When a target tag or commit is known, also limit the list to PRs included in that target release. Exclude PRs already merged by the previous release date.
+1. Establish the target release version and identify the latest published stable release before it. Use GitHub Releases and select the non-draft, non-prerelease release with the latest `published_at` time. Ignore all drafts and pre-releases when choosing the previous release. If the previous stable release or its publication date cannot be determined confidently, ask the developer before drafting.
+2. Include only pull requests merged after the previous stable release was published. Use each PR's `merged_at` time, not its creation or last update time. When a target tag or commit is known, also limit the list to PRs included in that target release. Exclude PRs already merged by the previous stable release date.
 3. Gather the included changes from their merged pull requests and commits. Use PR descriptions and issue context when available to understand user impact. Do not invent behavior, issue references, or contributor attribution; ask when an important fact is unclear.
 4. Group entries under the template sections. Put user-facing API changes, improvements, and bug fixes in their matching sections. Place tooling, documentation, packaging, and CI updates under `Build / Documentation / Other`.
 5. Write concise entries that describe outcomes. Link issue or PR numbers and include contributor GitHub handles only when verified. Write `(No changes)` for an empty section.
@@ -18,7 +18,7 @@ Prepare accurate, user-facing release notes for Janome using the Markdown struct
 7. Before returning the note, compare its PR numbers with the complete expected PR set for the range established in step 2. Check that every expected PR is included exactly once and that no PR outside that set is included. Correct omissions, out-of-range entries, and duplicates before answering. If the complete expected set cannot be verified, do not claim the check passed; resolve the range or ask the developer.
 8. Return the release note as a draft for review. Do not publish a GitHub release, create a tag, or upload artifacts unless the developer explicitly requests those actions.
 
-For example, if `0.5.0` is the previous published release, include PRs merged after `0.5.0` was published. Exclude PRs merged before that publication, even if they were created or updated afterward. If preparing notes for a target tag, exclude PRs that are not part of that tag's history.
+For example, if `0.5.0` is the latest stable release and `0.5.1` is a pre-release, use `0.5.0` as the previous release when preparing notes for `0.5.2`. Include PRs merged after `0.5.0` was published, even if they were merged before `0.5.1`; exclude PRs merged before `0.5.0` was published and PRs not included in the target tag's history.
 
 ## Markdown template
 
