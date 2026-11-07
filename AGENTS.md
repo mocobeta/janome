@@ -13,8 +13,9 @@ Janome is a pure-Python Japanese morphological analyzer. The package source is i
 Run the relevant checks for code changes:
 
 ```sh
-uv run python -m unittest discover tests/
-uv run ruff check src/janome/
+uv run pytest tests/
+uv run ruff check src/
+uv run ruff format --check src/ tests/
 uv run python -m mypy src/janome/
 ```
 
