@@ -45,7 +45,9 @@ jobs:
         parallel: true
         flag-name: Unit Test
     - name: Lint with Ruff
-      run: uv run ruff check ./src/janome
+      run: uv run ruff check ./src
+    - name: Check formatting with Ruff
+      run: uv run ruff format --check ./src ./tests
     - name: Lint with mypy
       run: uv run python -m mypy ./src/janome
 
