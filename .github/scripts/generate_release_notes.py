@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+from datetime import datetime
 from typing import Any
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -46,22 +47,41 @@ def git(*args: str) -> str:
     return subprocess.check_output(["git", *args], text=True).strip()
 
 
-def release_range(tag: str) -> tuple[str, list[str], list[dict[str, str]]]:
-    current_version = tuple(int(part) for part in tag.split("."))
-    reachable_tags = git("tag", "--merged", tag, "--sort=-version:refname").splitlines()
-    previous = next(
-        (
-            candidate
-            for candidate in reachable_tags
-            if VERSION_TAG.fullmatch(candidate) and tuple(int(part) for part in candidate.split(".")) < current_version
-        ),
-        None,
-    )
-    if previous is None:
-        raise RuntimeError(f"No previous d.d.d tag found before {tag}")
-    lines = git("log", "--reverse", "--format=%H%x09%s", f"{previous}..{tag}").splitlines()
+def latest_stable_release(owner: str, repo: str, token: str) -> dict[str, Any]:
+    api_url = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+    url = f"{api_url}/repos/{owner}/{repo}/releases?per_page=100"
+    releases = []
+    while url:
+        request = Request(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "Authorization": f"Bearer {token}",
+                "X-GitHub-Api-Version": "2022-11-28",
+            },
+        )
+        try:
+            with urlopen(request, timeout=30) as response:
+                releases.extend(json.load(response))
+                link = response.headers.get("Link", "")
+        except HTTPError as error:
+            raise RuntimeError(f"GitHub releases API request failed ({error.code})") from error
+        next_link = re.search(r'<([^>]+)>;\s*rel="next"', link)
+        url = next_link.group(1) if next_link else ""
+
+    stable_releases = [release for release in releases if not release.get("draft") and not release.get("prerelease")]
+    if not stable_releases:
+        raise RuntimeError("No published stable GitHub release found")
+    return max(stable_releases, key=lambda release: release["published_at"])
+
+
+def release_range(tag: str, previous: dict[str, Any]) -> tuple[list[str], list[dict[str, str]]]:
+    previous_tag = previous["tag_name"]
+    if not VERSION_TAG.fullmatch(previous_tag):
+        raise RuntimeError(f"Previous stable release tag is not in d.d.d format: {previous_tag}")
+    lines = git("log", "--reverse", "--format=%H%x09%s", f"{previous_tag}..{tag}").splitlines()
     commits = [{"sha": line.split("\t", 1)[0], "subject": line.split("\t", 1)[1]} for line in lines]
-    return previous, [commit["sha"] for commit in commits], commits
+    return [commit["sha"] for commit in commits], commits
 
 
 def associated_pull_requests(owner: str, repo: str, token: str, commits: list[str]) -> list[dict[str, Any]]:
@@ -92,7 +112,22 @@ def associated_pull_requests(owner: str, repo: str, token: str, commits: list[st
     return [pull_requests[number] for number in sorted(pull_requests)]
 
 
-def model_entries(tag: str, previous: str, commits: list[dict[str, str]], pull_requests: list[dict[str, Any]]) -> dict:
+def merged_after_release(pull_requests: list[dict[str, Any]], published_at: str) -> list[dict[str, Any]]:
+    release_time = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+    return [
+        pr
+        for pr in pull_requests
+        if pr.get("merged_at") and datetime.fromisoformat(pr["merged_at"].replace("Z", "+00:00")) > release_time
+    ]
+
+
+def model_entries(
+    tag: str,
+    previous_tag: str,
+    previous_published_at: str,
+    commits: list[dict[str, str]],
+    pull_requests: list[dict[str, Any]],
+) -> dict:
     skill_path = ".agents/skills/janome-release-notes/SKILL.md"
     with open(skill_path, encoding="utf-8") as skill_file:
         skill = skill_file.read()
@@ -121,7 +156,8 @@ def model_entries(tag: str, previous: str, commits: list[dict[str, str]], pull_r
     )
     input_data = {
         "release_version": tag,
-        "previous_version_tag": previous,
+        "previous_stable_release_tag": previous_tag,
+        "previous_stable_release_published_at": previous_published_at,
         "commit_range": commits,
         "merged_pull_requests": source_prs,
     }
@@ -215,12 +251,24 @@ def main() -> None:
     if not VERSION_TAG.fullmatch(tag):
         raise SystemExit(f"Tag must match d.d.d exactly: {tag}")
     owner, repo = os.environ["GITHUB_REPOSITORY"].split("/", 1)
-    previous, commit_shas, commits = release_range(tag)
-    pull_requests = associated_pull_requests(owner, repo, os.environ["GITHUB_TOKEN"], commit_shas)
-    entries = model_entries(tag, previous, commits, pull_requests)
+    token = os.environ["GITHUB_TOKEN"]
+    previous_release = latest_stable_release(owner, repo, token)
+    commit_shas, commits = release_range(tag, previous_release)
+    pull_requests = associated_pull_requests(owner, repo, token, commit_shas)
+    pull_requests = merged_after_release(pull_requests, previous_release["published_at"])
+    entries = model_entries(
+        tag,
+        previous_release["tag_name"],
+        previous_release["published_at"],
+        commits,
+        pull_requests,
+    )
     with open("release-notes.md", "w", encoding="utf-8") as output:
         output.write(format_notes(tag, entries, pull_requests))
-    print(f"Generated LLM draft for {tag} from {previous} ({len(pull_requests)} merged PRs)")
+    print(
+        f"Generated LLM draft for {tag} from stable release {previous_release['tag_name']} "
+        f"({len(pull_requests)} merged PRs)"
+    )
 
 
 if __name__ == "__main__":
