@@ -1,83 +1,43 @@
-## Release operations
+## Release procedure
 
-1. Create the release branch.
+Before starting the release, set `UV_PUBLISH_TOKEN` in the environment used to run the `pypi-release` skill.
 
-```
-git switch -c release-x.x.x
-```
+1. Use the `pypi-release` skill in `.agents/skills/pypi-release/SKILL.md` to prepare a PyPI release. For example:
 
-2. Make sure that all tests are OK.
-
-```
-python -m unittest discover tests/
+```text
+Use the `pypi-release` skill to prepare the Janome 0.5.2 release for PyPI.
 ```
 
-3. Fix version and create a new tag for the release.
+2. Review and merge the pull request created by the `pypi-release` skill.
 
+3. Update the documentation for every release in a separate pull request. After it is merged into `master`, Cloudflare Pages automatically builds and deploys the documentation.
+
+How it works: The skill prepares the release on a dedicated branch, runs the project checks, creates a release tag, and builds the package. It requests approval before publishing to PyPI. After publication, it updates the development version and changelog, then opens a pull request for review. Documentation changes are handled separately.
+
+The release flow is shown below:
+
+```mermaid
+flowchart TD
+    subgraph Manual[Manual]
+        A[Start pypi-release skill]
+        C[Approve PyPI publication]
+        G[Review and merge release pull request]
+        H[Update documentation in a separate pull request]
+        I[Merge documentation pull request to master]
+    end
+
+    subgraph Automated[Automated]
+        B[Prepare release branch, run checks, create tag, and build package]
+        D[Publish to PyPI]
+        E[Update development version and changelog]
+        F[Open release pull request]
+        J[Cloudflare Pages builds and deploys documentation]
+    end
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I --> J
+
+    classDef manual fill:#fff3cd,stroke:#856404,color:#212529
+    classDef automated fill:#d4edda,stroke:#155724,color:#212529
+    class A,C,G,H,I manual
+    class B,D,E,F,J automated
 ```
-vim janome/version.py
-
-git tag x.x.x
-git push --tags
-```
-
-4. Build the release modules and upload them to PyPI.
-
-```
-rm dist/*
-python -m build
-```
-
-```
-twine upload dist/*
-```
-
-5. Create the GitHub release.
-
-https://github.com/mocobeta/janome/releases
-
-6. Update and publish documentation.
-
-From the Janome repository root, build the API, Japanese, and English HTML documentation.
-
-```
-uv run --group docs sphinx-build -b html docs/api docs/api/_build/html
-uv run --group docs sphinx-build -b html docs/ja docs/ja/_build/html
-uv run --group docs sphinx-build -b html docs/en docs/en/_build/html
-```
-
-Clone the website repository into a temporary directory. `DOCS_ROOT_PATH` is the clone's `janome` directory.
-
-```
-TEMP_DIR=$(mktemp -d)
-git clone --branch master https://github.com/mocobeta/mocobeta.github.io.git "$TEMP_DIR/mocobeta.github.io"
-DOCS_ROOT_PATH="$TEMP_DIR/mocobeta.github.io/janome"
-mkdir -p "$DOCS_ROOT_PATH/api" "$DOCS_ROOT_PATH/en"
-rsync -a --delete \
-  --exclude='/.buildinfo' --exclude='/.doctrees/' \
-  --exclude='/.gitignore' --exclude='/index.md' \
-  --exclude='/api/' --exclude='/en/' \
-  docs/ja/_build/html/ "$DOCS_ROOT_PATH/"
-rsync -a --delete \
-  --exclude='/.buildinfo' --exclude='/.doctrees/' \
-  --exclude='/.gitignore' --exclude='/index.md' \
-  docs/api/_build/html/ "$DOCS_ROOT_PATH/api/"
-rsync -a --delete \
-  --exclude='/.buildinfo' --exclude='/.doctrees/' \
-  --exclude='/.gitignore' --exclude='/index.md' \
-  docs/en/_build/html/ "$DOCS_ROOT_PATH/en/"
-```
-
-Review the website repository changes, then commit and push the documentation update.
-
-```
-git -C "$TEMP_DIR/mocobeta.github.io" add janome
-git -C "$TEMP_DIR/mocobeta.github.io" commit -m "Update documentation"
-git -C "$TEMP_DIR/mocobeta.github.io" pull --rebase origin master
-git -C "$TEMP_DIR/mocobeta.github.io" push origin master
-```
-
-7. Push the release branch and merge to main branch via GitHub.
-
-Well done!
-
