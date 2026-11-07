@@ -24,20 +24,20 @@ sys.path.insert(0, parent_dir)
 
 class TestCharFilter(unittest.TestCase):
     def test_regex_replace_charfilter(self):
-        cf = RegexReplaceCharFilter('蛇の目', 'janome')
-        self.assertEqual('janomeは形態素解析器です。', cf.apply('蛇の目は形態素解析器です。'))
+        cf = RegexReplaceCharFilter("蛇の目", "janome")
+        self.assertEqual("janomeは形態素解析器です。", cf.apply("蛇の目は形態素解析器です。"))
 
-        cf = RegexReplaceCharFilter('\s+', '')
-        self.assertEqual('abcd', cf.apply(' a  b c   d  '))
+        cf = RegexReplaceCharFilter("\s+", "")
+        self.assertEqual("abcd", cf.apply(" a  b c   d  "))
 
-        cf = RegexReplaceCharFilter('', '')
-        self.assertEqual('abc あいうえお', 'abc あいうえお')
+        cf = RegexReplaceCharFilter("", "")
+        self.assertEqual("abc あいうえお", "abc あいうえお")
 
     def test_unicode_normalize_charfilter(self):
         cf = UnicodeNormalizeCharFilter()
-        self.assertEqual('Python', cf.apply('Ｐｙｔｈｏｎ'))
-        self.assertEqual('メガバイト', cf.apply('ﾒｶﾞﾊﾞｲﾄ'))
+        self.assertEqual("Python", cf.apply("Ｐｙｔｈｏｎ"))
+        self.assertEqual("メガバイト", cf.apply("ﾒｶﾞﾊﾞｲﾄ"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

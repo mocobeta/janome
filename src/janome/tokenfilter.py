@@ -66,7 +66,7 @@ class UpperCaseFilter(TokenFilter):
 
 
 class POSStopFilter(TokenFilter):
-    u"""
+    """
     A POSStopFilter removes tokens associated with part-of-speech tags
     listed in the stop tags list and keeps other tokens.
 
@@ -131,9 +131,9 @@ class CompoundNounFilter(TokenFilter):
         _ret = None
         for token in tokens:
             if _ret:
-                if token.part_of_speech.startswith('名詞') and _ret.part_of_speech.startswith('名詞'):
+                if token.part_of_speech.startswith("名詞") and _ret.part_of_speech.startswith("名詞"):
                     _ret.surface += token.surface
-                    _ret.part_of_speech = '名詞,複合,*,*'
+                    _ret.part_of_speech = "名詞,複合,*,*"
                     _ret.base_form += token.base_form
                     _ret.reading += token.reading
                     _ret.phonetic += token.phonetic
@@ -163,8 +163,8 @@ class ExtractAttributeFilter(TokenFilter):
         :param att: attribute name should be extraced from a token. valid values for *att* are 'surface',
                     'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
         """
-        if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
-            raise Exception(f'Unknown attribute name: {att}')
+        if att not in ["surface", "part_of_speech", "infl_type", "infl_form", "base_form", "reading", "phonetic"]:
+            raise Exception(f"Unknown attribute name: {att}")
         self.att = att
 
     def apply(self, tokens: Iterator[Token]) -> Iterator[str]:
@@ -185,7 +185,7 @@ class TokenCountFilter(TokenFilter):
     Added in *version 0.3.5*
     """
 
-    def __init__(self, att: str = 'surface', sorted: bool = False):
+    def __init__(self, att: str = "surface", sorted: bool = False):
         """
         Initialize TokenCountFilter object.
 
@@ -193,8 +193,8 @@ class TokenCountFilter(TokenFilter):
                     'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading' and 'phonetic'.
         :param sorted: sort items by term frequency
         """
-        if att not in ['surface', 'part_of_speech', 'infl_type', 'infl_form', 'base_form', 'reading', 'phonetic']:
-            raise Exception(f'Unknown attribute name: {att}')
+        if att not in ["surface", "part_of_speech", "infl_type", "infl_form", "base_form", "reading", "phonetic"]:
+            raise Exception(f"Unknown attribute name: {att}")
         self.att = att
         self.sorted = sorted
 

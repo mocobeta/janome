@@ -71,10 +71,13 @@ class Analyzer(object):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, *,
-                 char_filters: List[CharFilter] = [],
-                 tokenizer: Optional[Tokenizer] = None,
-                 token_filters: List[TokenFilter] = []):
+    def __init__(
+        self,
+        *,
+        char_filters: List[CharFilter] = [],
+        tokenizer: Optional[Tokenizer] = None,
+        token_filters: List[TokenFilter] = [],
+    ):
         """
         Initialize Analyzer object with CharFilters, a Tokenizer and TokenFilters.
 
@@ -89,7 +92,7 @@ class Analyzer(object):
         if not tokenizer:
             self.tokenizer = Tokenizer()
         elif tokenizer.wakati:
-            raise Exception('Invalid argument: A Tokenizer with wakati=True option is not accepted.')
+            raise Exception("Invalid argument: A Tokenizer with wakati=True option is not accepted.")
         else:
             self.tokenizer = tokenizer
         self.char_filters = char_filters
