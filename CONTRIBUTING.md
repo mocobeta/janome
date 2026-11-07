@@ -35,7 +35,7 @@ Steps to contribute
   $ uv run pytest tests/
   $ uv run ruff check src/
   $ uv run ruff format --check src/ tests/
-  $ uv run python -m mypy src/janome/
+  $ uv run ty check src/
   ```
 
 5. Once the branch passes all tests :100: , create a pull request :)

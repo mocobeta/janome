@@ -14,6 +14,7 @@
 
 from abc import ABC, abstractmethod
 import logging
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -28,11 +29,11 @@ class ProgressHandler(ABC):
     """
 
     @abstractmethod
-    def on_start(self, total, desc=None):
+    def on_start(self, total: int, value: float = 0, desc: Optional[str] = None):
         pass
 
     @abstractmethod
-    def on_progress(self, value=1):
+    def on_progress(self, value: float = 1):
         pass
 
     @abstractmethod
@@ -41,26 +42,30 @@ class ProgressHandler(ABC):
 
 
 class SimpleProgressIndicator(ProgressHandler):
-    def __init__(self, update_frequency=0.0001, format=None):
+    def __init__(self, update_frequency: float = 0.0001, format: Optional[str] = None):
         self.update_frequency = update_frequency
         self.format = format or "\r{}: {:.1f}% | {}/{}"
-        self.total = None
-        self.value = None
-        self.desc = None
+        self.total: Optional[int] = None
+        self.value: Optional[float] = None
+        self.desc: Optional[str] = None
 
-    def print_progress(self, terminator=""):
-        logger.handlers[0].terminator = terminator
+    def print_progress(self, terminator: str = ""):
+        if self.total is None or self.value is None:
+            return
+        handler.terminator = terminator
         logger.info(self.format.format(self.desc, self.value * 100 / self.total, self.value, self.total))
 
-    def on_start(self, total, value=0, desc=None):
+    def on_start(self, total: int, value: float = 0, desc: Optional[str] = None):
         self.total = total
         self.value = value
         self.desc = desc or "Processing"
 
-    def on_progress(self, value=1):
+    def on_progress(self, value: float = 1):
+        if self.value is None:
+            raise RuntimeError("Progress has not started")
         self.value += value
 
-        if float.is_integer(self.value * self.update_frequency):
+        if float(self.value * self.update_frequency).is_integer():
             self.print_progress()
 
     def on_complete(self):

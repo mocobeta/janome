@@ -48,8 +48,8 @@ jobs:
       run: uv run ruff check ./src
     - name: Check formatting with Ruff
       run: uv run ruff format --check ./src ./tests
-    - name: Lint with mypy
-      run: uv run python -m mypy ./src/janome
+    - name: Type check with Ty
+      run: uv run ty check ./src
 
   coveralls_finish:
     needs: check

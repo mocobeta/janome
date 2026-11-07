@@ -92,13 +92,13 @@ with user dictionary (simplified format):
 import sys
 import os
 from typing import Iterator, Union, Tuple, Optional, Any
-from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType  # type: ignore
-from .dic import UserDictionary, CompiledUserDictionary  # type: ignore
+from .lattice import Lattice, Node, SurfaceNode, BOS, EOS, NodeType
+from .dic import UserDictionary, CompiledUserDictionary
 from .system_dic import SystemDictionary, MMapSystemDictionary
 from .fst import Matcher
 
 try:
-    from janome.sysdic import all_fstdata, connections  # type: ignore
+    from janome.sysdic import all_fstdata, connections
 except ImportError:
     # hack for unit testing...
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -299,7 +299,7 @@ class Tokenizer(object):
             for node in min_cost_path[1:-1]:
                 if type(node) is SurfaceNode and node.node_type is NodeType.SYS_DICT:
                     tokens.append(Token(node, self.sys_dic.lookup_extra(node.num)))
-                elif type(node) is SurfaceNode and node.node_type is NodeType.USER_DICT:
+                elif self.user_dic is not None and type(node) is SurfaceNode and node.node_type is NodeType.USER_DICT:
                     tokens.append(Token(node, self.user_dic.lookup_extra(node.num)))
                 else:
                     tokens.append(Token(node))
