@@ -17,3 +17,4 @@ tests/userdic_simple
 tests/*.gv
 profiler/*.dump
 profiler/*.profile
+.envrc
