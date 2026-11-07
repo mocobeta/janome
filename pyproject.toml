@@ -35,7 +35,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 path = "src/janome/version.py"
-pattern = "^JANOME_VERSION = '(?P<version>.+)'$"
+pattern = """^JANOME_VERSION = ["'](?P<version>.+)["']$"""
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -56,6 +56,7 @@ dev = [
     "hatchling>=1.29.0",
     "mypy>=2.1.0",
     "psutil>=7.2.2",
+    "pytest>=9.2.0",
     "ruff>=0.17.4",
 ]
 
