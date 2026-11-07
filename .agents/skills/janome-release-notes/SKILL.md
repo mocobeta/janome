@@ -25,7 +25,7 @@ For example, if `0.5.0` is the latest stable release and `0.5.1` is a pre-releas
 Replace placeholders with verified release details and omit the HTML comment when delivering the note.
 
 ```markdown
-# Release Note {version}
+## Install
 
 Download here [PyPI](https://pypi.org/project/Janome/{version}/)
 
