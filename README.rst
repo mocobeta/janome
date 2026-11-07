@@ -25,7 +25,7 @@ https://janome.mocobeta.dev/ja/ (Japanese)
 Requirements
 =============
 
-Python 3.10+ is required.
+Python 3.11+ is required.
 
 Install
 ========
