@@ -16,7 +16,7 @@ Run the relevant checks for code changes:
 uv run pytest tests/
 uv run ruff check src/
 uv run ruff format --check src/ tests/
-uv run python -m mypy src/janome/
+uv run ty check src/janome/
 ```
 
 The GitHub Actions workflow runs the test suite on Python 3.11 through 3.15 and on Ubuntu, macOS, and Windows.

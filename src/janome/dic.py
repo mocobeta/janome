@@ -27,6 +27,7 @@ import pkgutil
 import zlib
 import base64
 from functools import lru_cache
+from typing import Optional
 from .fst import Matcher, create_minimum_transducer, compileFST
 
 logger = logging.getLogger(__name__)
@@ -106,10 +107,12 @@ def _load(file):
         return data
 
 
-def _load_package_data(package, resource):
+def _load_package_data(package, resource) -> Optional[bytes]:
     try:
         rawdata = pkgutil.get_data(package, resource)
     except IOError:
+        return None
+    if rawdata is None:
         return None
     return zlib.decompress(rawdata, zlib.MAX_WBITS | 16)
 
@@ -389,8 +392,8 @@ class UserDictionary(RAMDictionary):
         self.compiledFST = [fst_data]
         self.matcher = Matcher([fst_data])
 
-    def lookup(self, s):
-        return super().lookup(s, self.matcher)
+    def lookup(self, s, matcher=None):
+        return super().lookup(s, matcher or self.matcher)
 
     @classmethod
     def line_to_entry_ipadic(cls, line):
@@ -503,8 +506,8 @@ class CompiledUserDictionary(RAMDictionary):
         super().__init__(entries, connections)
         self.matcher = Matcher([fst_data])
 
-    def lookup(self, s):
-        return super().lookup(s, self.matcher)
+    def lookup(self, s, matcher=None):
+        return super().lookup(s, matcher or self.matcher)
 
     @classmethod
     def load_dict(cls, dic_dir):

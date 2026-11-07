@@ -15,6 +15,7 @@
 from abc import ABC, abstractmethod
 import unicodedata
 import re
+from typing import Literal
 
 
 class CharFilter(ABC):
@@ -63,7 +64,7 @@ class UnicodeNormalizeCharFilter(CharFilter):
     Added in *version 0.3.4*
     """
 
-    def __init__(self, form="NFKC"):
+    def __init__(self, form: Literal["NFC", "NFD", "NFKC", "NFKD"] = "NFKC"):
         """
         Initialize UnicodeNormalizeCharFilter with normalization form.
 

@@ -54,21 +54,15 @@ dev = [
     "autopep8>=2.3.2",
     "coverage>=7.14.0",
     "hatchling>=1.29.0",
-    "mypy>=2.1.0",
     "psutil>=7.2.2",
     "pytest>=9.2.0",
     "ruff>=0.17.4",
+    "ty>=0.0.99",
 ]
 
 [tool.coverage.run]
 relative_files = true
 omit = ["src/janome/sysdic/*", "tests/*"]
-
-[tool.mypy]
-
-[[tool.mypy.overrides]]
-module = "janome.sysdic.*"
-ignore_errors = true
 
 [tool.ruff]
 line-length = 120
