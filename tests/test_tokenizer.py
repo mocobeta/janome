@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import os
+import re
 import sys
+from collections import Counter
 from io import open
 import unittest
 import psutil
@@ -26,6 +28,33 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 IS_64BIT = sys.maxsize > 2**32
+
+
+def canonicalize_dotfile(dot):
+    canonical = Counter()
+    node_pattern = re.compile(
+        r'^  (\d+\.\d+) \[label="(.*)\\n(-?\d+)",shape=(\w+),style=filled,'
+        r'fillcolor=\w+,fontname=".*"\];$'
+    )
+    edge_pattern = re.compile(r'^  (\d+\.\d+) -> (\d+\.\d+) \[label="(-?\d+)".*\];$')
+
+    for line in dot.splitlines():
+        node_match = node_pattern.match(line)
+        if node_match:
+            _, label, cost, shape = node_match.groups()
+            canonical[("node", label, cost, shape)] += 1
+            continue
+
+        edge_match = edge_pattern.match(line)
+        if edge_match:
+            _, _, cost = edge_match.groups()
+            canonical[("edge", cost)] += 1
+            continue
+
+        if line not in ("digraph G {", "  rankdir=LR;", "  ranksep=2.0;", "}"):
+            raise AssertionError(f"Unexpected dotfile line: {line}")
+
+    return canonical
 
 
 class TestTokenizer(unittest.TestCase):
@@ -282,7 +311,14 @@ class TestTokenizer(unittest.TestCase):
             os.remove(dotfile)
 
         list(Tokenizer().tokenize(text, dotfile=dotfile))
-        self.assertTrue(os.path.exists(dotfile))
+        with open(dotfile, encoding="utf-8") as f:
+            dot = f.read()
+
+        expected_dotfile = os.path.join(parent_dir, "tests/data/lattice.gv")
+        with open(expected_dotfile, encoding="utf-8") as f:
+            expected_dot = f.read()
+
+        self.assertEqual(canonicalize_dotfile(expected_dot), canonicalize_dotfile(dot))
 
     def test_tokenize_dotfile_large_text(self):
         dotfile = os.path.join(parent_dir, "tests/lattice_must_not_exist.gv")
