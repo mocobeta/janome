@@ -41,6 +41,7 @@ pattern = """^JANOME_VERSION = ["'](?P<version>.+)["']$"""
 include = [
     "src/janome/**",
     "ipadic/sysdic.zip",
+    "NOTICE.txt",
 ]
 
 [tool.hatch.build.targets.wheel]
