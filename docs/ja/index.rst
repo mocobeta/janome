@@ -49,7 +49,7 @@ Python 3.11+ インタプリタ
 最新バージョン
 -----------------
 
-* 0.5.1
+* 0.5.2
 
 インストール
 ---------------
@@ -555,6 +555,7 @@ Copyright(C) 2015-2026, Tomoko Uchida. All rights reserved.
 History
 ----------
 
+* 2026.11.10 janome Version 0.5.2 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.5.2>`_
 * 2026.11.07 janome Version 0.5.1 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.5.1>`_
 * 2023.07.01 janome Version 0.5.0 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.5.0>`_
 * 2022.02.23 janome Version 0.4.2 released `[Release Note] <https://github.com/mocobeta/janome/releases/tag/0.4.2>`_
